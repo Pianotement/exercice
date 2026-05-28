@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quatrain cinématique 6415 - Pianotement</title>
+<style>
+  body { background-color: #14191f; color: #f5f6fa; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+  header { background: #1b222a; border-bottom: 2px solid #232d38; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .header-left { display: flex; align-items: center; gap: 20px; }
+  .logo-link { text-decoration: none; }
+  .logo-site { font-size: 22px; font-weight: 800; color: #00d2d3; letter-spacing: 1px; text-transform: uppercase; }
+  .logo-site span { color: #f1c40f; }
+  .yt-header-btn { background: #ff4757; color: white; text-decoration: none; font-size: 12px; font-weight: bold; padding: 6px 12px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; }
+  .yt-header-btn:hover { background: #ff6b81; }
+  .badge-eleve { background: #2e3d4d; color: #00d2d3; font-size: 13px; font-weight: bold; padding: 4px 12px; border-radius: 20px; border: 1px solid #3d5166; }
+  .main-content { flex: 1; padding: 40px 20px; max-width: 1000px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+  .piano-container { background: #1b222a; padding: 35px; border-radius: 12px; border: 1px solid #232d38; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+  h2 { margin-top: 0; color: #ffffff; font-size: 26px; font-weight: 600; margin-bottom: 25px; }
+  .piano-wrapper { overflow-x: auto; padding: 15px; background: #0f1318; border-radius: 8px; margin-bottom: 30px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.5); }
+  .piano { position: relative; width: 840px; height: 220px; margin: 0 auto; }
+  .key { position: absolute; top: 0; border: 1px solid #1a1a1a; border-radius: 0 0 6px 6px; box-sizing: border-box; cursor: pointer; }
+  .key.white { background: #fdfdfd; width: 40px; height: 220px; z-index: 1; box-shadow: inset 0 -8px 5px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.2); }
+  .key.black { background: #161616; width: 24px; height: 130px; z-index: 2; box-shadow: inset 0 -4px 4px rgba(255,255,255,0.15), 0 3px 6px rgba(0,0,0,0.4); }
+  .key.white.remanence, .key.black.remanence { background: #d4edda !important; }
+  .key.white:active, .key.white.active { background: #3498db !important; }
+  .key.black:active, .key.black.active { background: #2980b9 !important; }
+  .finger { position: absolute; bottom: 18px; left: 0; width: 100%; text-align: center; font-weight: bold; font-size: 20px; color: #e74c3c; pointer-events: none; opacity: 0;}
+  .finger.active-text { opacity: 1; }
+  .key.black .finger { color: #f1c40f; bottom: 12px; }
+  .controls { display: flex; justify-content: center; gap: 15px; }
+  button { font-family: inherit; font-weight: bold; border: none; padding: 12px 28px; font-size: 16px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+  .btn-play { background: #10ac84; color: white; }
+  .btn-play:hover { background: #1dd1a1; }
+  .btn-pause { background: #f39c12; color: white; }
+  .btn-pause:hover { background: #e67e22; }
+  .btn-reset { background: #576574; color: white; }
+  .annotations-card { background: #1b222a; border: 1px solid #232d38; border-left: 5px solid #00d2d3; border-radius: 8px; margin-top: 25px; padding: 25px; text-align: left; display: none; }
+  .annotations-card h3 { margin-top: 0; color: #00d2d3; font-size: 18px; }
+  .annotations-content { font-size: 16px; line-height: 1.6; color: #dcdde1; white-space: pre-wrap; }
+  footer { background: #0f1318; border-top: 2px solid #1b222a; text-align: center; padding: 30px; margin-top: 40px; }
+  .footer-row { display: flex; justify-content: center; align-items: center; gap: 20px; }
+  .footer-link { font-size: 28px; font-weight: 900; color: #ffffff; text-decoration: none; letter-spacing: 2px; }
+  .footer-link span { color: #00d2d3; }
+  .footer-sub { font-size: 12px; color: #576574; margin-top: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <a href="https://www.pianotement.fr/" target="_blank" class="logo-link">
+      <div class="logo-site">PIANO<span>TEMENT</span></div>
+    </a>
+    <a href="https://www.youtube.com/@pianotement" target="_blank" class="yt-header-btn">▶ YouTube</a>
+  </div>
+  <div class="badge-eleve">Espace Exercices Interactifs</div>
+</header>
+<div class="main-content">
+  <div class="piano-container">
+    <h2>Quatrain cinématique 6415</h2>
+    <div class="piano-wrapper">
+      <div id="pianoVisualizer" class="piano"></div>
+    </div>
+    <div class="controls">
+      <button class="btn-play" onclick="lancerPattern()">▶ Jouer</button>
+      <button class="btn-pause" onclick="pausePattern()">⏸ Pause</button>
+      <button class="btn-reset" onclick="stopperPattern()">⏹ Recommencer</button>
+    </div>
+  </div>
+  <div id="annotationsCard" class="annotations-card">
+    <h3>📝 Notes du professeur & Conseils :</h3>
+    <div id="annotationsBox" class="annotations-content"></div>
+  </div>
+</div>
+<footer>
+  <div class="footer-row">
+    <a href="https://www.pianotement.fr/" target="_blank" class="footer-link">PIANO<span>TEMENT</span></a>
+    <a href="https://www.youtube.com/@pianotement" target="_blank" class="yt-header-btn">▶ Rejoindre sur YouTube</a>
+  </div>
+  <div class="footer-sub">Méthode de Piano & Motifs Visuels Autonomes</div>
+</footer>
+<script>
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
+  const notesDef = [
+    { n: 'C', t: 'white' }, { n: 'C#', t: 'black' }, { n: 'D', t: 'white' }, { n: 'D#', t: 'black' },
+    { n: 'E', t: 'white' }, { n: 'F', t: 'white' }, { n: 'F#', t: 'black' }, { n: 'G', t: 'white' },
+    { n: 'G#', t: 'black' }, { n: 'A', t: 'white' }, { n: 'A#', t: 'black' }, { n: 'B', t: 'white' }
+  ];
+  function getFrequency(noteName) {
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const name = noteName.slice(0, -1); const octave = parseInt(noteName.slice(-1));
+    return 440 * Math.pow(2, ((notes.indexOf(name) + (octave + 1) * 12) - 69) / 12);
+  }
+  const piano = document.getElementById('pianoVisualizer');
+  let whiteCount = 0;
+  for (let oct = 3; oct <= 5; oct++) {
+    notesDef.forEach(item => {
+      const key = document.createElement('div'); const id = item.n + oct;
+      key.id = id; key.classList.add('key', item.t);
+      const finger = document.createElement('span'); finger.classList.add('finger'); finger.id = 'f-' + id; key.appendChild(finger);
+      if (item.t === 'white') { key.style.left = (whiteCount * 40) + 'px'; whiteCount++; } else { key.style.left = (whiteCount * 40 - 12) + 'px'; }
+      key.addEventListener('mousedown', () => declencherSynthe(getFrequency(id), tempo));
+      piano.appendChild(key);
+    });
+  }
+  function declencherSynthe(freq, activeTempoMs) {
+    if(!audioCtx) audioCtx = new AudioContext();
+    const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+    osc.type = 'triangle'; osc.frequency.value = freq;
+    const maintenant = audioCtx.currentTime;
+    gainNode.gain.setValueAtTime(0, maintenant); gainNode.gain.linearRampToValueAtTime(0.4, maintenant + 0.03);
+    let dureeSon = 0.8;
+    if (activerSustain) {
+      dureeSon = activeTempoMs / 1000;
+      gainNode.gain.setValueAtTime(0.4, maintenant + dureeSon - 0.05); gainNode.gain.linearRampToValueAtTime(0.001, maintenant + dureeSon);
+    } else { gainNode.gain.exponentialRampToValueAtTime(0.001, maintenant + 0.8); }
+    osc.connect(gainNode); gainNode.connect(audioCtx.destination);
+    osc.start(maintenant); osc.stop(maintenant + dureeSon);
+  }
+  const sequenceData = [[{"id":"A3","doigt":"1"}],[{"id":"E4","doigt":"2"}],[{"id":"C5","doigt":"5"}],[{"id":"E4","doigt":"2"}],[{"id":"A3","doigt":""}],[{"id":"E4","doigt":""}],[{"id":"C5","doigt":""}],[{"id":"E4","doigt":""}],[{"id":"F3","doigt":"1"}],[{"id":"C4","doigt":"2"}],[{"id":"A4","doigt":"5"}],[{"id":"C4","doigt":"2"}],[{"id":"F3","doigt":""}],[{"id":"C4","doigt":""}],[{"id":"A4","doigt":""}],[{"id":"C4","doigt":""}],[{"id":"C3","doigt":"1"}],[{"id":"G3","doigt":"2"}],[{"id":"E4","doigt":"5"}],[{"id":"G3","doigt":"2"}],[{"id":"G3","doigt":"1"}],[{"id":"D4","doigt":"2"}],[{"id":"B4","doigt":"5"}],[{"id":"D4","doigt":"2"}]];
+  const tempo = 2000;
+  const activerRemanence = true;
+  const activerSustain = true;
+  const txtAnnotations = "Dans la lignée du quatrain classique voici une variante, dans chaque accords, on déplace la note du milieu à la fin du mouvement. \n\nPour l'accord de La mineur par exemple, on fait les notes La Mi Do, le Do étant celui de l'octave au dessus. Cette façon de jouer donne un son plus profond avec beaucoup d'amplitude, ne pas oublier la pédale de sustain et bien laisser résonner. Ce type de motif pour un accord s'appelle un Voicing. Il est très utilisé dans les musiques de film, et dans la musique néo classique.\n\nConseil d'exécution : \n\nA la main gauche, avec une position fixe à la main droite au choix. Commencer par maîtriser un seul accord à la main gauche.\n\nTout comme le quatrain classique, on compte 1 2 3 4, le seul changement est qu'ici l'écart est beaucoup plus large, et que le doigt pivot est l'index. Avec la taille de l'écart, la plupart des personnes seront obligées de décoller le doigt de départ 1 pour atteindre le doigt d'arrivée 5, tout en maintenant le pivot 2. Bien sentir le balancier autour de l'index.\n\nBalancer son corps, faire une rotation de l'avant bras et du poignet, avec comme axe l'index. Bien enfoncer la pédale de sustain, et prendre son temps, ce Voicing rempli l'espace sonore, bien savourer l'effet avant d'amener la main droite.\n\nPour la main droite, sur une position fixe, amener des notes progressivement, écouter les silences et leurs profondeurs entre les notes. Le quatrain cinématique se prête admirablement au mélodies profondes.\n\nPour les transitions s'appuyer sur l'index pour aider la visée de la prochaine note de départ d'accord avec le petit doigt. Prendre tout son temps.\n\nLa passage du Do majeur au Sol majeur conserve son saut périlleux, courage ! \n\nTravaillez bien, et à bientôt !";
+  if(txtAnnotations && txtAnnotations.trim() !== "") {
+    document.getElementById('annotationsBox').innerText = txtAnnotations;
+    document.getElementById('annotationsCard').style.display = 'block';
+  }
+  let isPlaying = false; let currentStep = 0; let stepTimeout = null; let activeExtinctions = [];
+  if (activerRemanence) {
+    sequenceData.forEach(temps => { temps.forEach(noteData => { const kEl = document.getElementById(noteData.id); if (kEl) kEl.classList.add('remanence'); }); });
+  }
+  function nettoyerTouchesActives() {
+    activeExtinctions.forEach(clearTimeout); activeExtinctions = [];
+    document.querySelectorAll('.key.active').forEach(k => k.classList.remove('active'));
+    document.querySelectorAll('.finger.active-text').forEach(f => { f.innerText = ''; f.classList.remove('active-text'); });
+  }
+  function jouerEtape() {
+    if (!isPlaying) return; nettoyerTouchesActives();
+    if (currentStep >= sequenceData.length) { currentStep = 0; }
+    const notesCourantes = sequenceData[currentStep];
+    notesCourantes.forEach(noteData => {
+      declencherSynthe(getFrequency(noteData.id), tempo);
+      const kEl = document.getElementById(noteData.id); const fEl = document.getElementById('f-' + noteData.id);
+      if(kEl) kEl.classList.add('active');
+      if(fEl && noteData.doigt) { fEl.innerText = noteData.doigt; fEl.classList.add('active-text'); }
+      const extT = setTimeout(() => { if(kEl) kEl.classList.remove('active'); if(fEl) { fEl.innerText = ''; fEl.classList.remove('active-text'); } }, tempo);
+      activeExtinctions.push(extT);
+    });
+    currentStep++; stepTimeout = setTimeout(jouerEtape, tempo);
+  }
+  function lancerPattern() { if (isPlaying) return; isPlaying = true; jouerEtape(); }
+  function pausePattern() { isPlaying = false; clearTimeout(stepTimeout); activeExtinctions.forEach(clearTimeout); activeExtinctions = []; }
+  function stopperPattern() { isPlaying = false; clearTimeout(stepTimeout); nettoyerTouchesActives(); currentStep = 0; }
+</script>
+</body>
+</html>
