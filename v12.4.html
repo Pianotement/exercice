@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arcade Piano - V12.3 (Zoom & Amélioration Visuelle)</title>
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* DESIGN GLOBAL ÉLITE */
+        body { 
+            font-family: 'Montserrat', sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 15px; 
+            overflow-x: auto; 
+            color: #fff;
+            background-color: #1a1a1e;
+            background-image: url('piano_app_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: -1;
+        }
+
+        .top-controls { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            max-width: 1160px; 
+            margin: 0 auto 15px auto; 
+            gap: 15px; 
+            padding: 10px;
+            background: rgba(42, 42, 53, 0.4);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        .main-title { text-align: center; margin: 0; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+        .main-title a { color: #f39c12; text-decoration: none; transition: color 0.3s; }
+        .main-title a:hover { color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.5); }
+
+        .youtube-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ff4757;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.25);
+            transition: all 0.3s ease;
+        }
+        .youtube-link:hover {
+            color: #fff;
+            background: #ff4757;
+            box-shadow: 0 0 12px rgba(255, 71, 87, 0.5);
+            border-color: transparent;
+        }
+        .youtube-link svg { width: 16px; height: 16px; fill: currentColor; }
+
+        .top-controls-right { display: flex; gap: 10px; align-items: center; }
+
+        .midi-badge { 
+            padding: 8px 18px; 
+            border-radius: 30px; 
+            font-weight: 600; 
+            background: #c0392b; 
+            color: white; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            font-size: 13px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+        }
+        .midi-connected { background: #2ecc71; box-shadow: 0 0 10px rgba(46, 204, 113, 0.4); border-color: transparent; }
+
+        /* BOUTONS SECONDAIRES (SAUVER / CHARGER) */
+        .btn-secondary { 
+            background: linear-gradient(135deg, #444a50 0%, #2c3e50 100%); 
+            color: #bdc3c7;
+            font-size: 13px; 
+            padding: 8px 16px; 
+            border: 1px solid #555;
+            text-transform: uppercase;
+            font-weight: 600;
+            flex-shrink: 0; 
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover,
+        .file-input-wrapper:hover .btn-secondary { 
+            background: linear-gradient(135deg, #50565d 0%, #34495e 100%); 
+            color: #fff; 
+            border-color: #777; 
+            box-shadow: 0 7px 12px rgba(0,0,0,0.4);
+            transform: translateY(-2px);
+        }
+
+        .file-input-wrapper { position: relative; display: inline-block; flex-shrink: 0; }
+        .file-input-wrapper input[type=file] { 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            width: 100%;
+            height: 100%;
+            opacity: 0; 
+            cursor: pointer; 
+            z-index: 5; 
+        }
+
+        select, input[type="file"] { 
+            font-family: 'Montserrat', sans-serif;
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
+            background: linear-gradient(135deg, #2a2a35 0%, #1e1e24 100%); color: white; 
+            font-size: 14px; box-sizing: border-box; cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        select:focus { border-color: #f39c12; outline: none; box-shadow: 0 0 10px rgba(243, 156, 18, 0.4); }
+        select option { background-color: #2a2a35; color: #ffffff; padding: 10px; }
+        select option:disabled { color: #555566; background-color: #1a1a22; }
+
+        #menu-config { 
+            background: rgba(42, 42, 53, 0.35); max-width: 1160px; margin: 10px auto 20px auto; 
+            padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+            text-align: left; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.05);
+        }
+        #menu-config h2 { margin-top: 0; color: #f39c12; text-align: center; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; border-bottom: 2px solid #444; padding-bottom: 15px; margin-bottom: 25px;}
+        
+        .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .config-grid .config-group { display: flex; flex-direction: column; }
+        .config-group label { font-weight: 600; margin-bottom: 8px; color: #bdc3c7; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .panel { background: rgba(30, 30, 36, 0.6); padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); grid-column: span 2; }
+        @media (max-width: 768px) { .panel { grid-column: span 1; } }
+        .custom-ambitus-panel { display: none; margin-top: 15px; border: 1px dashed #555; padding: 10px; gap: 15px; border-radius: 8px;}
+
+        /* HUD DU JEU */
+        #game-ui { display: none; }
+        #hud { 
+            display: flex; justify-content: center; gap: 15px; font-size: 16px; font-weight: 600; 
+            margin: 10px auto; max-width: 1200px; background: rgba(42, 42, 53, 0.9); 
+            padding: 12px 20px; border-radius: 12px; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.5); text-transform: uppercase;
+        }
+        .stat { 
+            padding: 8px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%); display: inline-flex; align-items: center; gap: 8px;
+        }
+        #stat-fautes { background: #c0392b; border: none; box-shadow: 0 2px 10px rgba(192, 57, 43, 0.4);}
+        #stat-score { background: #27ae60; border: none; box-shadow: 0 2px 10px rgba(39, 174, 96, 0.4);}
+        #stat-level { background: #2980b9; border: none; box-shadow: 0 2px 10px rgba(41, 128, 185, 0.4);}
+        
+        /* VIEWPORT PAYSAGE - CONTROLE DU ZOOM APPLIQUÉ ICI */
+        #viewport { 
+            position: relative; width: 1200px; height: 450px; background: #ffffff; margin: 15px auto; 
+            border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #f39c12; 
+        }
+        #bg-staves { position: absolute; left: 0; top: 0; width: 1200px; height: 450px; z-index: 1; }
+        #fixed-clefs { position: absolute; left: 0; top: 0; width: 140px; height: 450px; z-index: 10; background: linear-gradient(to right, rgba(255,255,255,1) 80%, rgba(255,255,255,0)); }
+        #hitzone { position: absolute; left: 150px; top: 0; width: 134px; height: 450px; background: rgba(231, 76, 60, 0.08); border-left: 3px solid #e74c3c; border-right: 3px solid #e74c3c; z-index: 15; box-shadow: 0 0 15px rgba(231,76,60,0.3); }
+        #track { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; }
+        .note-column { position: absolute; top: 0; height: 450px; width: 134px; }
+
+        .overlay-screen { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.88); z-index: 30; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+        }
+        .overlay-screen h2 { color: #e74c3c; font-size: 56px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 700;}
+        #pause-screen h2 { color: #f1c40f; text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
+
+        button { 
+            font-family: 'Montserrat', sans-serif; padding: 12px 24px; font-size: 15px; cursor: pointer; 
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); color: white; border: none; border-radius: 8px; 
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+        }
+        button:hover { background: linear-gradient(135deg, #3adb81 0%, #2ecc71 100%); transform: translateY(-2px); box-shadow: 0 7px 12px rgba(0,0,0,0.4); }
+        button:active { transform: translateY(0); box-shadow: 0 3px 5px rgba(0,0,0,0.3); }
+
+        #btn-pause { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-color: rgba(255,255,255,0.15);}
+        #btn-pause:hover { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); }
+        
+        #menu-config button { 
+            font-size: 18px; padding: 15px 30px; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); color: #1e1e24; 
+            border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+        }
+        #menu-config button:hover { background: linear-gradient(135deg, #fff 0%, #f1c40f 100%); box-shadow: 0 0 30px rgba(241, 196, 15, 0.5); }
+    </style>
+</head>
+<body>
+
+    <div class="top-controls">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="main-title"><a href="https://www.pianotement.fr/" target="_blank">Pianotement.fr</a></div>
+            <a href="https://youtube.com/@pianotement" target="_blank" class="youtube-link">
+                <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93 .502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+            </a>
+        </div>
+        <div class="top-controls-right">
+            <div id="midi-badge" class="midi-badge" data-i18n="midiWaiting">MIDI</div>
+            <select id="cfg-lang" onchange="changerLangue(this.value)" style="width: auto; padding: 5px 30px 5px 10px; font-size: 13px;">
+                <option value="fr">Français</option>
+                <option value="en">English</option>
+                <option value="es">Español</option>
+            </select>
+            <button class="btn-secondary" onclick="exporterConfiguration()" data-i18n="btnExport">Sauver</button>
+            <div class="file-input-wrapper">
+                <button class="btn-secondary" data-i18n="btnImport">Charger</button>
+                <input type="file" id="import-file" accept=".json" onchange="importerConfiguration(event)" />
+            </div>
+        </div>
+    </div>
+
+    <div id="menu-config">
+        <h2 data-i18n="menuTitle">Paramètres de la partie</h2>
+        
+        <div class="config-grid">
+            <div class="config-group">
+                <label data-i18n="lblInputSource">Source d'entrée :</label>
+                <select id="cfg-input-source" onchange="toggleInputSource()">
+                    <option value="midi" selected data-i18n="srcMidi">Clavier numérique (MIDI USB)</option>
+                    <option value="mic" data-i18n="srcMic">Piano Acoustique (Microphone)</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblSansErreur">Mode sans erreur :</label>
+                <select id="cfg-sans-erreur">
+                    <option value="on" selected data-i18n="optSeOn">Activé (Pénalité)</option>
+                    <option value="off" data-i18n="optSeOff">Désactivé</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblMD">Main Droite (Clé de Sol) :</label>
+                <select id="cfg-mode-md">
+                    <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
+                    <option value="accords" id="opt-md-chord" data-i18n="optChords">Accords</option>
+                    <option value="off" data-i18n="optOff">Désactivée</option>
+                </select>
+            </div>
+            <div class="config-group">
+                <label data-i18n="lblMG">Main Gauche (Clé de Fa) :</label>
+                <select id="cfg-mode-mg">
+                    <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
+                    <option value="accords" id="opt-mg-chord" data-i18n="optChords">Accords</option>
+                    <option value="off" data-i18n="optOff">Désactivée</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblAccordsInv">Structure des Accords :</label>
+                <select id="cfg-accords-inv">
+                    <option value="fondamentale" selected data-i18n="optFondamental">Fondamental uniquement</option>
+                    <option value="renversements" data-i18n="optRenversements">Fondamental & Renversements</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblIntervalle">Intervalle maximal :</label>
+                <select id="cfg-intervalle">
+                    <option value="2" data-i18n="intTierce">Tierce (Répétitions, Secondes, Tierces)</option>
+                    <option value="3" data-i18n="intQuarte">Quarte max</option>
+                    <option value="4" data-i18n="intQuinte">Quinte max</option>
+                    <option value="5" data-i18n="intSixte">Sixte max</option>
+                    <option value="libre" selected data-i18n="intLibre">Libre (Tous sauts autorisés)</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblDebitTreble">Débit Clé de Sol (Densité) :</label>
+                <select id="cfg-debit-treble">
+                    <option value="160" selected data-i18n="debitBeg">Débutant (Standard)</option>
+                    <option value="128" data-i18n="debitNorm">Normal (+25 %)</option>
+                    <option value="102" data-i18n="debitInt">Intermédiaire (+56 %)</option>
+                    <option value="82" data-i18n="debitHard">Difficile (+95 %)</option>
+                    <option value="66" data-i18n="debitPro">Pro (+144 %)</option>
+                </select>
+            </div>
+            <div class="config-group">
+                <label data-i18n="lblDebitBass">Débit Clé de Fa (Densité) :</label>
+                <select id="cfg-debit-bass">
+                    <option value="160" selected data-i18n="debitBeg">Débutant (Standard)</option>
+                    <option value="128" data-i18n="debitNorm">Normal (+25 %)</option>
+                    <option value="102" data-i18n="debitInt">Intermédiaire (+56 %)</option>
+                    <option value="82" data-i18n="debitHard">Difficile (+95 %)</option>
+                    <option value="66" data-i18n="debitPro">Pro (+144 %)</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblAcceleration">Accélération :</label>
+                <select id="cfg-acceleration">
+                    <option value="0" data-i18n="accOff">Désactivée</option>
+                    <option value="5" selected data-i18n="accFacile">Facile (5 %)</option>
+                    <option value="10" data-i18n="accNormal">Normal (10 %)</option>
+                    <option value="15" data-i18n="accDifficile">Difficile (15 %)</option>
+                </select>
+            </div>
+            <div class="config-group">
+                <label data-i18n="lblVitesse">Vitesse linéaire de départ :</label>
+                <select id="cfg-vitesse">
+                    <option value="20" data-i18n="vitVerySlow">Grand Débutant</option>
+                    <option value="40" data-i18n="vitSlow">Lent (Débutant)</option>
+                    <option value="60" selected data-i18n="vitMed">Moyen (Initié)</option>
+                    <option value="90" data-i18n="vitFast">Rapide (Avancé)</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblFautes">Fautes autorisées :</label>
+                <select id="cfg-fautes">
+                    <option value="1" data-i18n="fSubite">1 (Mort subite)</option>
+                    <option value="10" selected data-i18n="fDix">10 fautes</option>
+                    <option value="infinity" data-i18n="fInfinie">Mode Infini</option>
+                </select>
+            </div>
+            <div class="config-group">
+                <label data-i18n="lblTonalite">Tonalité (Armure) :</label>
+                <select id="cfg-gamme">
+                    <option value="C" selected>Do Maj / La Min (Rien)</option>
+                    <option value="G">Sol Maj / Mi Min (1#)</option>
+                    <option value="D">Ré Maj / Si Min (2#)</option>
+                    <option value="A">La Maj / Fa# Min (3#)</option>
+                    <option value="E">Mi Maj / Do# Min (4#)</option>
+                    <option value="B">Si Maj / Sol# Min (5#)</option>
+                    <option value="F#">Fa# Maj / Ré# Min (6#)</option>
+                    <option value="F">Fa Maj / Ré Min (1b)</option>
+                    <option value="Bb">Sib Maj / Sol Min (2b)</option>
+                    <option value="Eb">Mib Maj / Do Min (3b)</option>
+                    <option value="Ab">Lab Maj / Fa Min (4b)</option>
+                    <option value="Db">Réb Maj / Sib Min (5b)</option>
+                    <option value="Gb">Solb Maj / Mib Min (6b)</option>
+                </select>
+            </div>
+
+            <div class="config-group">
+                <label data-i18n="lblZoom">Taille des Notes / Zoom :</label>
+                <select id="cfg-zoom" onchange="majusterZoom(this.value)">
+                    <option value="1" selected>Normal (100%)</option>
+                    <option value="1.15">Grand (115%)</option>
+                    <option value="1.3">Très Grand (130%)</option>
+                    <option value="1.5">Plein Écran HD (150%)</option>
+                </select>
+            </div>
+
+            <div class="panel">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="config-group">
+                        <label data-i18n="lblAmbitusTreble">Ambitus Clé de Sol :</label>
+                        <select id="cfg-ambitus-treble" onchange="toggleCustomAmbitus()">
+                            <option value="facile" selected data-i18n="ambTFacile">Facile (Do4 - Do5)</option>
+                            <option value="normal" data-i18n="ambTNormal">Normal (Do4 - Do6)</option>
+                            <option value="difficile" data-i18n="ambTDifficile">Difficile (Do3 - Do6)</option>
+                            <option value="custom" data-i18n="ambCustom">Sur mesure...</option>
+                        </select>
+                        <div id="custom-treble-panel" class="custom-ambitus-panel">
+                            <div><label data-i18n="lblDe">De :</label><select id="treble-min"></select></div>
+                            <div><label data-i18n="lblA">À :</label><select id="treble-max"></select></div>
+                        </div>
+                    </div>
+                    
+                    <div class="config-group">
+                        <label data-i18n="lblAmbitusBass">Ambitus Clé de Fa :</label>
+                        <select id="cfg-ambitus-bass" onchange="toggleCustomAmbitus()">
+                            <option value="facile" selected data-i18n="ambBFacile">Facile (Do3 - Do4)</option>
+                            <option value="normal" data-i18n="ambBNormal">Normal (Do2 - Do4)</option>
+                            <option value="difficile" data-i18n="ambBDifficile">Difficile (Do2 - Do5)</option>
+                            <option value="custom" data-i18n="ambCustom">Sur mesure...</option>
+                        </select>
+                        <div id="custom-bass-panel" class="custom-ambitus-panel">
+                            <div><label data-i18n="lblDe">De :</label><select id="bass-min"></select></div>
+                            <div><label data-i18n="lblA">À :</label><select id="bass-max"></select></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-group" style="justify-content: flex-end; grid-column: span 2; text-align: center;">
+                <button style="width: 50%; margin: 24px auto 0 auto;" onclick="lancerJeu()" data-i18n="btnStart">Démarrer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-ui">
+        <div id="hud">
+            <div class="stat" id="stat-level"><span data-i18n="hudLevel">Niveau</span> : <span id="lbl-level">1</span></div>
+            <div class="stat" id="stat-score">Score : <span id="lbl-score">0</span></div>
+            <div class="stat" id="stat-fautes"><span data-i18n="hudFautes">Fautes</span> : <span id="lbl-fautes">0</span></div>
+            <button id="btn-pause" onclick="togglePause()" data-i18n="btnPause">Pause (Espace)</button>
+            <button style="background:#555;" onclick="retourMenu()" data-i18n="btnMenu">Menu</button>
+        </div>
+        
+        <div id="viewport">
+            <div id="bg-staves"></div>
+            <div id="fixed-clefs"></div>
+            <div id="hitzone"></div> 
+            <div id="track"></div>
+            
+            <div id="pause-screen" class="overlay-screen">
+                <h2 data-i18n="pauseTitle">JEU EN PAUSE</h2>
+                <button onclick="togglePause()" data-i18n="btnResume">Reprendre (Espace)</button>
+            </div>
+
+            <div id="game-over-screen" class="overlay-screen">
+                <h2>GAME OVER</h2>
+                <p id="final-score" style="font-size: 24px; color:white; margin-bottom: 25px; font-weight:600;"></p>
+                <button onclick="lancerJeu()" data-i18n="btnReplay">Rejouer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const VF = Vex.Flow;
+        
+        let TOUTES_LES_NOTES = [];
+        const notesCmaj = ["c", "d", "e", "f", "g", "a", "b"];
+        const nomsFr = ["Do", "Ré", "Mi", "Fa", "Sol", "La", "Si"];
+        const nomsEn = ["C", "D", "E", "F", "G", "A", "B"];
+        let langueActuelle = "fr";
+        let midiGlobalConnected = false;
+
+        let audioCtx = null;
+        let audioAnalyser = null;
+        let audioStream = null;
+        let audioBuffer = new Float32Array(2048);
+        let dernierPitchMidiDetecte = null;
+
+        const DICTIONNAIRE = {
+            fr: {
+                midiWaiting: "MIDI ATTENTE", midiReady: "MIDI PRÊT", midiError: "Pas de MIDI",
+                micReady: "MICRO PRÊT", micWaiting: "MICRO OFF",
+                btnExport: "Sauver", btnImport: "Charger", menuTitle: "Paramètres de la partie",
+                lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
+                lblMD: "Main Droite (Clé de Sol) :", lblMG: "Main Gauche (Clé de Fa) :", optMelody: "Mélodie",
+                optChords: "Accords", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
+                lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant (Standard)", debitNorm: "Normal (+25 %)",
+                debitInt: "Intermédiaire (+56 %)", debitHard: "Difficile (+95 %)", debitPro: "Pro (+144 %)",
+                lblIntervalle: "Intervalle maximal :", intTierce: "Tierce (Seconde, Tierce, Rep.)",
+                intQuarte: "Quarte max", intQuinte: "Quinte max", intSixte: "Sixte max", intLibre: "Libre (Tous sauts)",
+                lblAcceleration: "Accélération :", accOff: "Désactivée", accFacile: "Facile (5 %)",
+                accNormal: "Normal (10 %)", accDifficile: "Difficile (15 %)", lblVitesse: "Vitesse de départ :",
+                vitVerySlow: "Grand Débutant", vitSlow: "Lent (Débutant)", vitMed: "Moyen (Initié)", vitFast: "Rapide (Avancé)",
+                lblFautes: "Fautes autorisées :", fSubite: "1 (Mort subite)", fDix: "10 fautes", fInfinie: "Mode Infini",
+                lblAmbitusTreble: "Ambitus Clé de Sol :", lblAmbitusBass: "Ambitus Clé de Fa :", ambTFacile: "Facile (Do4 - Do5)",
+                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difficile (Do3 - Do6)", ambBFacile: "Facile (Do3 - Do4)",
+                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difficile (Do2 - Do5)", ambCustom: "Sur mesure...",
+                lblDe: "De :", lblA: "À :", lblTonalite: "Tonalité (Armure) :", btnStart: "Démarrer",
+                hudLevel: "Niveau", hudFautes: "Fautes", btnPause: "Pause (Espace)", btnMenu: "Menu",
+                pauseTitle: "JEU EN PAUSE", btnResume: "Reprendre (Espace)", btnReplay: "Rejouer", infiniteLabel: "Infini",
+                lblAccordsInv: "Structure des Accords :", optFondamental: "Fondamental uniquement", optRenversements: "Fondamental & Renversements",
+                lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé",
+                lblZoom: "Taille des notes / Zoom :"
+            },
+            en: {
+                midiWaiting: "MIDI WAITING", midiReady: "MIDI READY", midiError: "No MIDI",
+                micReady: "MIC READY", micWaiting: "MIC OFF",
+                btnExport: "Save", btnImport: "Load", menuTitle: "Game Settings",
+                lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
+                lblMD: "Right Hand (Treble Clef):", lblMG: "Left Hand (Bass Clef):", optMelody: "Melody",
+                optChords: "Chords", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
+                lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner (Standard)", debitNorm: "Normal (+25%)",
+                debitInt: "Intermediate (+56%)", debitHard: "Difficult (+95%)", debitPro: "Pro (+144%)",
+                lblIntervalle: "Maximum Interval (Jump):", intTierce: "Third (2nd, 3rd, Rep.)",
+                intQuarte: "Max Fourth", intQuinte: "Max Fifth", intSixte: "Max Sixth", intLibre: "Free (Any jump)",
+                lblAcceleration: "Acceleration:", accOff: "Disabled", accFacile: "Easy (5%)",
+                accNormal: "Normal (10%)", accDifficile: "Hard (15%)", lblVitesse: "Starting Speed:",
+                vitVerySlow: "Absolute Beginner", vitSlow: "Slow (Beginner)", vitMed: "Medium (Initiated)", vitFast: "Fast (Advanced)",
+                lblFautes: "Allowed Mistakes:", fSubite: "1 (Sudden Death)", fDix: "10 Mistakes", fInfinie: "Infinite Mode",
+                lblAmbitusTreble: "Treble Clef Range:", lblAmbitusBass: "Bass Clef Range:", ambTFacile: "Easy (C4 - C5)",
+                ambTNormal: "Normal (C4 - C6)", ambTDifficile: "Hard (C3 - C6)", ambBFacile: "Easy (C3 - C4)",
+                ambBNormal: "Normal (C2 - C4)", ambBDifficile: "Hard (C2 - C5)", ambCustom: "Custom...",
+                lblDe: "From:", lblA: "To:", lblTonalite: "Key Signature:", btnStart: "Start",
+                hudLevel: "Level", hudFautes: "Mistakes", btnPause: "Space (Pause)", btnMenu: "Menu",
+                pauseTitle: "GAME PAUSED", btnResume: "Resume (Space)", btnReplay: "Replay", infiniteLabel: "Infinite",
+                lblAccordsInv: "Chord Structure:", optFondamental: "Root Position Only", optRenversements: "Root & Inversions",
+                lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled",
+                lblZoom: "Note Size / Zoom:"
+            },
+            es: {
+                midiWaiting: "ESPERANDO MIDI", midiReady: "MIDI LISTO", midiError: "Sin MIDI",
+                micReady: "MICRO LISTO", micWaiting: "MICRO APAGADO",
+                btnExport: "Guardar", btnImport: "Cargar", menuTitle: "Ajustes de la partida",
+                lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
+                lblMD: "Mano Derecha (Clave de Sol):", lblMG: "Mano Izquierda (Clave de Fa):", optMelody: "Melodía",
+                optChords: "Acordes", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
+                lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante (Estándar)", debitNorm: "Normal (+25 %)",
+                debitInt: "Intermedio (+56 %)", debitHard: "Difícil (+95 %)", debitPro: "Pro (+144 %)",
+                lblIntervalle: "Intervalo máximo:", intTierce: "Tercera (Segunda, Tercera, Rep.)",
+                intQuarte: "Cuarta máx", intQuinte: "Quinta máx", intSixte: "Sexta máx", intLibre: "Libre (Todos los saltos)",
+                lblAcceleration: "Aceleración:", accOff: "Desactivada", accFacile: "Fácil (5 %)",
+                accNormal: "Normal (10 %)", accDifficile: "Difícil (15 %)", lblVitesse: "Velocidad de salida:",
+                vitVerySlow: "Gran Principiante", vitSlow: "Lento (Principiante)", vitMed: "Medio (Iniciado)", vitFast: "Rápido (Avanzado)",
+                lblFautes: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fDix: "10 errores", fInfinie: "Modo Infinito",
+                lblAmbitusTreble: "Ámbito Clave de Sol:", lblAmbitusBass: "Ámbito Clave de Fa:", ambTFacile: "Fácil (Do4 - Do5)",
+                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difícil (Do3 - Do6)", ambBFacile: "Fácil (Do3 - Do4)",
+                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difícil (Do2 - Do5)", ambCustom: "A medida...",
+                lblDe: "De:", lblA: "A:", lblTonalite: "Tonalidad (Armadura):", btnStart: "Comenzar",
+                hudLevel: "Nivel", hudFautes: "Errores", btnPause: "Pausa (Espacio)", btnMenu: "Menú",
+                pauseTitle: "JUEGO EN PAUSA", btnResume: "Reanudar (Espacio)", btnReplay: "Volver a jugar", infiniteLabel: "Infinito",
+                lblAccordsInv: "Estructura de Acordes:", optFondamental: "Solo fundamental", optRenversements: "Fundamental e Inversiones",
+                lblSansErreur: "Modo sin errores:", optSeOn: "Activado (Penalización)", optSeOff: "Desactivado",
+                lblZoom: "Tamaño de notas / Zoom:"
+            }
+        };
+
+        const GAMMES = {
+            "C": [0,2,4,5,7,9,11], "G": [0,2,4,6,7,9,11], "D": [1,2,4,6,7,9,11], "A": [1,2,4,6,8,9,11],
+            "E": [1,3,4,6,8,9,11], "B": [1,3,4,6,8,10,11], "F#": [1,3,5,6,8,10,11], "F": [0,2,4,5,7,9,10],
+            "Bb": [0,2,3,5,7,9,10], "Eb": [0,2,3,5,7,8,10], "Ab": [0,1,3,5,7,8,10], "Db": [0,1,3,5,6,8,10], "Gb": [-1,1,3,5,6,8,10]
+        };
+
+        function genererBaseDeNotes(cleArmure) {
+            TOUTES_LES_NOTES = [];
+            const offsets = GAMMES[cleArmure];
+            let absoluteIndex = 0;
+            for (let oct = 1; oct <= 7; oct++) {
+                for (let i = 0; i < 7; i++) {
+                    let midiNum = (oct + 1) * 12 + offsets[i];
+                    if (midiNum > 108) break;
+                    
+                    let labelFr = `${nomsFr[i]}${oct}`;
+                    let labelEn = `${nomsEn[i].toUpperCase()}${oct}`;
+                    
+                    TOUTES_LES_NOTES.push({
+                        id: `${notesCmaj[i]}/${oct}`,
+                        labelFr: labelFr, labelEn: labelEn,
+                        keys: [`${notesCmaj[i]}/${oct}`], acc: [""], midi: [midiNum],
+                        diatonicIndex: absoluteIndex
+                    });
+                    absoluteIndex++;
+                }
+            }
+        }
+        
+        genererBaseDeNotes("C");
+
+        function updateBadgeVisual() {
+            const badge = document.getElementById("midi-badge");
+            const src = document.getElementById("cfg-input-source").value;
+            
+            if (src === "midi") {
+                if (midiGlobalConnected) {
+                    badge.innerText = DICTIONNAIRE[langueActuelle].midiReady;
+                    badge.className = "midi-badge midi-connected";
+                } else {
+                    badge.innerText = DICTIONNAIRE[langueActuelle].midiWaiting;
+                    badge.className = "midi-badge";
+                }
+            } else {
+                if (audioCtx && audioAnalyser) {
+                    badge.innerText = DICTIONNAIRE[langueActuelle].micReady;
+                    badge.className = "midi-badge midi-connected";
+                } else {
+                    badge.innerText = DICTIONNAIRE[langueActuelle].micWaiting;
+                    badge.className = "midi-badge";
+                }
+            }
+        }
+
+        function toggleInputSource() {
+            const src = document.getElementById("cfg-input-source").value;
+            const selectMD = document.getElementById("cfg-mode-md");
+            const selectMG = document.getElementById("cfg-mode-mg");
+            const selectInv = document.getElementById("cfg-accords-inv");
+
+            if (src === "mic") {
+                if(selectMD.value === "accords") selectMD.value = "melodie";
+                if(selectMG.value === "accords") selectMG.value = "melodie";
+                document.getElementById("opt-md-chord").disabled = true;
+                document.getElementById("opt-mg-chord").disabled = true;
+                selectInv.disabled = true;
+                
+                initMicrophone();
+            } else {
+                document.getElementById("opt-md-chord").disabled = false;
+                document.getElementById("opt-mg-chord").disabled = false;
+                selectInv.disabled = false;
+                updateBadgeVisual();
+            }
+            sauvegarderDansLocalStorage();
+        }
+
+        function initMicrophone() {
+            if (audioCtx) { updateBadgeVisual(); return Promise.resolve(); }
+            return navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    audioStream = stream;
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    audioAnalyser = audioCtx.createAnalyser();
+                    audioAnalyser.fftSize = 2048;
+                    let source = audioCtx.createMediaStreamSource(stream);
+                    source.connect(audioAnalyser);
+                    updateBadgeVisual();
+                })
+                .catch(err => {
+                    console.error("Accès micro refusé ou indisponible:", err);
+                    document.getElementById("cfg-input-source").value = "midi";
+                    toggleInputSource();
+                });
+        }
+
+        function autoCorrelate(buffer, sampleRate) {
+            let rms = 0;
+            for (let i = 0; i < buffer.length; i++) {
+                rms += buffer[i] * buffer[i];
+            }
+            rms = Math.sqrt(rms / buffer.length);
+            if (rms < 0.02) return -1;
+
+            let r1 = 0, r2 = buffer.length - 1;
+            let thres = 0.2;
+            for (let i = 0; i < buffer.length / 2; i++) {
+                if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+            }
+            for (let i = buffer.length - 1; i >= buffer.length / 2; i--) {
+                if (Math.abs(buffer[i]) < thres) { r2 = i; break; }
+            }
+            let buf = buffer.slice(r1, r2);
+
+            let c = new Float32Array(buf.length);
+            for (let i = 0; i < buf.length; i++) {
+                for (let j = 0; j < buf.length - i; j++) {
+                    c[i] += buf[j] * buf[j + i];
+                }
+            }
+
+            let d = 0;
+            while (c[d] > c[d + 1]) d++;
+            let maxval = -1, maxpos = -1;
+            for (let i = d; i < c.length; i++) {
+                if (c[i] > maxval && c[i] > c[i - 1] && c[i] > c[i + 1]) {
+                    maxval = c[i]; maxpos = i;
+                }
+            }
+
+            if (maxpos !== -1) { return sampleRate / maxpos; }
+            return -1;
+        }
+
+        function analyserFrequenceMicro() {
+            if (!jeuActif || enPause || !audioAnalyser) return;
+            audioAnalyser.getFloatTimeDomainData(audioBuffer);
+            let freq = autoCorrelate(audioBuffer, audioCtx.sampleRate);
+            
+            if (freq !== -1) {
+                let midiNote = Math.round(12 * Math.log2(freq / 440) + 69);
+                if (midiNote >= 21 && midiNote <= 108) {
+                    if (midiNote !== dernierPitchMidiDetecte) {
+                        dernierPitchMidiDetecte = midiNote;
+                        traiterEntreeNote(midiNote);
+                    }
+                }
+            } else {
+                dernierPitchMidiDetecte = null;
+            }
+        }
+
+        function changerLangue(lang) {
+            langueActuelle = lang;
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (DICTIONNAIRE[lang][key]) el.innerText = DICTIONNAIRE[lang][key];
+            });
+            
+            let valTMin = document.getElementById("treble-min").value;
+            let valTMax = document.getElementById("treble-max").value;
+            let valBMin = document.getElementById("bass-min").value;
+            let valBMax = document.getElementById("bass-max").value;
+            
+            peuplerSelectsAmbitus();
+            
+            if(valTMin) document.getElementById("treble-min").value = valTMin;
+            if(valTMax) document.getElementById("treble-max").value = valTMax;
+            if(valBMin) document.getElementById("bass-min").value = valBMin;
+            if(valBMax) document.getElementById("bass-max").value = valBMax;
+            
+            updateBadgeVisual();
+            sauvegarderDansLocalStorage();
+        }
+
+        function peuplerSelectsAmbitus() {
+            const p = (id, def) => {
+                const s = document.getElementById(id);
+                s.innerHTML = "";
+                TOUTES_LES_NOTES.forEach(n => {
+                    let o = document.createElement("option");
+                    o.value = n.id;
+                    o.innerText = (langueActuelle === "fr") ? n.labelFr : n.labelEn;
+                    if(n.id === def) o.selected = true;
+                    s.appendChild(o);
+                });
+            };
+            p("treble-min", "c/4"); p("treble-max", "b/5");
+            p("bass-min", "c/2"); p("bass-max", "c/4");
+        }
+
+        function toggleCustomAmbitus() {
+            document.getElementById("custom-treble-panel").style.display = document.getElementById("cfg-ambitus-treble").value === "custom" ? "flex" : "none";
+            document.getElementById("custom-bass-panel").style.display = document.getElementById("cfg-ambitus-bass").value === "custom" ? "flex" : "none";
+            sauvegarderDansLocalStorage();
+        }
+
+        function getPool(idMin, idMax) {
+            let idxMin = TOUTES_LES_NOTES.findIndex(n => n.id === idMin);
+            let idxMax = TOUTES_LES_NOTES.findIndex(n => n.id === idMax);
+            if (idxMin > idxMax) [idxMin, idxMax] = [idxMax, idxMin]; 
+            return TOUTES_LES_NOTES.slice(idxMin, idxMax + 1);
+        }
+
+        function generateTriad(rootIndex, inversionLevel) {
+            let i1 = rootIndex, i2 = rootIndex + 2, i3 = rootIndex + 4;
+            if (inversionLevel === 1) i1 += 7;
+            if (inversionLevel === 2) { i1 += 7; i2 += 7; }
+            let indices = [i1, i2, i3].sort((a,b) => a-b);
+            
+            let n1 = TOUTES_LES_NOTES[indices[0]] || TOUTES_LES_NOTES[0];
+            let n2 = TOUTES_LES_NOTES[indices[1]] || TOUTES_LES_NOTES[0];
+            let n3 = TOUTES_LES_NOTES[indices[2]] || TOUTES_LES_NOTES[0];
+
+            return {
+                keys: [n1.keys[0], n2.keys[0], n3.keys[0]],
+                acc: ["", "", ""],
+                midi: [n1.midi[0], n2.midi[0], n3.midi[0]],
+                diatonicIndex: n1.diatonicIndex
+            };
+        }
+
+        let config = { maxFautes: 10, modeInfini: false, vitesse: 60, acceleration: 5, modeMD: 'melodie', modeMG: 'melodie', intervalleMax: 'libre', modeSansErreur: true, inputSource: "midi" };
+        let poolTreble = [], poolBass = [];
+        
+        let trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
+        let trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
+        
+        let dernierDiatonicIndexTreble = null;
+        let dernierDiatonicIndexBass = null;
+
+        let jeuActif = false, enPause = false;
+        let score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
+        
+        let currentX = 0; 
+        let espacementTreble = 160, espacementBass = 160;
+        let dernierXTreble = 180, dernierXBass = 180;
+        let colonnesEnCours = [];
+        let dernierTimestamp = 0;
+        const trackDOM = document.getElementById("track");
+
+        function dessinerEnvironnementStatique() {
+            const armure = document.getElementById("cfg-gamme").value; 
+            const bgDiv = document.getElementById("bg-staves");
+            bgDiv.innerHTML = "";
+            const rendererBg = new VF.Renderer(bgDiv, VF.Renderer.Backends.SVG);
+            rendererBg.resize(1200, 450);
+            const ctxBg = rendererBg.getContext();
+            new VF.Stave(180, 70, 1020).setContext(ctxBg).draw();
+            new VF.Stave(180, 230, 1020).setContext(ctxBg).draw();
+
+            const clefsDiv = document.getElementById("fixed-clefs");
+            clefsDiv.innerHTML = "";
+            const rendererClefs = new VF.Renderer(clefsDiv, VF.Renderer.Backends.SVG);
+            rendererClefs.resize(140, 450);
+            const ctxClefs = rendererClefs.getContext();
+            new VF.Stave(20, 70, 120).addClef("treble").addKeySignature(armure).setContext(ctxClefs).draw();
+            new VF.Stave(20, 230, 120).addClef("bass").addKeySignature(armure).setContext(ctxClefs).draw();
+        }
+
+        function piocherNoteOptimisee(pool, tracker, dernierDiatonicIndex, maxIntervalleConfig) {
+            tracker.notesGenereesCount++;
+            if (tracker.historiqueVisites.size >= pool.length || tracker.notesGenereesCount % 75 === 0) {
+                tracker.historiqueVisites.clear();
+            }
+
+            let candidatsParIntervalle = pool;
+            if (maxIntervalleConfig !== "libre" && dernierDiatonicIndex !== null) {
+                const intervalleMaxAutorise = parseInt(maxIntervalleConfig); 
+                candidatsParIntervalle = pool.filter(note => {
+                    let distance = Math.abs(note.diatonicIndex - dernierDiatonicIndex);
+                    return distance <= intervalleMaxAutorise;
+                });
+                if (candidatsParIntervalle.length === 0) candidatsParIntervalle = pool;
+            }
+
+            let candidatsNonVisites = candidatsParIntervalle.filter(note => !tracker.historiqueVisites.has(note.id || JSON.stringify(note.keys)));
+            let noteChoisie = candidatsNonVisites.length > 0 
+                ? candidatsNonVisites[Math.floor(Math.random() * candidatsNonVisites.length)]
+                : candidatsParIntervalle[Math.floor(Math.random() * candidatsParIntervalle.length)];
+
+            tracker.historiqueVisites.add(noteChoisie.id || JSON.stringify(noteChoisie.keys));
+            return noteChoisie;
+        }
+
+        // FONCTION DÉDIÉE AU CHANGEMENT DE ZOOM
+        function majusterZoom(val) {
+            const vp = document.getElementById("viewport");
+            if (vp) {
+                const scaleNum = parseFloat(val);
+                
+                // Utilisation de transform: scale compatible avec les tablettes Android
+                vp.style.transform = `scale(${scaleNum})`;
+                vp.style.transformOrigin = "top center";
+                
+                // Compensation de l'espace vertical dans le DOM
+                if (scaleNum > 1) {
+                    const hauteurSupplementaire = 450 * (scaleNum - 1);
+                    vp.style.marginBottom = `${hauteurSupplementaire + 15}px`;
+                } else {
+                    vp.style.marginBottom = "15px";
+                }
+            }
+            sauvegarderDansLocalStorage();
+        }
+
+        async function lancerJeu() {
+            sauvegarderDansLocalStorage();
+            config.inputSource = document.getElementById("cfg-input-source").value;
+            
+            if (config.inputSource === "mic") {
+                await initMicrophone();
+            }
+
+            let armureChoisie = document.getElementById("cfg-gamme").value;
+            genererBaseDeNotes(armureChoisie);
+            
+            let f = document.getElementById("cfg-fautes").value;
+            config.modeInfini = (f === "infinity");
+            config.maxFautes = config.modeInfini ? 0 : parseInt(f);
+            config.vitesse = parseInt(document.getElementById("cfg-vitesse").value);
+            config.acceleration = parseInt(document.getElementById("cfg-acceleration").value);
+            config.modeMD = document.getElementById("cfg-mode-md").value;
+            config.modeMG = document.getElementById("cfg-mode-mg").value;
+            config.intervalleMax = document.getElementById("cfg-intervalle").value;
+            config.modeSansErreur = (document.getElementById("cfg-sans-erreur").value === "on");
+            let invMode = document.getElementById("cfg-accords-inv").value;
+
+            // Application immédiate du zoom au lancement
+            majusterZoom(document.getElementById("cfg-zoom").value);
+
+            espacementTreble = parseInt(document.getElementById("cfg-debit-treble").value);
+            espacementBass = parseInt(document.getElementById("cfg-debit-bass").value);
+
+            poolTreble = []; poolBass = [];
+
+            const tMode = document.getElementById("cfg-ambitus-treble").value;
+            if (config.modeMD === 'melodie') {
+                if(tMode === "facile") poolTreble = getPool("c/4", "c/5");
+                else if(tMode === "normal") poolTreble = getPool("c/4", "c/6");
+                else if(tMode === "difficile") poolTreble = getPool("c/3", "c/6");
+                else poolTreble = getPool(document.getElementById("treble-min").value, document.getElementById("treble-max").value);
+            } else if (config.modeMD === 'accords') {
+                for(let r=21; r<=27; r++) {
+                    poolTreble.push(generateTriad(r, 0));
+                    if(invMode === "renversements") { poolTreble.push(generateTriad(r, 1)); poolTreble.push(generateTriad(r, 2)); }
+                }
+            }
+
+            const bMode = document.getElementById("cfg-ambitus-bass").value;
+            if (config.modeMG === 'melodie') {
+                if(bMode === "facile") poolBass = getPool("c/3", "c/4");
+                else if(bMode === "normal") poolBass = getPool("c/2", "c/4");
+                else if(bMode === "difficile") poolBass = getPool("c/2", "b/5");
+                else poolBass = getPool(document.getElementById("bass-min").value, document.getElementById("bass-max").value);
+            } else if (config.modeMG === 'accords') {
+                for(let r=7; r<=13; r++) {
+                    poolBass.push(generateTriad(r, 0));
+                    if(invMode === "renversements") { poolBass.push(generateTriad(r, 1)); poolBass.push(generateTriad(r, 2)); }
+                }
+            }
+
+            document.getElementById("menu-config").style.display = "none";
+            document.getElementById("game-ui").style.display = "block";
+            document.getElementById("game-over-screen").style.display = "none";
+            document.getElementById("pause-screen").style.display = "none";
+
+            dessinerEnvironnementStatique();
+
+            score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0;
+            currentX = 0; dernierXTreble = 180; dernierXBass = 180;
+            dernierDiatonicIndexTreble = null; dernierDiatonicIndexBass = null;
+            dernierPitchMidiDetecte = null;
+            
+            trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
+            trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
+            
+            colonnesEnCours = [];
+            trackDOM.innerHTML = "";
+            enPause = false;
+            
+            document.getElementById("lbl-score").innerText = score;
+            document.getElementById("lbl-level").innerText = niveau;
+            document.getElementById("lbl-fautes").innerText = config.modeInfini ? `0 (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `0 / ${config.maxFautes}`;
+            
+            while (dernierXTreble < 1300) {
+                dernierXTreble += espacementTreble;
+                if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
+            }
+            while (dernierXBass < 1300) {
+                dernierXBass += espacementBass;
+                if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
+            }
+            
+            jeuActif = true;
+            dernierTimestamp = performance.now();
+            requestAnimationFrame(boucleDeJeu);
+        }
+
+        function togglePause() {
+            if (!jeuActif) return;
+            enPause = !enPause;
+            document.getElementById("pause-screen").style.display = enPause ? "flex" : "none";
+            if (!enPause) { dernierTimestamp = performance.now(); requestAnimationFrame(boucleDeJeu); }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && document.getElementById("game-ui").style.display === "block") {
+                e.preventDefault(); togglePause();
+            }
+        });
+
+        function creerColonne(absoluteX, includeTreble, includeBass) {
+            let tItem = null, bItem = null;
+            if (includeTreble && poolTreble.length > 0) {
+                tItem = piocherNoteOptimisee(poolTreble, trackerTreble, dernierDiatonicIndexTreble, config.intervalleMax);
+                dernierDiatonicIndexTreble = tItem.diatonicIndex;
+            }
+            if (includeBass && poolBass.length > 0) {
+                bItem = piocherNoteOptimisee(poolBass, trackerBass, dernierDiatonicIndexBass, config.intervalleMax);
+                dernierDiatonicIndexBass = bItem.diatonicIndex;
+            }
+
+            const colDiv = document.createElement("div");
+            colDiv.className = "note-column";
+            trackDOM.appendChild(colDiv);
+
+            const colonneObj = {
+                xBase: absoluteX, element: colDiv, processed: false,
+                treble: includeTreble && tItem ? { keys: tItem.keys, acc: tItem.acc, midi: tItem.midi, pressed: [], status: 'pending' } : { status: 'ignored' },
+                bass: includeBass && bItem ? { keys: bItem.keys, acc: bItem.acc, midi: bItem.midi, pressed: [], status: 'pending' } : { status: 'ignored' }
+            };
+
+            redessinerColonne(colonneObj);
+            colonnesEnCours.push(colonneObj);
+        }
+
+        function redessinerColonne(col) {
+            col.element.innerHTML = ""; 
+            const renderer = new VF.Renderer(col.element, VF.Renderer.Backends.SVG);
+            renderer.resize(134, 450); 
+            const context = renderer.getContext();
+
+            const staveTreble = new VF.Stave(0, 70, 134);
+            const staveBass = new VF.Stave(0, 230, 134);
+            const voices = [];
+
+            if (col.treble.status !== 'ignored') {
+                const noteT = new VF.StaveNote({ clef: "treble", keys: col.treble.keys, duration: "q" });
+                col.treble.acc.forEach((a, i) => { if(a) noteT.addModifier(new VF.Accidental(a), i); });
+                appliquerCouleur(noteT, col.treble.status);
+                voices.push(new VF.Voice({num_beats: 1, beat_value: 4}).addTickables([noteT]));
+            }
+            if (col.bass.status !== 'ignored') {
+                const noteB = new VF.StaveNote({ clef: "bass", keys: col.bass.keys, duration: "q" });
+                col.bass.acc.forEach((a, i) => { if(a) noteB.addModifier(new VF.Accidental(a), i); });
+                appliquerCouleur(noteB, col.bass.status);
+                voices.push(new VF.Voice({num_beats: 1, beat_value: 4}).addTickables([noteB]));
+            }
+
+            if (voices.length > 0) {
+                new VF.Formatter().joinVoices(voices).format(voices, 60);
+                if (col.treble.status !== 'ignored') voices[0].draw(context, staveTreble);
+                if (col.bass.status !== 'ignored') voices[voices.length - 1].draw(context, staveBass);
+            }
+        }
+
+        function appliquerCouleur(staveNote, status) {
+            if (status === 'hit') staveNote.setStyle({ fillStyle: "#2ecc71", strokeStyle: "#2ecc71" });
+            else if (status === 'missed') staveNote.setStyle({ fillStyle: "#e74c3c", strokeStyle: "#e74c3c" });
+            else staveNote.setStyle({ fillStyle: "#2c3e50", strokeStyle: "#2c3e50" });
+        }
+
+        function boucleDeJeu(timestamp) {
+            if (!jeuActif || enPause) return;
+            let dt = (timestamp - dernierTimestamp) / 1000;
+            dernierTimestamp = timestamp;
+
+            currentX += config.vitesse * dt;
+
+            if (config.inputSource === "mic") {
+                analyserFrequenceMicro();
+            }
+
+            for (let col of colonnesEnCours) {
+                let positionEcran = col.xBase - currentX;
+                col.element.style.transform = `translateX(${positionEcran}px)`;
+
+                if (!col.processed && positionEcran < 150) { 
+                    let updated = false;
+                    if (col.treble.status === 'pending') { col.treble.status = 'missed'; fautes++; updated = true; }
+                    if (col.bass.status === 'pending') { col.bass.status = 'missed'; fautes++; updated = true; }
+                    
+                    if(updated) {
+                        col.processed = true;
+                        redessinerColonne(col);
+                        document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
+                        if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
+                    }
+                }
+            }
+
+            colonnesEnCours = colonnesEnCours.filter(col => {
+                if (col.xBase - currentX < -134) { col.element.remove(); return false; }
+                return true; 
+            });
+
+            while (dernierXTreble < currentX + 1300) {
+                dernierXTreble += espacementTreble;
+                if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
+            }
+            while (dernierXBass < currentX + 1300) {
+                dernierXBass += espacementBass;
+                if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
+            }
+
+            requestAnimationFrame(boucleDeJeu);
+        }
+
+        function terminerJeu() {
+            jeuActif = false;
+            document.getElementById("final-score").innerText = `Niveau ${niveau} | Score : ${score} pts`;
+            document.getElementById("game-over-screen").style.display = "flex";
+        }
+
+        function retourMenu() {
+            jeuActif = false; enPause = false;
+            document.getElementById("game-ui").style.display = "none";
+            document.getElementById("menu-config").style.display = "block";
+            updateBadgeVisual();
+        }
+
+        function traiterEntreeNote(noteJouee) {
+            let cibles = colonnesEnCours.filter(col => {
+                let posEcr = col.xBase - currentX;
+                return !col.processed && posEcr >= 140 && posEcr <= 290; 
+            });
+            
+            let noteTrouvee = false;
+
+            for (let cible of cibles) {
+                let noteValideeSurCetteCle = false;
+
+                if (cible.treble.status === 'pending' && cible.treble.midi.includes(noteJouee)) {
+                    noteTrouvee = true;
+                    if (!cible.treble.pressed.includes(noteJouee)) cible.treble.pressed.push(noteJouee);
+                    if (cible.treble.pressed.length === cible.treble.midi.length) {
+                        cible.treble.status = 'hit'; 
+                        score += (10 * cible.treble.midi.length); 
+                        noteValideeSurCetteCle = true;
+                    }
+                }
+                
+                if (cible.bass.status === 'pending' && cible.bass.midi.includes(noteJouee)) {
+                    noteTrouvee = true;
+                    if (!cible.bass.pressed.includes(noteJouee)) cible.bass.pressed.push(noteJouee);
+                    if (cible.bass.pressed.length === cible.bass.midi.length) {
+                        cible.bass.status = 'hit'; 
+                        score += (10 * cible.bass.midi.length); 
+                        noteValideeSurCetteCle = true;
+                    }
+                }
+
+                if (noteTrouvee) {
+                    if (noteValideeSurCetteCle) {
+                        document.getElementById("lbl-score").innerText = score;
+                        redessinerColonne(cible);
+                    }
+                    if ((cible.treble.status === 'hit' || cible.treble.status === 'ignored') && 
+                        (cible.bass.status === 'hit' || cible.bass.status === 'ignored')) {
+                        cible.processed = true;
+                        notesValideesCeNiveau++;
+                        if (notesValideesCeNiveau >= 15) {
+                            niveau++; notesValideesCeNiveau = 0; 
+                            config.vitesse *= (1 + (config.acceleration / 100));
+                            document.getElementById("lbl-level").innerText = niveau;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (config.modeSansErreur && !noteTrouvee) {
+                fautes++;
+                document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
+                if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
+            }
+        }
+
+        function getMIDIMessage(midiMessage) {
+            if (!jeuActif || enPause || config.inputSource !== "midi") return;
+            const command = midiMessage.data[0];
+            const noteJouee = midiMessage.data[1];
+            const velocity = (midiMessage.data.length > 2) ? midiMessage.data[2] : 0;
+
+            if (command === 144 && velocity > 0) {
+                traiterEntreeNote(noteJouee);
+            }
+        }
+
+        if (navigator.requestMIDIAccess) {
+            navigator.requestMIDIAccess().then(
+                midiAccess => {
+                    midiGlobalConnected = true;
+                    updateBadgeVisual();
+                    for (let input of midiAccess.inputs.values()) input.onmidimessage = getMIDIMessage;
+                },
+                () => { midiGlobalConnected = false; updateBadgeVisual(); }
+            );
+        }
+
+        // AJOUT DE "cfg-zoom" DANS LA LISTE DES CLES DE CONFIGURATION
+        const CONFIG_KEYS = [
+            "cfg-mode-md", "cfg-mode-mg", "cfg-accords-inv", "cfg-debit-treble", "cfg-debit-bass",
+            "cfg-intervalle", "cfg-acceleration", "cfg-vitesse", "cfg-fautes",
+            "cfg-ambitus-treble", "cfg-ambitus-bass", "treble-min", "treble-max",
+            "bass-min", "bass-max", "cfg-gamme", "cfg-lang", "cfg-sans-erreur", "cfg-input-source", "cfg-zoom"
+        ];
+
+        function extraireConfigurationJson() {
+            let configObj = {};
+            CONFIG_KEYS.forEach(key => {
+                const el = document.getElementById(key);
+                if (el) configObj[key] = el.value;
+            });
+            return JSON.stringify(configObj, null, 2);
+        }
+
+        function appliquerConfigurationJson(jsonStr) {
+            try {
+                let configObj = JSON.parse(jsonStr);
+                CONFIG_KEYS.forEach(key => {
+                    if (configObj[key] !== undefined && document.getElementById(key)) {
+                        document.getElementById(key).value = configObj[key];
+                    }
+                });
+                toggleInputSource();
+                toggleCustomAmbitus();
+                if(configObj["cfg-lang"]) changerLangue(configObj["cfg-lang"]);
+                if(configObj["cfg-zoom"]) majusterZoom(configObj["cfg-zoom"]);
+            } catch(e) {
+                console.error("Erreur lors de l'application de la config", e);
+            }
+        }
+
+        function sauvegarderDansLocalStorage() {
+            localStorage.setItem("pianotement_config", extraireConfigurationJson());
+        }
+
+        function chargerDepuisLocalStorage() {
+            let saved = localStorage.getItem("pianotement_config");
+            if(saved) {
+                appliquerConfigurationJson(saved);
+            } else {
+                let osLang = navigator.language || navigator.userLanguage || "fr";
+                osLang = osLang.substring(0, 2).toLowerCase();
+                if (["fr", "en", "es"].includes(osLang)) {
+                    document.getElementById("cfg-lang").value = osLang;
+                    changerLangue(osLang);
+                } else {
+                    changerLangue("fr");
+                }
+                majusterZoom("1"); // Valeur par défaut
+            }
+        }
+
+        function exporterConfiguration() {
+            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(extraireConfigurationJson());
+            let downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", "pianotement_config.json");
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click(); downloadAnchor.remove();
+        }
+
+        function importerConfiguration(event) {
+            const input = event.target;
+            if ('files' in input && input.files.length > 0) {
+                let reader = new FileReader();
+                reader.onload = event => {
+                    appliquerConfigurationJson(event.target.result);
+                    sauvegarderDansLocalStorage();
+                };
+                reader.readAsText(input.files[0]);
+            }
+        }
+
+        peuplerSelectsAmbitus();
+        chargerDepuisLocalStorage();
+    </script>
+</body>
+</html>
