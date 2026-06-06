@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V12.5 beta test</title>
+    <title>Arcade Piano - V12.5 (Fluidité GPU & Pause Transparente)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -165,23 +165,58 @@
         #stat-score { background: #27ae60; border: none; box-shadow: 0 2px 10px rgba(39, 174, 96, 0.4);}
         #stat-level { background: #2980b9; border: none; box-shadow: 0 2px 10px rgba(41, 128, 185, 0.4);}
         
-        /* VIEWPORT PAYSAGE - CONTROLE DU ZOOM APPLIQUÉ ICI */
-        #viewport { 
-            position: relative; width: 1200px; height: 450px; background: #ffffff; margin: 15px auto; 
-            border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #f39c12; 
+        /* GESTION DU ZOOM ET SCROLL HORIZONTAL */
+        #viewport-wrapper {
+            width: 100%;
+            overflow-x: auto; 
+            display: flex;
+            justify-content: center; 
+            padding: 15px 0;
         }
+
+        #viewport { 
+            position: relative; width: 1200px; height: 450px; background: #ffffff; 
+            border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #f39c12; 
+            flex-shrink: 0; 
+        }
+
         #bg-staves { position: absolute; left: 0; top: 0; width: 1200px; height: 450px; z-index: 1; }
         #fixed-clefs { position: absolute; left: 0; top: 0; width: 140px; height: 450px; z-index: 10; background: linear-gradient(to right, rgba(255,255,255,1) 80%, rgba(255,255,255,0)); }
         #hitzone { position: absolute; left: 150px; top: 0; width: 134px; height: 450px; background: rgba(231, 76, 60, 0.08); border-left: 3px solid #e74c3c; border-right: 3px solid #e74c3c; z-index: 15; box-shadow: 0 0 15px rgba(231,76,60,0.3); }
         #track { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; }
-        .note-column { position: absolute; top: 0; height: 450px; width: 134px; }
+        
+        /* FIX FLUIDITÉ : FORCE L'UTILISATION DU GPU POUR LE SCROLLING SANS VAGUE */
+        .note-column { 
+            position: absolute; 
+            top: 0; 
+            height: 450px; 
+            width: 134px; 
+            will-change: transform;
+        }
 
+        /* OVERLAYS ÉCRANS */
         .overlay-screen { 
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.88); z-index: 30; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);
         }
         .overlay-screen h2 { color: #e74c3c; font-size: 56px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 700;}
-        #pause-screen h2 { color: #f1c40f; text-shadow: 0 0 15px rgba(241, 196, 15, 0.6); }
+        
+        /* FIX PAUSE TRANSPARENTE POUR VOIR LES PARTITIONS */
+        #pause-screen { 
+            background: rgba(0, 0, 0, 0.15); 
+            backdrop-filter: none; 
+        }
+        #pause-screen h2 { 
+            color: #1e1e24; 
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 38px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            border: 2px solid #f39c12;
+            text-shadow: none;
+            margin-bottom: 25px;
+        }
 
         button { 
             font-family: 'Montserrat', sans-serif; padding: 12px 24px; font-size: 15px; cursor: pointer; 
@@ -285,21 +320,23 @@
             <div class="config-group">
                 <label data-i18n="lblDebitTreble">Débit Clé de Sol (Densité) :</label>
                 <select id="cfg-debit-treble">
-                    <option value="160" selected data-i18n="debitBeg">Débutant (Standard)</option>
-                    <option value="128" data-i18n="debitNorm">Normal (+25 %)</option>
-                    <option value="102" data-i18n="debitInt">Intermédiaire (+56 %)</option>
-                    <option value="82" data-i18n="debitHard">Difficile (+95 %)</option>
-                    <option value="66" data-i18n="debitPro">Pro (+144 %)</option>
+                    <option value="160" selected data-i18n="debitBeg">Débutant</option>
+                    <option value="128" data-i18n="debitNorm">Normal</option>
+                    <option value="102" data-i18n="debitInt">Intermédiaire</option>
+                    <option value="var25" data-i18n="debitVar25">Variable (0-25%)</option>
+                    <option value="var50" data-i18n="debitVar50">Variable (0-50%)</option>
+                    <option value="var75" data-i18n="debitVar75">Variable (0-75%)</option>
                 </select>
             </div>
             <div class="config-group">
                 <label data-i18n="lblDebitBass">Débit Clé de Fa (Densité) :</label>
                 <select id="cfg-debit-bass">
-                    <option value="160" selected data-i18n="debitBeg">Débutant (Standard)</option>
-                    <option value="128" data-i18n="debitNorm">Normal (+25 %)</option>
-                    <option value="102" data-i18n="debitInt">Intermédiaire (+56 %)</option>
-                    <option value="82" data-i18n="debitHard">Difficile (+95 %)</option>
-                    <option value="66" data-i18n="debitPro">Pro (+144 %)</option>
+                    <option value="160" selected data-i18n="debitBeg">Débutant</option>
+                    <option value="128" data-i18n="debitNorm">Normal</option>
+                    <option value="102" data-i18n="debitInt">Intermédiaire</option>
+                    <option value="var25" data-i18n="debitVar25">Variable (0-25%)</option>
+                    <option value="var50" data-i18n="debitVar50">Variable (0-50%)</option>
+                    <option value="var75" data-i18n="debitVar75">Variable (0-75%)</option>
                 </select>
             </div>
 
@@ -333,29 +370,29 @@
             <div class="config-group">
                 <label data-i18n="lblTonalite">Tonalité (Armure) :</label>
                 <select id="cfg-gamme">
-                    <option value="C" selected data-i18n="keyC">Do Maj / La Min (Rien)</option>
-                    <option value="G" data-i18n="keyG">Sol Maj / Mi Min (1#)</option>
-                    <option value="D" data-i18n="keyD">Ré Maj / Si Min (2#)</option>
-                    <option value="A" data-i18n="keyA">La Maj / Fa# Min (3#)</option>
-                    <option value="E" data-i18n="keyE">Mi Maj / Do# Min (4#)</option>
-                    <option value="B" data-i18n="keyB">Si Maj / Sol# Min (5#)</option>
-                    <option value="F#" data-i18n="keyFs">Fa# Maj / Ré# Min (6#)</option>
-                    <option value="F" data-i18n="keyF">Fa Maj / Ré Min (1b)</option>
-                    <option value="Bb" data-i18n="keyBb">Sib Maj / Sol Min (2b)</option>
-                    <option value="Eb" data-i18n="keyEb">Mib Maj / Do Min (3b)</option>
-                    <option value="Ab" data-i18n="keyAb">Lab Maj / Fa Min (4b)</option>
-                    <option value="Db" data-i18n="keyDb">Réb Maj / Sib Min (5b)</option>
-                    <option value="Gb" data-i18n="keyGb">Solb Maj / Mib Min (6b)</option>
+                    <option value="C" selected>Do Maj / La Min (Rien)</option>
+                    <option value="G">Sol Maj / Mi Min (1#)</option>
+                    <option value="D">Ré Maj / Si Min (2#)</option>
+                    <option value="A">La Maj / Fa# Min (3#)</option>
+                    <option value="E">Mi Maj / Do# Min (4#)</option>
+                    <option value="B">Si Maj / Sol# Min (5#)</option>
+                    <option value="F#">Fa# Maj / Ré# Min (6#)</option>
+                    <option value="F">Fa Maj / Ré Min (1b)</option>
+                    <option value="Bb">Sib Maj / Sol Min (2b)</option>
+                    <option value="Eb">Mib Maj / Do Min (3b)</option>
+                    <option value="Ab">Lab Maj / Fa Min (4b)</option>
+                    <option value="Db">Réb Maj / Sib Min (5b)</option>
+                    <option value="Gb">Solb Maj / Mib Min (6b)</option>
                 </select>
             </div>
 
             <div class="config-group">
                 <label data-i18n="lblZoom">Taille des Notes / Zoom :</label>
                 <select id="cfg-zoom" onchange="majusterZoom(this.value)">
-                    <option value="1" selected data-i18n="zoom100">Normal (100%)</option>
-                    <option value="1.15" data-i18n="zoom115">Grand (115%)</option>
-                    <option value="1.3" data-i18n="zoom130">Très Grand (130%)</option>
-                    <option value="1.5" data-i18n="zoom150">Plein Écran HD (150%)</option>
+                    <option value="1" selected>Normal (100%)</option>
+                    <option value="1.15">Grand (115%)</option>
+                    <option value="1.3">Très Grand (130%)</option>
+                    <option value="1.5">Plein Écran HD (150%)</option>
                 </select>
             </div>
 
@@ -406,21 +443,23 @@
             <button style="background:#555;" onclick="retourMenu()" data-i18n="btnMenu">Menu</button>
         </div>
         
-        <div id="viewport">
-            <div id="bg-staves"></div>
-            <div id="fixed-clefs"></div>
-            <div id="hitzone"></div> 
-            <div id="track"></div>
-            
-            <div id="pause-screen" class="overlay-screen">
-                <h2 data-i18n="pauseTitle">JEU EN PAUSE</h2>
-                <button onclick="togglePause()" data-i18n="btnResume">Reprendre (Espace)</button>
-            </div>
+        <div id="viewport-wrapper">
+            <div id="viewport">
+                <div id="bg-staves"></div>
+                <div id="fixed-clefs"></div>
+                <div id="hitzone"></div> 
+                <div id="track"></div>
+                
+                <div id="pause-screen" class="overlay-screen">
+                    <h2 data-i18n="pauseTitle">JEU EN PAUSE</h2>
+                    <button onclick="togglePause()" data-i18n="btnResume">Reprendre (Espace)</button>
+                </div>
 
-            <div id="game-over-screen" class="overlay-screen">
-                <h2>GAME OVER</h2>
-                <p id="final-score" style="font-size: 24px; color:white; margin-bottom: 25px; font-weight:600;"></p>
-                <button onclick="lancerJeu()" data-i18n="btnReplay">Rejouer</button>
+                <div id="game-over-screen" class="overlay-screen">
+                    <h2>GAME OVER</h2>
+                    <p id="final-score" style="font-size: 24px; color:white; margin-bottom: 25px; font-weight:600;"></p>
+                    <button onclick="lancerJeu()" data-i18n="btnReplay">Rejouer</button>
+                </div>
             </div>
         </div>
     </div>
@@ -441,6 +480,10 @@
         let audioBuffer = new Float32Array(2048);
         let dernierPitchMidiDetecte = null;
 
+        // TRACKERS POUR LE DÉBIT RYTHMIQUE VARIABLE PAR PAQUETS
+        let varCompteurTreble = 0, varTargetTreble = 5, varFacteurTreble = 1.0;
+        let varCompteurBass = 0, varTargetBass = 5, varFacteurBass = 1.0;
+
         const DICTIONNAIRE = {
             fr: {
                 midiWaiting: "MIDI ATTENTE", midiReady: "MIDI PRÊT", midiError: "Pas de MIDI",
@@ -449,8 +492,8 @@
                 lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
                 lblMD: "Main Droite (Clé de Sol) :", lblMG: "Main Gauche (Clé de Fa) :", optMelody: "Mélodie",
                 optChords: "Accords", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
-                lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant (Standard)", debitNorm: "Normal (+25 %)",
-                debitInt: "Intermédiaire (+56 %)", debitHard: "Difficile (+95 %)", debitPro: "Pro (+144 %)",
+                lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant", debitNorm: "Normal",
+                debitInt: "Intermédiaire", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalle maximal :", intTierce: "Tierce (Seconde, Tierce, Rep.)",
                 intQuarte: "Quarte max", intQuinte: "Quinte max", intSixte: "Sixte max", intLibre: "Libre (Tous sauts)",
                 lblAcceleration: "Accélération :", accOff: "Désactivée", accFacile: "Facile (5 %)",
@@ -465,13 +508,7 @@
                 pauseTitle: "JEU EN PAUSE", btnResume: "Reprendre (Espace)", btnReplay: "Rejouer", infiniteLabel: "Infini",
                 lblAccordsInv: "Structure des Accords :", optFondamental: "Fondamental uniquement", optRenversements: "Fondamental & Renversements",
                 lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé",
-                lblZoom: "Taille des notes / Zoom :",
-                keyC: "Do Maj / La Min (Rien)", keyG: "Sol Maj / Mi Min (1#)", keyD: "Ré Maj / Si Min (2#)", 
-                keyA: "La Maj / Fa# Min (3#)", keyE: "Mi Maj / Do# Min (4#)", keyB: "Si Maj / Sol# Min (5#)", 
-                keyFs: "Fa# Maj / Ré# Min (6#)", keyF: "Fa Maj / Ré Min (1b)", keyBb: "Sib Maj / Sol Min (2b)", 
-                keyEb: "Mib Maj / Do Min (3b)", keyAb: "Lab Maj / Fa Min (4b)", keyDb: "Réb Maj / Sib Min (5b)", 
-                keyGb: "Solb Maj / Mib Min (6b)",
-                zoom100: "Normal (100%)", zoom115: "Grand (115%)", zoom130: "Très Grand (130%)", zoom150: "Plein Écran HD (150%)"
+                lblZoom: "Taille des notes / Zoom :"
             },
             en: {
                 midiWaiting: "MIDI WAITING", midiReady: "MIDI READY", midiError: "No MIDI",
@@ -480,8 +517,8 @@
                 lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
                 lblMD: "Right Hand (Treble Clef):", lblMG: "Left Hand (Bass Clef):", optMelody: "Melody",
                 optChords: "Chords", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
-                lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner (Standard)", debitNorm: "Normal (+25%)",
-                debitInt: "Intermediate (+56%)", debitHard: "Difficult (+95%)", debitPro: "Pro (+144%)",
+                lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner", debitNorm: "Normal",
+                debitInt: "Intermediate", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Maximum Interval (Jump):", intTierce: "Third (2nd, 3rd, Rep.)",
                 intQuarte: "Max Fourth", intQuinte: "Max Fifth", intSixte: "Max Sixth", intLibre: "Free (Any jump)",
                 lblAcceleration: "Acceleration:", accOff: "Disabled", accFacile: "Easy (5%)",
@@ -496,13 +533,7 @@
                 pauseTitle: "GAME PAUSED", btnResume: "Resume (Space)", btnReplay: "Replay", infiniteLabel: "Infinite",
                 lblAccordsInv: "Chord Structure:", optFondamental: "Root Position Only", optRenversements: "Root & Inversions",
                 lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled",
-                lblZoom: "Note Size / Zoom:",
-                keyC: "C Maj / A Min (None)", keyG: "G Maj / E Min (1#)", keyD: "D Maj / B Min (2#)", 
-                keyA: "A Maj / F# Min (3#)", keyE: "E Maj / C# Min (4#)", keyB: "B Maj / G# Min (5#)", 
-                keyFs: "F# Maj / D# Min (6#)", keyF: "F Maj / D Min (1b)", keyBb: "Bb Maj / G Min (2b)", 
-                keyEb: "Eb Maj / C Min (3b)", keyAb: "Ab Maj / F Min (4b)", keyDb: "Db Maj / Bb Min (5b)", 
-                keyGb: "Gb Maj / Eb Min (6b)",
-                zoom100: "Normal (100%)", zoom115: "Large (115%)", zoom130: "Very Large (130%)", zoom150: "Full Screen HD (150%)"
+                lblZoom: "Note Size / Zoom:"
             },
             es: {
                 midiWaiting: "ESPERANDO MIDI", midiReady: "MIDI LISTO", midiError: "Sin MIDI",
@@ -511,14 +542,14 @@
                 lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
                 lblMD: "Mano Derecha (Clave de Sol):", lblMG: "Mano Izquierda (Clave de Fa):", optMelody: "Melodía",
                 optChords: "Acordes", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
-                lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante (Estándar)", debitNorm: "Normal (+25 %)",
-                debitInt: "Intermedio (+56 %)", debitHard: "Difícil (+95 %)", debitPro: "Pro (+144 %)",
+                lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante", debitNorm: "Normal",
+                debitInt: "Intermedio", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalo máximo:", intTierce: "Tercera (Segunda, Tercera, Rep.)",
                 intQuarte: "Cuarta máx", intQuinte: "Quinta máx", intSixte: "Sexta máx", intLibre: "Libre (Todos los saltos)",
                 lblAcceleration: "Aceleración:", accOff: "Desactivada", accFacile: "Fácil (5 %)",
                 accNormal: "Normal (10 %)", accDifficile: "Difícil (15 %)", lblVitesse: "Velocidad de salida:",
                 vitVerySlow: "Gran Principiante", vitSlow: "Lento (Principiante)", vitMed: "Medio (Iniciado)", vitFast: "Rápido (Avanzado)",
-                lblFautes: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fDix: "10 errores", fInfinie: "Modo Infinito",
+                lblErores: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fDix: "10 errores", fInfinie: "Modo Infinito",
                 lblAmbitusTreble: "Ámbito Clave de Sol:", lblAmbitusBass: "Ámbito Clave de Fa:", ambTFacile: "Fácil (Do4 - Do5)",
                 ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difícil (Do3 - Do6)", ambBFacile: "Fácil (Do3 - Do4)",
                 ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difícil (Do2 - Do5)", ambCustom: "A medida...",
@@ -527,13 +558,7 @@
                 pauseTitle: "JUEGO EN PAUSA", btnResume: "Reanudar (Espacio)", btnReplay: "Volver a jugar", infiniteLabel: "Infinito",
                 lblAccordsInv: "Estructura de Acordes:", optFondamental: "Solo fundamental", optRenversements: "Fundamental e Inversiones",
                 lblSansErreur: "Modo sin errores:", optSeOn: "Activado (Penalización)", optSeOff: "Desactivado",
-                lblZoom: "Tamaño de notas / Zoom:",
-                keyC: "Do May / La Men (Nada)", keyG: "Sol May / Mi Men (1#)", keyD: "Re May / Si Men (2#)", 
-                keyA: "La May / Fa# Men (3#)", keyE: "Mi May / Do# Men (4#)", keyB: "Si May / Sol# Men (5#)", 
-                keyFs: "Fa# May / Re# Men (6#)", keyF: "Fa May / Re Men (1b)", keyBb: "Sib May / Sol Men (2b)", 
-                keyEb: "Mib May / Do Men (3b)", keyAb: "Lab May / Fa Men (4b)", keyDb: "Reb May / Sib Men (5b)", 
-                keyGb: "Solb May / Mib Men (6b)",
-                zoom100: "Normal (100%)", zoom115: "Grande (115%)", zoom130: "Muy Grande (130%)", zoom150: "Pantalla Completa HD (150%)"
+                lblZoom: "Tamaño de notas / Zoom:"
             }
         };
 
@@ -596,18 +621,20 @@
             const selectMD = document.getElementById("cfg-mode-md");
             const selectMG = document.getElementById("cfg-mode-mg");
             const selectInv = document.getElementById("cfg-accords-inv");
+            const optMdChord = document.getElementById("opt-md-chord");
+            const optMgChord = document.getElementById("opt-mg-chord");
 
             if (src === "mic") {
                 if(selectMD.value === "accords") selectMD.value = "melodie";
                 if(selectMG.value === "accords") selectMG.value = "melodie";
-                document.getElementById("opt-md-chord").disabled = true;
-                document.getElementById("opt-mg-chord").disabled = true;
+                optMdChord.style.display = "none";
+                optMgChord.style.display = "none";
                 selectInv.disabled = true;
                 
                 initMicrophone();
             } else {
-                document.getElementById("opt-md-chord").disabled = false;
-                document.getElementById("opt-mg-chord").disabled = false;
+                optMdChord.style.display = "block";
+                optMgChord.style.display = "block";
                 selectInv.disabled = false;
                 updateBadgeVisual();
             }
@@ -772,7 +799,6 @@
         let score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
         
         let currentX = 0; 
-        let espacementTreble = 160, espacementBass = 160;
         let dernierXTreble = 180, dernierXBass = 180;
         let colonnesEnCours = [];
         let dernierTimestamp = 0;
@@ -822,25 +848,49 @@
             return noteChoisie;
         }
 
-        // FONCTION DÉDIÉE AU CHANGEMENT DE ZOOM
         function majusterZoom(val) {
             const vp = document.getElementById("viewport");
             if (vp) {
-                const scaleNum = parseFloat(val);
-                
-                // Utilisation de transform: scale compatible avec les tablettes Android
-                vp.style.transform = `scale(${scaleNum})`;
-                vp.style.transformOrigin = "top center";
-                
-                // Compensation de l'espace vertical dans le DOM
-                if (scaleNum > 1) {
-                    const hauteurSupplementaire = 450 * (scaleNum - 1);
-                    vp.style.marginBottom = `${hauteurSupplementaire + 15}px`;
-                } else {
-                    vp.style.marginBottom = "15px";
-                }
+                vp.style.transform = "none"; 
+                vp.style.zoom = val; 
             }
             sauvegarderDansLocalStorage();
+        }
+
+        function calculerProchainEspacementTreble() {
+            let mode = document.getElementById("cfg-debit-treble").value;
+            if (mode.startsWith("var")) {
+                if (varCompteurTreble >= varTargetTreble) {
+                    varCompteurTreble = 0;
+                    varTargetTreble = Math.floor(Math.random() * 6) + 5; 
+                    let maxPct = 0.25;
+                    if (mode === "var50") maxPct = 0.50;
+                    if (mode === "var75") maxPct = 0.75;
+                    
+                    varFacteurTreble = 1 + ((Math.random() * 2 - 1) * maxPct);
+                }
+                varCompteurTreble++;
+                return 128 * varFacteurTreble;
+            }
+            return parseInt(mode);
+        }
+
+        function calculerProchainEspacementBass() {
+            let mode = document.getElementById("cfg-debit-bass").value;
+            if (mode.startsWith("var")) {
+                if (varCompteurBass >= varTargetBass) {
+                    varCompteurBass = 0;
+                    varTargetBass = Math.floor(Math.random() * 6) + 5; 
+                    let maxPct = 0.25;
+                    if (mode === "var50") maxPct = 0.50;
+                    if (mode === "var75") maxPct = 0.75;
+                    
+                    varFacteurBass = 1 + ((Math.random() * 2 - 1) * maxPct);
+                }
+                varCompteurBass++;
+                return 128 * varFacteurBass;
+            }
+            return parseInt(mode);
         }
 
         async function lancerJeu() {
@@ -865,11 +915,10 @@
             config.modeSansErreur = (document.getElementById("cfg-sans-erreur").value === "on");
             let invMode = document.getElementById("cfg-accords-inv").value;
 
-            // Application immédiate du zoom au lancement
             majusterZoom(document.getElementById("cfg-zoom").value);
 
-            espacementTreble = parseInt(document.getElementById("cfg-debit-treble").value);
-            espacementBass = parseInt(document.getElementById("cfg-debit-bass").value);
+            varCompteurTreble = 0; varTargetTreble = Math.floor(Math.random() * 6) + 5; varFacteurTreble = 1.0;
+            varCompteurBass = 0; varTargetBass = Math.floor(Math.random() * 6) + 5; varFacteurBass = 1.0;
 
             poolTreble = []; poolBass = [];
 
@@ -923,11 +972,11 @@
             document.getElementById("lbl-fautes").innerText = config.modeInfini ? `0 (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `0 / ${config.maxFautes}`;
             
             while (dernierXTreble < 1300) {
-                dernierXTreble += espacementTreble;
+                dernierXTreble += calculerProchainEspacementTreble();
                 if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
             }
             while (dernierXBass < 1300) {
-                dernierXBass += espacementBass;
+                dernierXBass += calculerProchainEspacementBass();
                 if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
             }
             
@@ -1023,7 +1072,9 @@
 
             for (let col of colonnesEnCours) {
                 let positionEcran = col.xBase - currentX;
-                col.element.style.transform = `translateX(${positionEcran}px)`;
+                
+                /* FIX FLUIDITÉ : UTILISATION DE TRANSLATE3D POUR ÉVITER LES VAGUES ET LES EFFETS DE SAUT DE RENDU */
+                col.element.style.transform = `translate3d(${positionEcran}px, 0, 0)`;
 
                 if (!col.processed && positionEcran < 150) { 
                     let updated = false;
@@ -1045,11 +1096,11 @@
             });
 
             while (dernierXTreble < currentX + 1300) {
-                dernierXTreble += espacementTreble;
+                dernierXTreble += calculerProchainEspacementTreble();
                 if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
             }
             while (dernierXBass < currentX + 1300) {
-                dernierXBass += espacementBass;
+                dernierXBass += calculerProchainEspacementBass();
                 if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
             }
 
@@ -1148,7 +1199,6 @@
             );
         }
 
-        // AJOUT DE "cfg-zoom" DANS LA LISTE DES CLES DE CONFIGURATION
         const CONFIG_KEYS = [
             "cfg-mode-md", "cfg-mode-mg", "cfg-accords-inv", "cfg-debit-treble", "cfg-debit-bass",
             "cfg-intervalle", "cfg-acceleration", "cfg-vitesse", "cfg-fautes",
@@ -1199,7 +1249,7 @@
                 } else {
                     changerLangue("fr");
                 }
-                majusterZoom("1"); // Valeur par défaut
+                majusterZoom("1"); 
             }
         }
 
