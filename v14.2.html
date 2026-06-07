@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.1 (Correctif Rendu Vectoriel)</title>
+    <title>Arcade Piano - V14.2 (Optimisation Tablette & Anti-Lag)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -167,7 +167,7 @@
         #stat-score { background: #27ae60; border: none; box-shadow: 0 2px 10px rgba(39, 174, 96, 0.4);}
         #stat-level { background: #2980b9; border: none; box-shadow: 0 2px 10px rgba(41, 128, 185, 0.4);}
         
-        /* ZONE DE JEU REHAUSSÉE À 560PX */
+        /* ZONE DE JEU À 560PX */
         #viewport-wrapper {
             width: 100%;
             padding: 15px 0;
@@ -214,13 +214,17 @@
         
         #track { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; }
         
+        /* ACCÉLÉRATION MATÉRIELLE ULTRA-RENFORCÉE POUR TABLETTE */
         .note-column { 
             position: absolute; 
             top: 0; 
-            left: 0; /* ANCRAGE CRITIQUE : Évite que les notes se fassent repousser par le text-align center */
+            left: 0; 
             height: 100%; 
             width: 170px; 
             will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
 
         /* OVERLAYS ÉCRANS */
@@ -566,7 +570,7 @@
                 vitVerySlow: "Gran Principiante", vitSlow: "Lento (Principiante)", vitMed: "Medio (Iniciado)", vitFast: "Rápido (Avanzado)",
                 lblFautes: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fDix: "10 errores", fInfinie: "Modo Infinito",
                 lblAmbitusTreble: "Ámbito Clave de Sol:", lblAmbitusBass: "Ámbito Clave de Fa:", ambTFacile: "Fácil (Do4 - Do5)",
-                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difícil (Do3 - Do6)", ambBFacile: "Fácil (Do3 - Do4)",
+                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "難 (Do3 - Do6)", ambBFacile: "Fácil (Do3 - Do4)",
                 ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difícil (Do2 - Do5)", ambCustom: "A medida...",
                 lblDe: "De:", lblA: "A:", lblTonalite: "Tonalidad (Armadura):", btnStart: "Comenzar",
                 hudLevel: "Nivel", hudFautes: "Errores", btnPause: "Pausa (Espacio)", btnMenu: "Menú",
@@ -1041,7 +1045,6 @@
             colonnesEnCours.push(colonneObj);
         }
 
-        /* RENDU AUTONOME RECALIBRÉ SANS CONFLIT DE JOINVOICES MULTI-PORTÉES */
         function redessinerColonne(col) {
             col.element.innerHTML = ""; 
             const renderer = new VF.Renderer(col.element, VF.Renderer.Backends.SVG);
@@ -1052,7 +1055,6 @@
             const staveTreble = new VF.Stave(0, 50, 120);
             const staveBass = new VF.Stave(0, 230, 120);
 
-            // Traitement indépendant Clé de sol
             if (col.treble.status !== 'ignored') {
                 const noteT = new VF.StaveNote({ clef: "treble", keys: col.treble.keys, duration: "q" });
                 col.treble.acc.forEach((a, i) => { if(a) noteT.addModifier(new VF.Accidental(a), i); });
@@ -1062,7 +1064,6 @@
                 voiceT.draw(context, staveTreble);
             }
             
-            // Traitement indépendant Clé de fa
             if (col.bass.status !== 'ignored') {
                 const noteB = new VF.StaveNote({ clef: "bass", keys: col.bass.keys, duration: "q" });
                 col.bass.acc.forEach((a, i) => { if(a) noteB.addModifier(new VF.Accidental(a), i); });
@@ -1082,8 +1083,16 @@
         function boucleDeJeu(timestamp) {
             if (!jeuActif || enPause) return;
             let dt = (timestamp - dernierTimestamp) / 1000;
+            
+            /* LE BOUCLIER ANTI-LAG TABLETTE : 
+               Si le delta time est anormalement grand (supérieur à 100ms), 
+               on le force à 16.6ms (équivalent 60 FPS). Cela bloque instantanément 
+               tout effet de rattrapage brutal ou d'accélération artificielle. */
+            if (dt > 0.1) {
+                dt = 0.0166;
+            }
+            
             dernierTimestamp = timestamp;
-
             currentX += config.vitesse * dt;
 
             if (config.inputSource === "mic") {
