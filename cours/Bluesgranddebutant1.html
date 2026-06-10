@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Fiche de Cours : Le Blues pour les Grands Débutants - Pianotement</title>
+<style>
+  body { background-color: #14191f; color: #f5f6fa; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; line-height: 1.6; }
+  header { background: #1b222a; border-bottom: 2px solid #232d38; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  .logo-site { font-size: 22px; font-weight: 800; color: #00d2d3; letter-spacing: 1px; text-decoration: none;}
+  .logo-site span { color: #f1c40f; }
+  .main-content { flex: 1; padding: 40px 20px; max-width: 960px; margin: 0 auto; width: 100%; box-sizing: border-box; font-size: 18px;}
+  h3 { color: #00d2d3; margin-top: 30px; border-bottom: 1px solid #232d38; padding-bottom: 8px;}
+  
+  .piano-container { background: #1b222a; padding: 25px; border-radius: 12px; border: 1px solid #232d38; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin: 30px 0; }
+  .piano-container h4 { margin-top: 0; color: #ffffff; font-size: 22px; margin-bottom: 20px; }
+  .piano-wrapper { overflow-x: auto; padding: 12px; background: #0f1318; border-radius: 8px; margin-bottom: 12px; }
+  
+  .piano { position: relative; height: 220px; margin: 0 auto; }
+  .key { position: absolute; top: 0; border: 1px solid #1a1a1a; border-radius: 0 0 6px 6px; box-sizing: border-box; cursor: pointer; }
+  .key.white { background: #fdfdfd; z-index: 1; box-shadow: inset 0 -8px 5px rgba(0,0,0,0.15); }
+  .key.black { background: #161616; z-index: 2; box-shadow: inset 0 -4px 4px rgba(255,255,255,0.15); }
+  
+  .key.white.remanence, .key.black.remanence { background: #1dd1a1 !important; border-bottom: 4px solid #10ac84; }
+  
+  .key.white.active { 
+    background: #2e86de !important; 
+    border-bottom: 4px solid #00ffff; 
+    animation: flashImpactBlanche 0.4s ease-out forwards; 
+  }
+  .key.black.active { 
+    background: #1b4f72 !important; 
+    border-bottom: 4px solid #00ffff; 
+    animation: flashImpactNoire 0.4s ease-out forwards; 
+  }
+  
+  @keyframes flashImpactBlanche {
+    0% { background: #00ffff; box-shadow: inset 0 0 30px #00ffff, 0 0 15px #00ffff; }
+    20% { background: #2e86de; box-shadow: inset 0 -8px 5px rgba(0,0,0,0.2); }
+    100% { background: #2e86de; box-shadow: inset 0 -8px 5px rgba(0,0,0,0.2); }
+  }
+  @keyframes flashImpactNoire {
+    0% { background: #00ffff; box-shadow: inset 0 0 25px #00ffff, 0 0 15px #00ffff; }
+    20% { background: #1b4f72; box-shadow: inset 0 -4px 4px rgba(255,255,255,0.15); }
+    100% { background: #1b4f72; box-shadow: inset 0 -4px 4px rgba(255,255,255,0.15); }
+  }
+  
+  .finger { position: absolute; bottom: 18px; left: 0; width: 100%; text-align: center; font-weight: bold; font-size: 20px; color: #ffffff; pointer-events: none; opacity: 0; text-shadow: 1px 1px 2px black;}
+  .finger.active-text { opacity: 1; }
+  .key.black .finger { color: #f1c40f; bottom: 12px; }
+  
+  .sustain-pedal-zone { display: flex; justify-content: center; margin-top: 5px; margin-bottom: 20px; }
+  .sustain-pedal-badge { background: #1a2228; color: #4b5563; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; padding: 8px 40px; border-radius: 4px; border: 1px solid #2e3a46; transition: all 0.15s ease; opacity: 0.6; user-select: none;}
+  .sustain-pedal-badge.pedal-on { background: #f39c12; color: #14191f; border-color: #f1c40f; box-shadow: 0 0 15px rgba(241, 196, 15, 0.5); opacity: 1; font-weight: 900; }
+
+  .controls { display: flex; justify-content: center; gap: 15px; }
+  button { font-family: inherit; font-weight: bold; border: none; padding: 10px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; }
+  .btn-play { background: #10ac84; color: white; }
+  .btn-pause { background: #f39c12; color: white; }
+  .btn-reset { background: #576574; color: white; }
+  footer { background: #0f1318; border-top: 2px solid #1b222a; text-align: center; padding: 30px; margin-top: 40px; color: #576574; font-size: 14px;}
+</style>
+</head>
+<body>
+<header>
+  <a href="https://www.pianotement.fr/" target="_blank" style="text-decoration:none;"><div class="logo-site">PIANO<span>TEMENT</span></div></a>
+  <div style="color: #00d2d3; font-weight: bold; border: 1px solid #3d5166; padding: 5px 15px; border-radius: 20px;">Leçon Interactive</div>
+</header>
+
+<div class="main-content" id="lessonBody">
+  
+      <h3 style="text-align: center;"><span data-path-to-node="3" data-index-in-node="0"><span style="font-size: 18.72px;"><u>Fiche de Cours : Le Blues pour les Grands Débutants</u></span></span></h3><p><b data-path-to-node="3" data-index-in-node="0">Objectif :</b> <span style="font-weight: normal;">Ressentir, s'amuser et sonner "Blues" immédiatement, sans les blocages techniques inutiles.</span></p>
+      <div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781099009382">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Clavier Interactif</strong>
+          <small>(51 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781099009382')">✕</button>
+        </div>
+      </div><p><br></p>
+    
+      <h3 data-path-to-node="5">Introduction : Le blues n'est pas ce que l'on croit</h3><p data-path-to-node="6">Le blues est souvent perçu comme une musique virtuose et complexe, réservée à une élite. <b data-path-to-node="6" data-index-in-node="89">C'est une erreur.</b> En réalité, c'est l'une des musiques les plus accessibles au piano si l'on écarte les carcans académiques qui découragent les débutants dès la première leçon.</p><h3 data-path-to-node="7">I. Les 3 barrières inutiles du blues académique</h3><p data-path-to-node="8">Avant de commencer, il faut balayer les idées reçues qui empêchent de progresser :</p><ol start="1" data-path-to-node="9"><li><p data-path-to-node="9,0,0"><b data-path-to-node="9,0,0" data-index-in-node="0">Le mythe du shuffle obligatoire :</b> Vouloir caler un rythme de shuffle à la main gauche tout en improvisant à droite est une erreur pédagogique. C'est le meilleur moyen de se crisper.</p></li><li><p data-path-to-node="9,1,0"><b data-path-to-node="9,1,0" data-index-in-node="0">L'illusion de la pentatonique majeure :</b> On la dit "facile" car elle n'a qu'une touche noire, mais elle n'est pas ergonomique et sonne "pop" ou "comptine". Elle manque de l'âme et de l'originalité du blues.</p></li><li><p data-path-to-node="9,2,0"><b data-path-to-node="9,2,0" data-index-in-node="0">Le piège des 12 mesures :</b> La structure en 12 mesures n'est qu'une convention sociale pour jouer en groupe (s'accorder). Pour un pianiste qui travaille seul, c'est une prison mentale. Explorez vos 3 accords librement, à votre propre rythme.</p></li></ol>
+      <h3 data-path-to-node="10">II. La fondation : Le choc Majeur / Mineur</h3><p data-path-to-node="11">Le secret du blues réside dans le frottement entre la main gauche et la main droite.</p><p data-path-to-node="11" style="text-align: center;"><b data-path-to-node="12,0,0" data-index-in-node="0">Main Gauche (Fondation Majeure) :</b> On utilise trois accords fondamentaux de septième pour poser l'ambiance : <b data-path-to-node="12,0,0" data-index-in-node="108">Do7, Fa7 et Sol7</b>.</p>
+      <div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781099626151">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Accords de Do7   Fa7   Sol7</strong>
+          <small>(12 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781099626151')">✕</button>
+        </div>
+      </div><p><b data-path-to-node="12,1,0" data-index-in-node="0"><br></b></p><p style="text-align: center;"><b data-path-to-node="12,1,0" data-index-in-node="0">Main Droite (Couleur Mineure) :</b> On utilise la <b data-path-to-node="12,1,0" data-index-in-node="46">gamme de Do mineur blues</b>.</p><div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781100281549">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Le doigté de la gamme de Do mineur Blues en schéma.</strong>
+          <small>(13 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781100281549')">✕</button>
+        </div>
+      </div><p style="text-align: center;"><b>On monte et on descend la gamme tout en laissant résonner les accords :&nbsp;</b></p><p style="text-align: center;"><b data-path-to-node="12,2,0" data-index-in-node="0">Le résultat :</b> Le frottement entre la tierce majeure de l'accord (Main Gauche) et la tierce mineure de la gamme (Main Droite) crée instantanément cette sonorité expressive et "dirty" typique du blues.</p><div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781100608621">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Exemple</strong>
+          <small>(33 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781100608621')">✕</button>
+        </div>
+      </div><h3 data-path-to-node="13">III. L'ergonomie des "Grips" (Main Droite)</h3><p data-path-to-node="14">Au lieu de chercher des patterns compliqués, la main droite se déplace sur deux positions fixes et naturelles :</p><ul data-path-to-node="15"><li><p data-path-to-node="15,0,0"><b data-path-to-node="15,0,0" data-index-in-node="0">Grip A (Ancre sur le Do) :</b> Le pouce est posé sur le Do. Les doigts déroulent naturellement vers le Mi bémol et le Fa.</p></li></ul><div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781100739436">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Grip A</strong>
+          <small>(5 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781100739436')">✕</button>
+        </div>
+      </div><div><br></div><ul data-path-to-node="15"><li><p data-path-to-node="15,1,0"><b data-path-to-node="15,1,0" data-index-in-node="0">Grip B (Ancre sur le Fa) :</b> Le pouce bascule sur le Fa. Les doigts déroulent naturellement vers le Fa# (la Blue Note), le Sol et le Si bémol.</p></li></ul><div contenteditable="false" draggable="true" class="pattern-marker" data-clavier-id="kbd_1781100800811">
+        <div class="marker-title">
+          🎹 CLAVIER : <strong>Grip B</strong>
+          <small>(5 étapes mémorisées) — Maintenir et faire glisser pour déplacer</small>
+        </div>
+        <div class="marker-ctrls">
+          <button onclick="supprimerClavierDuCours('kbd_1781100800811')">✕</button>
+        </div>
+      </div><ul data-path-to-node="15"><li><p data-path-to-node="15,2,0"><i data-path-to-node="15,2,0" data-index-in-node="0">Avantage :</i> Plus de passage de pouce complexe ni de sauts frustrants. La main se pose et "déroule" le son.</p></li></ul><div><h3 data-path-to-node="16">IV. La voie du ressenti (Le vrai travail)</h3><p data-path-to-node="17">Ne cherchez pas à apprendre des "fillers" ou des séries de notes par cœur (ce qui donne un jeu impersonnel).</p><ul data-path-to-node="18"><li><p data-path-to-node="18,0,0"><b data-path-to-node="18,0,0" data-index-in-node="0">Le principe "Question-Réponse" :</b> Jouez un accord à la main gauche (la question), puis répondez avec une ou deux notes à la main droite.</p></li><li><p data-path-to-node="18,1,0"><b data-path-to-node="18,1,0" data-index-in-node="0">Habiter la note :</b> Ne vous contentez pas de jouer les touches. Faites résonner le Mi bémol, tapez-le, ressentez sa tension. Le blues, c'est le temps qu'on passe à écouter la résonance.</p></li><li><p data-path-to-node="18,2,0"><b data-path-to-node="18,2,0" data-index-in-node="0">Rythme :</b> Oubliez les calculs mathématiques (70% de durée pour tel temps). Le rythme est une sensation physique.</p></li></ul><h3 data-path-to-node="19">V. Vers la suite</h3><p data-path-to-node="20">Ce système est votre fondation pour jouer de manière musicale dès aujourd'hui. Une fois ce ressenti bien intégré, nous aborderons dans les prochains modules des structures plus travaillées : l'ajout de patterns rythmiques à la main gauche et le travail du shuffle.</p><p data-path-to-node="21"><b data-path-to-node="21" data-index-in-node="0">Rappelez-vous :</b> La virtuosité vient avec le temps, mais le plaisir et le son blues doivent être immédiats.</p></div>
+      <p><br></p>
+      <p>A bientôt, et bon courage !&nbsp;</p>
+      <p><br></p>
+</div>
+
+<footer>© Pianotement - Apprendre le piano autrement</footer>
+
+<script>
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx = null;
+  let reverbNode = null;
+
+  const notesDef = [
+    { n: 'C', t: 'white' }, { n: 'C#', t: 'black' }, { n: 'D', t: 'white' }, { n: 'D#', t: 'black' },
+    { n: 'E', t: 'white' }, { n: 'F', t: 'white' }, { n: 'F#', t: 'black' }, { n: 'G', t: 'white' },
+    { n: 'G#', t: 'black' }, { n: 'A', t: 'white' }, { n: 'A#', t: 'black' }, { n: 'B', t: 'white' }
+  ];
+  
+  function initAudioEngine() {
+    if (audioCtx) return;
+    audioCtx = new AudioContext();
+    
+    const sampleRate = audioCtx.sampleRate;
+    const reverbLen = sampleRate * 1.8;
+    const reverbBuffer = audioCtx.createBuffer(2, reverbLen, sampleRate);
+    
+    for (let channel = 0; channel < 2; channel++) {
+      const channelData = reverbBuffer.getChannelData(channel);
+      for (let i = 0; i < reverbLen; i++) {
+        channelData[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / reverbLen, 2.2) * 0.5;
+      }
+    }
+    
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = reverbBuffer;
+    
+    const reverbWetGain = audioCtx.createGain();
+    reverbWetGain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+    
+    reverbNode.connect(reverbWetGain);
+    reverbWetGain.connect(audioCtx.destination);
+  }
+
+  function jouerSonPianoAcoustique(freq, durationMs, isSustain) {
+    initAudioEngine();
+    const currentTime = audioCtx.currentTime;
+    const durationSec = durationMs / 1000;
+    
+    const naturalDecayTime = isSustain ? 10.0 : Math.max(durationSec, 4.0);
+
+    const mainGain = audioCtx.createGain();
+    mainGain.gain.setValueAtTime(0, currentTime);
+    mainGain.gain.linearRampToValueAtTime(0.55, currentTime + 0.005); 
+    mainGain.gain.exponentialRampToValueAtTime(0.30, currentTime + 0.08); 
+    
+    if (!isSustain) {
+      mainGain.gain.setValueAtTime(0.30 * Math.pow(0.88, durationSec), currentTime + durationSec);
+      mainGain.gain.exponentialRampToValueAtTime(0.001, currentTime + durationSec + 0.25);
+    } else {
+      mainGain.gain.exponentialRampToValueAtTime(0.001, currentTime + naturalDecayTime);
+    }
+    
+    mainGain.connect(audioCtx.destination);
+    if (reverbNode) mainGain.connect(reverbNode);
+
+    const harmoniques = [
+      { fMult: 1.00, type: 'sine', vol: 0.60, decayRatio: 1.0 },
+      { fMult: 2.00, type: 'sine', vol: 0.35, decayRatio: 0.85 },
+      { fMult: 3.01, type: 'triangle', vol: 0.12, decayRatio: 0.70 },
+      { fMult: 4.00, type: 'sine', vol: 0.07, decayRatio: 0.50 },
+      { fMult: 5.02, type: 'sine', vol: 0.03, decayRatio: 0.30 }
+    ];
+
+    const finalCutoff = isSustain ? naturalDecayTime : (durationSec + 0.25);
+
+    harmoniques.forEach(h => {
+      if (freq * h.fMult < audioCtx.sampleRate / 2) {
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = h.type;
+        osc.frequency.setValueAtTime(freq * h.fMult, currentTime);
+        
+        g.gain.setValueAtTime(h.vol, currentTime);
+        const singleHarmonicDecay = finalCutoff * h.decayRatio;
+        g.gain.exponentialRampToValueAtTime(0.001, currentTime + Math.max(singleHarmonicDecay, 0.05));
+        
+        osc.connect(g);
+        g.connect(mainGain);
+        osc.start(currentTime);
+        osc.stop(currentTime + Math.max(singleHarmonicDecay, 0.06));
+      }
+    });
+
+    const hammerOsc = audioCtx.createOscillator();
+    const hammerGain = audioCtx.createGain();
+    hammerOsc.type = 'triangle';
+    hammerOsc.frequency.setValueAtTime(70, currentTime);
+    hammerGain.gain.setValueAtTime(0.20, currentTime);
+    hammerGain.gain.exponentialRampToValueAtTime(0.001, currentTime + 0.035);
+    hammerOsc.connect(hammerGain);
+    hammerGain.connect(audioCtx.destination);
+    hammerOsc.start(currentTime);
+    hammerOsc.stop(currentTime + 0.04);
+  }
+
+  function getFrequency(noteName) {
+    const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+    const name = noteName.slice(0, -1); const octave = parseInt(noteName.slice(-1));
+    return 440 * Math.pow(2, ((notes.indexOf(name) + (octave + 1) * 12) - 69) / 12);
+  }
+
+  const claviersData = [{"id":"kbd_1781099009382","titre":"Clavier Interactif","mode":"libre","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"A#3","doigt":""},{"id":"G3","doigt":""},{"id":"C3","doigt":""},{"id":"E3","doigt":""}],"delayToNext":1548,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":272,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":401,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":221,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":360,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":259,"sustainPressed":true},{"notes":[{"id":"A#5","doigt":""}],"delayToNext":372,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":249,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":392,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":264,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":369,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":233,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":402,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":242,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":367,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":242,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""},{"id":"D#5","doigt":""},{"id":"C4","doigt":""},{"id":"F3","doigt":""},{"id":"A3","doigt":""}],"delayToNext":342,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":298,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""}],"delayToNext":278,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":299,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""},{"id":"C4","doigt":""}],"delayToNext":185,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":167,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""}],"delayToNext":233,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""},{"id":"A#4","doigt":""}],"delayToNext":77,"sustainPressed":true},{"notes":[{"id":"F3","doigt":""}],"delayToNext":275,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""}],"delayToNext":534,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":253,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""},{"id":"D#4","doigt":""}],"delayToNext":61,"sustainPressed":true},{"notes":[{"id":"F3","doigt":""}],"delayToNext":180,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":205,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""}],"delayToNext":185,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""},{"id":"G4","doigt":""},{"id":"F3","doigt":""},{"id":"C4","doigt":""},{"id":"A3","doigt":""}],"delayToNext":184,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":117,"sustainPressed":true},{"notes":[{"id":"C4","doigt":""}],"delayToNext":82,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""}],"delayToNext":198,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""},{"id":"G4","doigt":""}],"delayToNext":210,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":167,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""}],"delayToNext":253,"sustainPressed":true},{"notes":[{"id":"G4","doigt":""},{"id":"D4","doigt":""},{"id":"F4","doigt":""},{"id":"G3","doigt":""},{"id":"B3","doigt":""}],"delayToNext":401,"sustainPressed":true},{"notes":[{"id":"D4","doigt":""}],"delayToNext":339,"sustainPressed":true},{"notes":[{"id":"F4","doigt":""}],"delayToNext":400,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":567,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":257,"sustainPressed":true},{"notes":[{"id":"A#5","doigt":""}],"delayToNext":211,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":200,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":200,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":360,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":230,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":419,"sustainPressed":true},{"notes":[{"id":"A#4","doigt":""}],"delayToNext":224,"sustainPressed":true},{"notes":[{"id":"G3","doigt":""},{"id":"A#3","doigt":""},{"id":"E3","doigt":""},{"id":"C3","doigt":""},{"id":"C5","doigt":""}],"delayToNext":1000,"sustainPressed":true}]},{"id":"kbd_1781099626151","titre":"Accords de Do7   Fa7   Sol7","mode":"fixed","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"C2","doigt":"5"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"E2","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G2","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"A#2","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F3","doigt":"5"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"A3","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"C4","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"D#4","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G4","doigt":"5"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"B4","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"D5","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F5","doigt":"1"}],"delayToNext":1000,"sustainPressed":false}]},{"id":"kbd_1781100281549","titre":"Le doigté de la gamme de Do mineur Blues en schéma.","mode":"fixed","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"C4","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"D#4","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F4","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F#4","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G4","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"A#4","doigt":"4"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"C5","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"D#5","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F5","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F#5","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G5","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"A#5","doigt":"4"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"C6","doigt":"5"}],"delayToNext":1000,"sustainPressed":false}]},{"id":"kbd_1781100608621","titre":"Exemple","mode":"libre","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"A#3","doigt":""},{"id":"C3","doigt":""},{"id":"G3","doigt":""},{"id":"E3","doigt":""}],"delayToNext":2522,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":501,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":333,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":483,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":281,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":458,"sustainPressed":true},{"notes":[{"id":"A#5","doigt":""}],"delayToNext":276,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":473,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":276,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":491,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":260,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":883,"sustainPressed":true},{"notes":[{"id":"D#4","doigt":""},{"id":"C4","doigt":""},{"id":"A3","doigt":""},{"id":"F3","doigt":""}],"delayToNext":1643,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":425,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":309,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":425,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":266,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":428,"sustainPressed":true},{"notes":[{"id":"A#5","doigt":""}],"delayToNext":273,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":440,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":260,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":447,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":277,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":822,"sustainPressed":true},{"notes":[{"id":"D4","doigt":""},{"id":"F4","doigt":""},{"id":"B3","doigt":""},{"id":"G3","doigt":""}],"delayToNext":1282,"sustainPressed":true},{"notes":[{"id":"C5","doigt":""}],"delayToNext":402,"sustainPressed":true},{"notes":[{"id":"D#5","doigt":""}],"delayToNext":301,"sustainPressed":true},{"notes":[{"id":"F5","doigt":""}],"delayToNext":350,"sustainPressed":true},{"notes":[{"id":"F#5","doigt":""}],"delayToNext":283,"sustainPressed":true},{"notes":[{"id":"G5","doigt":""}],"delayToNext":401,"sustainPressed":true},{"notes":[{"id":"A#5","doigt":""}],"delayToNext":1168,"sustainPressed":true},{"notes":[{"id":"C6","doigt":""}],"delayToNext":1651,"sustainPressed":true},{"notes":[{"id":"C6","doigt":""},{"id":"A#3","doigt":""},{"id":"G3","doigt":""},{"id":"E3","doigt":""},{"id":"C3","doigt":""}],"delayToNext":1000,"sustainPressed":true}]},{"id":"kbd_1781100739436","titre":"Grip A","mode":"fixed","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"C5","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"D#5","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F5","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F#5","doigt":"4"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G5","doigt":"5"}],"delayToNext":1000,"sustainPressed":false}]},{"id":"kbd_1781100800811","titre":"Grip B","mode":"fixed","tempo":"1000","remanence":false,"sustain":false,"sequence":[{"notes":[{"id":"F5","doigt":"1"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"F#5","doigt":"2"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"G5","doigt":"3"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"A#5","doigt":"4"}],"delayToNext":1000,"sustainPressed":false},{"notes":[{"id":"C6","doigt":"5"}],"delayToNext":1000,"sustainPressed":false}]}];
+
+  document.querySelectorAll('.pattern-marker').forEach(marker => {
+    const cid = marker.getAttribute('data-clavier-id');
+    const data = claviersData.find(c => c.id === cid);
+    if(!data) return;
+
+    const container = document.createElement('div');
+    container.className = 'piano-container';
+    
+    let html = '<h4>🎹 ' + data.titre + '</h4><div class="piano-wrapper"><div class="piano" id="piano_dom_'+cid+'"></div></div>';
+    html += '<div class="sustain-pedal-zone"><div class="sustain-pedal-badge" id="pedal_'+cid+'">Pédale de Sustain</div></div>';
+    
+    if (data.mode !== 'fixed') {
+      html += '<div class="controls"><button class="btn-play" id="play_'+cid+'">▶ Écouter</button><button class="btn-pause" id="pause_'+cid+'">⏸ Pause</button><button class="btn-reset" id="reset_'+cid+'">⏹ Stop</button></div>';
+    } else {
+      html += '<p style="font-size:14px; color:#9ca3af; margin:0;">(Schéma d\'accord fixe — Cliquez sur les touches pour tester l\'acoustique)</p>';
+    }
+    
+    container.innerHTML = html;
+    marker.parentNode.replaceChild(container, marker);
+
+    const pianoDom = document.getElementById('piano_dom_'+cid);
+    const pedalDom = document.getElementById('pedal_'+cid);
+    let whiteCount = 0;
+    
+    for (let oct = 2; oct <= 6; oct++) {
+      notesDef.forEach(item => {
+        const key = document.createElement('div'); const noteId = item.n + oct;
+        key.className = 'key ' + item.t; key.id = cid + '_' + noteId;
+        
+        const finger = document.createElement('span'); finger.className = 'finger'; finger.id = 'f_' + cid + '_' + noteId;
+        key.appendChild(finger);
+        
+        if (item.t === 'white') { key.style.left = (whiteCount * 24) + 'px'; whiteCount++; } else { key.style.left = (whiteCount * 24 - 8) + 'px'; }
+        if(item.t === 'white') { key.style.width = "24px"; key.style.height = "160px"; } 
+        else { key.style.width = "16px"; key.style.height = "95px"; }
+        
+        key.addEventListener('mousedown', () => jouerSonPianoAcoustique(getFrequency(noteId), data.tempo, data.sustain));
+        pianoDom.appendChild(key);
+      });
+    }
+    pianoDom.style.width = (whiteCount * 24) + 'px';
+
+    if (data.mode === 'fixed') {
+      data.sequence.forEach(stepObj => {
+        stepObj.notes.forEach(n => {
+          const kEl = document.getElementById(cid + '_' + n.id);
+          const fEl = document.getElementById('f_' + cid + '_' + n.id);
+          if (kEl) kEl.classList.add('active');
+          if (fEl && n.doigt) { fEl.innerText = n.doigt; fEl.classList.add('active-text'); }
+        });
+        if(stepObj.sustainPressed && pedalDom) pedalDom.classList.add('pedal-on');
+      });
+    } else {
+      let isPlaying = false; let currentStep = 0; let stepTimeout = null; let activeExts = [];
+      
+      if (data.remanence) {
+        data.sequence.forEach(stepObj => { stepObj.notes.forEach(n => { document.getElementById(cid + '_' + n.id)?.classList.add('remanence'); }); });
+      }
+
+      function cleanKeys() {
+        activeExts.forEach(clearTimeout); activeExts = [];
+        pianoDom.querySelectorAll('.key.active').forEach(k => k.classList.remove('active'));
+        pianoDom.querySelectorAll('.finger.active-text').forEach(f => { f.innerText = ''; f.classList.remove('active-text'); });
+        if(pedalDom) pedalDom.classList.remove('pedal-on');
+      }
+
+      function playStepLoop() {
+        if (!isPlaying) return;
+        if (currentStep >= data.sequence.length) currentStep = 0;
+        
+        const stepData = data.sequence[currentStep];
+        const stepTime = stepData.delayToNext || 1000;
+        
+        if (pedalDom) {
+          if (stepData.sustainPressed) pedalDom.classList.add('pedal-on');
+          else pedalDom.classList.remove('pedal-on');
+        }
+        
+        const isMidiTrack = (data.mode === 'libre' || data.mode === 'fixe');
+        const noteSustain = isMidiTrack ? stepData.sustainPressed : data.sustain;
+
+        stepData.notes.forEach(n => {
+          jouerSonPianoAcoustique(getFrequency(n.id), stepTime, noteSustain);
+          
+          const kEl = document.getElementById(cid + '_' + n.id);
+          const fEl = document.getElementById('f_' + cid + '_' + n.id);
+          
+          if(kEl) {
+            kEl.classList.remove('active');
+            void kEl.offsetWidth; 
+            kEl.classList.add('active');
+          }
+          if(fEl && n.doigt) { fEl.innerText = n.doigt; fEl.classList.add('active-text'); }
+          
+          activeExts.push(setTimeout(() => {
+            if(kEl) kEl.classList.remove('active');
+            if(fEl) { fEl.innerText = ''; fEl.classList.remove('active-text'); }
+          }, stepTime));
+        });
+        
+        currentStep++; 
+        stepTimeout = setTimeout(playStepLoop, stepTime);
+      }
+
+      document.getElementById('play_'+cid).onclick = () => { if(!isPlaying){ isPlaying = true; playStepLoop(); } };
+      document.getElementById('pause_'+cid).onclick = () => { isPlaying = false; clearTimeout(stepTimeout); activeExts.forEach(clearTimeout); activeExts = []; };
+      document.getElementById('reset_'+cid).onclick = () => { isPlaying = false; clearTimeout(stepTimeout); cleanKeys(); currentStep = 0; };
+    }
+  });
+</script>
+</body>
+</html>
