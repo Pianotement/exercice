@@ -318,6 +318,7 @@
                 <select id="cfg-mode-md">
                     <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
                     <option value="accords" id="opt-md-chord" data-i18n="optChords">Accords</option>
+                    <option value="accords_melodie" id="opt-md-chord-melody" data-i18n="optChordsMelody">Accords + Mélodie</option>
                     <option value="off" data-i18n="optOff">Désactivée</option>
                 </select>
             </div>
@@ -326,6 +327,7 @@
                 <select id="cfg-mode-mg">
                     <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
                     <option value="accords" id="opt-mg-chord" data-i18n="optChords">Accords</option>
+                    <option value="accords_melodie" id="opt-mg-chord-melody" data-i18n="optChordsMelody">Accords + Mélodie</option>
                     <option value="off" data-i18n="optOff">Désactivée</option>
                 </select>
             </div>
@@ -385,7 +387,7 @@
                 <label data-i18n="lblVitesse">Vitesse linéaire de départ :</label>
                 <select id="cfg-vitesse">
                     <option value="25" data-i18n="vitVerySlow">Grand Débutant</option>
-                    <option value="45" data-i18n="vitSlow">Lent (Débutant)</option>
+                    <option value="36" data-i18n="vitSlow">Lent (Débutant)</option>
                     <option value="65" selected data-i18n="vitMed">Moyen (Initié)</option>
                     <option value="95" data-i18n="vitFast">Rapide (Avancé)</option>
                 </select>
@@ -395,6 +397,7 @@
                 <label data-i18n="lblFautes">Fautes autorisées :</label>
                 <select id="cfg-fautes">
                     <option value="1" data-i18n="fSubite">1 (Mort subite)</option>
+                    <option value="5" data-i18n="fCinq">5 fautes</option>
                     <option value="10" selected data-i18n="fDix">10 fautes</option>
                     <option value="infinity" data-i18n="fInfinie">Mode Infini</option>
                 </select>
@@ -425,7 +428,7 @@
                         <select id="cfg-ambitus-treble" onchange="toggleCustomAmbitus()">
                             <option value="facile" selected data-i18n="ambTFacile">Facile (Do4 - Do5)</option>
                             <option value="normal" data-i18n="ambTNormal">Normal (Do4 - Do6)</option>
-                            <option value="difficile" data-i18n="ambTDifficile">Difficile (Do3 - Do6)</option>
+                            <option value="difficile" data-i18n="ambTDifficile">Difficile (Fa3 - Si5)</option>
                             <option value="custom" data-i18n="ambCustom">Sur mesure...</option>
                         </select>
                         <div id="custom-treble-panel" class="custom-ambitus-panel">
@@ -439,7 +442,7 @@
                         <select id="cfg-ambitus-bass" onchange="toggleCustomAmbitus()">
                             <option value="facile" selected data-i18n="ambBFacile">Facile (Do3 - Do4)</option>
                             <option value="normal" data-i18n="ambBNormal">Normal (Do2 - Do4)</option>
-                            <option value="difficile" data-i18n="ambBDifficile">Difficile (Do2 - Do5)</option>
+                            <option value="difficile" data-i18n="ambBDifficile">Difficile (Fa2 - Do5)</option>
                             <option value="custom" data-i18n="ambCustom">Sur mesure...</option>
                         </select>
                         <div id="custom-bass-panel" class="custom-ambitus-panel">
@@ -512,7 +515,7 @@
                 btnExport: "Sauver", btnImport: "Charger", menuTitle: "Paramètres de la partie",
                 lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
                 lblMD: "Main Droite (Clé de Sol) :", lblMG: "Main Gauche (Clé de Fa) :", optMelody: "Mélodie",
-                optChords: "Accords", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
+                optChords: "Accords", optChordsMelody: "Accords + Mélodie", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
                 lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant", debitNorm: "Normal",
                 debitInt: "Intermédiaire", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalle maximal :", intTierce: "Tierce (Seconde, Tierce, Rep.)",
@@ -520,10 +523,10 @@
                 lblAcceleration: "Accélération :", accOff: "Désactivée", accFacile: "Facile (5 %)",
                 accNormal: "Normal (10 %)", accDifficile: "Difficile (15 %)", lblVitesse: "Vitesse de départ :",
                 vitVerySlow: "Grand Débutant", vitSlow: "Lent (Débutant)", vitMed: "Moyen (Initié)", vitFast: "Rapide (Avancé)",
-                lblFautes: "Fautes autorisées :", fSubite: "1 (Mort subite)", fDix: "10 fautes", fInfinie: "Mode Infini",
+                lblFautes: "Fautes autorisées :", fSubite: "1 (Mort subite)", fCinq: "5 fautes", fDix: "10 fautes", fInfinie: "Mode Infini",
                 lblAmbitusTreble: "Ambitus Clé de Sol :", lblAmbitusBass: "Ambitus Clé de Fa :", ambTFacile: "Facile (Do4 - Do5)",
-                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difficile (Do3 - Do6)", ambBFacile: "Facile (Do3 - Do4)",
-                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difficile (Do2 - Do5)", ambCustom: "Sur mesure...",
+                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difficile (Fa3 - Si5)", ambBFacile: "Facile (Do3 - Do4)",
+                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difficile (Fa2 - Do5)", ambCustom: "Sur mesure...",
                 lblDe: "De :", lblA: "À :", lblTonalite: "Tonalité (Armure) :", btnStart: "Démarrer",
                 hudLevel: "Niveau", hudFautes: "Fautes", btnPause: "Pause (Espace)", btnMenu: "Menu",
                 pauseTitle: "JEU EN PAUSE", btnResume: "Reprendre (Espace)", btnReplay: "Rejouer", infiniteLabel: "Infini",
@@ -536,7 +539,7 @@
                 btnExport: "Save", btnImport: "Load", menuTitle: "Game Settings",
                 lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
                 lblMD: "Right Hand (Treble Clef):", lblMG: "Left Hand (Bass Clef):", optMelody: "Melody",
-                optChords: "Chords", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
+                optChords: "Chords", optChordsMelody: "Chords + Melody", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
                 lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner", debitNorm: "Normal",
                 debitInt: "Intermediate", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Maximum Interval (Jump):", intTierce: "Third (2nd, 3rd, Rep.)",
@@ -544,10 +547,10 @@
                 lblAcceleration: "Acceleration:", accOff: "Disabled", accFacile: "Easy (5%)",
                 accNormal: "Normal (10%)", accDifficile: "Hard (15%)", lblVitesse: "Starting Speed:",
                 vitVerySlow: "Absolute Beginner", vitSlow: "Slow (Beginner)", vitMed: "Medium (Initiated)", vitFast: "Fast (Advanced)",
-                lblFautes: "Allowed Mistakes:", fSubite: "1 (Sudden Death)", fDix: "10 Mistakes", fInfinie: "Infinite Mode",
+                lblFautes: "Allowed Mistakes:", fSubite: "1 (Sudden Death)", fCinq: "5 Mistakes", fDix: "10 Mistakes", fInfinie: "Infinite Mode",
                 lblAmbitusTreble: "Treble Clef Range:", lblAmbitusBass: "Bass Clef Range:", ambTFacile: "Easy (C4 - C5)",
-                ambTNormal: "Normal (C4 - C6)", ambTDifficile: "Hard (C3 - C6)", ambBFacile: "Easy (C3 - C4)",
-                ambBNormal: "Normal (C2 - C4)", ambBDifficile: "Hard (C2 - C5)", ambCustom: "Custom...",
+                ambTNormal: "Normal (C4 - C6)", ambTDifficile: "Hard (F3 - B5)", ambBFacile: "Easy (C3 - C4)",
+                ambBNormal: "Normal (C2 - C4)", ambBDifficile: "Hard (F2 - C5)", ambCustom: "Custom...",
                 lblDe: "From:", lblA: "To:", lblTonalite: "Key Signature:", btnStart: "Start",
                 hudLevel: "Level", hudFautes: "Mistakes", btnPause: "Space (Pause)", btnMenu: "Menu",
                 pauseTitle: "GAME PAUSED", btnResume: "Resume (Space)", btnReplay: "Replay", infiniteLabel: "Infinite",
@@ -560,7 +563,7 @@
                 btnExport: "Guardar", btnImport: "Cargar", menuTitle: "Ajustes de la partida",
                 lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
                 lblMD: "Mano Derecha (Clave de Sol):", lblMG: "Mano Izquierda (Clave de Fa):", optMelody: "Melodía",
-                optChords: "Acordes", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
+                optChords: "Acordes", optChordsMelody: "Acordes + Melodía", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
                 lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante", debitNorm: "Normal",
                 debitInt: "Intermedio", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalo máximo:", intTierce: "Tercera (Segunda, Tercera, Rep.)",
@@ -568,10 +571,10 @@
                 lblAcceleration: "Aceleración:", accOff: "Desactivada", accFacile: "Fácil (5 %)",
                 accNormal: "Normal (10 %)", accDifficile: "Difícil (15 %)", lblVitesse: "Velocidad de salida:",
                 vitVerySlow: "Gran Principiante", vitSlow: "Lento (Principiante)", vitMed: "Medio (Iniciado)", vitFast: "Rápido (Avanzado)",
-                lblFautes: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fDix: "10 errores", fInfinie: "Modo Infinito",
+                lblFautes: "Errores permitidos:", fSubite: "1 (Muerte súbita)", fCinq: "5 Errores", fDix: "10 errores", fInfinie: "Modo Infinito",
                 lblAmbitusTreble: "Ámbito Clave de Sol:", lblAmbitusBass: "Ámbito Clave de Fa:", ambTFacile: "Fácil (Do4 - Do5)",
-                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "難 (Do3 - Do6)", ambBFacile: "Fácil (Do3 - Do4)",
-                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difícil (Do2 - Do5)", ambCustom: "A medida...",
+                ambTNormal: "Normal (Do4 - Do6)", ambTDifficile: "Difícil (Fa3 - Si5)", ambBFacile: "Fácil (Do3 - Do4)",
+                ambBNormal: "Normal (Do2 - Do4)", ambBDifficile: "Difícil (Fa2 - Do5)", ambCustom: "A medida...",
                 lblDe: "De:", lblA: "A:", lblTonalite: "Tonalidad (Armadura):", btnStart: "Comenzar",
                 hudLevel: "Nivel", hudFautes: "Errores", btnPause: "Pausa (Espacio)", btnMenu: "Menú",
                 pauseTitle: "JUEGO EN PAUSE", btnResume: "Reanudar (Espacio)", btnReplay: "Volver a jugar", infiniteLabel: "Infinito",
@@ -641,18 +644,24 @@
             const selectInv = document.getElementById("cfg-accords-inv");
             const optMdChord = document.getElementById("opt-md-chord");
             const optMgChord = document.getElementById("opt-mg-chord");
+            const optMdChordMelody = document.getElementById("opt-md-chord-melody");
+            const optMgChordMelody = document.getElementById("opt-mg-chord-melody");
 
             if (src === "mic") {
-                if(selectMD.value === "accords") selectMD.value = "melodie";
-                if(selectMG.value === "accords") selectMG.value = "melodie";
+                if(selectMD.value === "accords" || selectMD.value === "accords_melodie") selectMD.value = "melodie";
+                if(selectMG.value === "accords" || selectMG.value === "accords_melodie") selectMG.value = "melodie";
                 optMdChord.style.display = "none";
                 optMgChord.style.display = "none";
+                optMdChordMelody.style.display = "none";
+                optMgChordMelody.style.display = "none";
                 selectInv.disabled = true;
                 
                 initMicrophone();
             } else {
                 optMdChord.style.display = "block";
                 optMgChord.style.display = "block";
+                optMdChordMelody.style.display = "block";
+                optMgChordMelody.style.display = "block";
                 selectInv.disabled = false;
                 updateBadgeVisual();
             }
@@ -937,12 +946,13 @@
             poolTreble = []; poolBass = [];
 
             const tMode = document.getElementById("cfg-ambitus-treble").value;
-            if (config.modeMD === 'melodie') {
+            if (config.modeMD === 'melodie' || config.modeMD === 'accords_melodie') {
                 if(tMode === "facile") poolTreble = getPool("c/4", "c/5");
                 else if(tMode === "normal") poolTreble = getPool("c/4", "c/6");
-                else if(tMode === "difficile") poolTreble = getPool("c/3", "c/6");
+                else if(tMode === "difficile") poolTreble = getPool("f/3", "b/5");
                 else poolTreble = getPool(document.getElementById("treble-min").value, document.getElementById("treble-max").value);
-            } else if (config.modeMD === 'accords') {
+            }
+            if (config.modeMD === 'accords' || config.modeMD === 'accords_melodie') {
                 for(let r=21; r<=27; r++) {
                     poolTreble.push(generateTriad(r, 0));
                     if(invMode === "renversements") { poolTreble.push(generateTriad(r, 1)); poolTreble.push(generateTriad(r, 2)); }
@@ -950,12 +960,13 @@
             }
 
             const bMode = document.getElementById("cfg-ambitus-bass").value;
-            if (config.modeMG === 'melodie') {
+            if (config.modeMG === 'melodie' || config.modeMG === 'accords_melodie') {
                 if(bMode === "facile") poolBass = getPool("c/3", "c/4");
                 else if(bMode === "normal") poolBass = getPool("c/2", "c/4");
-                else if(bMode === "difficile") poolBass = getPool("c/2", "b/5");
+                else if(bMode === "difficile") poolBass = getPool("f/2", "c/5");
                 else poolBass = getPool(document.getElementById("bass-min").value, document.getElementById("bass-max").value);
-            } else if (config.modeMG === 'accords') {
+            }
+            if (config.modeMG === 'accords' || config.modeMG === 'accords_melodie') {
                 for(let r=7; r<=13; r++) {
                     poolBass.push(generateTriad(r, 0));
                     if(invMode === "renversements") { poolBass.push(generateTriad(r, 1)); poolBass.push(generateTriad(r, 2)); }
