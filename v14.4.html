@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.3 (Presets & Anti-Brouillage Micro)</title>
+    <title>Arcade Piano - V14.4 (Scores & Ergonomie Tablette)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         /* DESIGN GLOBAL ÉLITE */
         body { 
@@ -42,6 +42,14 @@
             border-radius: 12px;
             backdrop-filter: blur(5px);
             box-sizing: border-box;
+            flex-wrap: wrap; /* Adaptation responsive */
+        }
+
+        .top-controls-left {
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            flex-wrap: wrap;
         }
 
         .main-title { text-align: center; margin: 0; font-size: 28px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
@@ -112,6 +120,59 @@
             transform: translateY(-2px);
         }
 
+        .btn-scores {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            color: #1e1e24;
+            font-size: 13px; 
+            padding: 8px 16px; 
+            border: 1px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            font-weight: 800;
+            flex-shrink: 0; 
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        .btn-scores:hover {
+            background: linear-gradient(135deg, #fff 0%, #f1c40f 100%); 
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* BOUTON MODES - BLEU NUIT MÉTALLIQUE */
+        .mode-indicator {
+            background: linear-gradient(135deg, #1a2a6c 0%, #11347a 50%, #1a2a6c 100%);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 14px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: 1px solid #4a7ab5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.25);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: default;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        #cfg-presets {
+            font-size: 16px; 
+            font-weight: 700;
+            padding: 10px 35px 10px 15px;
+            border: 2px solid #bdc3c7; 
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            max-width: 260px;
+            color: #fff;
+        }
+        #cfg-presets:focus {
+            border-color: #f39c12;
+            box-shadow: 0 0 12px rgba(243, 156, 18, 0.5);
+        }
+
         select { 
             font-family: 'Montserrat', sans-serif;
             width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
@@ -136,6 +197,7 @@
         .config-grid .config-group { display: flex; flex-direction: column; }
         .config-group label { font-weight: 600; margin-bottom: 8px; color: #bdc3c7; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;}
         
+        /* Modif pour accoler le bouton Démarrer */
         .panel { background: rgba(30, 30, 36, 0.6); padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); grid-column: span 2; }
         @media (max-width: 768px) { .panel { grid-column: span 1; } }
         .custom-ambitus-panel { display: none; margin-top: 15px; border: 1px dashed #555; padding: 10px; gap: 15px; border-radius: 8px;}
@@ -156,64 +218,20 @@
         #stat-score { background: #27ae60; border: none; box-shadow: 0 2px 10px rgba(39, 174, 96, 0.4);}
         #stat-level { background: #2980b9; border: none; box-shadow: 0 2px 10px rgba(41, 128, 185, 0.4);}
         
-        /* ZONE DE JEU À 560PX */
-        #viewport-wrapper {
-            width: 100%;
-            padding: 15px 0;
-            box-sizing: border-box;
-        }
-
+        #viewport-wrapper { width: 100%; padding: 15px 0; box-sizing: border-box; }
         #viewport { 
-            position: relative; 
-            width: 100%; 
-            height: 560px; 
-            background: #ffffff; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); 
-            border: 2px solid #f39c12; 
-            box-sizing: border-box;
+            position: relative; width: 100%; height: 560px; background: #ffffff; 
+            border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); 
+            border: 2px solid #f39c12; box-sizing: border-box;
         }
-
         #bg-staves { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; }
-        
-        #fixed-clefs { 
-            position: absolute; 
-            left: 0; 
-            top: 0; 
-            width: 180px; 
-            height: 100%; 
-            z-index: 10; 
-            background: #ffffff;
-            border-right: 1px solid #e5e5e5;
-        }
-        
-        #hitzone { 
-            position: absolute; 
-            left: 180px; 
-            top: 0; 
-            width: 240px; 
-            height: 100%; 
-            background: rgba(231, 76, 60, 0.06); 
-            border-left: 3px solid #e74c3c; 
-            border-right: 3px solid #e74c3c; 
-            z-index: 15; 
-            box-shadow: 0 0 15px rgba(231,76,60,0.2); 
-        }
-        
+        #fixed-clefs { position: absolute; left: 0; top: 0; width: 180px; height: 100%; z-index: 10; background: #ffffff; border-right: 1px solid #e5e5e5; }
+        #hitzone { position: absolute; left: 180px; top: 0; width: 240px; height: 100%; background: rgba(231, 76, 60, 0.06); border-left: 3px solid #e74c3c; border-right: 3px solid #e74c3c; z-index: 15; box-shadow: 0 0 15px rgba(231,76,60,0.2); }
         #track { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; }
         
-        /* ACCÉLÉRATION MATÉRIELLE ULTRA-RENFORCÉE POUR TABLETTE */
         .note-column { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            height: 100%; 
-            width: 170px; 
-            will-change: transform;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            perspective: 1000px;
+            position: absolute; top: 0; left: 0; height: 100%; width: 170px; 
+            will-change: transform; transform: translateZ(0); backface-visibility: hidden; perspective: 1000px;
         }
 
         /* OVERLAYS ÉCRANS */
@@ -223,21 +241,22 @@
         }
         .overlay-screen h2 { color: #e74c3c; font-size: 56px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 700;}
         
-        #pause-screen { 
-            background: rgba(0, 0, 0, 0.12); 
-            backdrop-filter: none; 
+        #pause-screen { background: rgba(0, 0, 0, 0.12); backdrop-filter: none; }
+        #pause-screen h2 { color: #1e1e24; background: rgba(255, 255, 255, 0.98); padding: 15px 40px; border-radius: 12px; font-size: 38px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border: 2px solid #f39c12; text-shadow: none; margin-bottom: 25px; }
+
+        /* OVERLAY GLOBAL SCORES */
+        #scores-screen {
+            position: fixed; z-index: 9999;
         }
-        #pause-screen h2 { 
-            color: #1e1e24; 
-            background: rgba(255, 255, 255, 0.98);
-            padding: 15px 40px;
-            border-radius: 12px;
-            font-size: 38px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 2px solid #f39c12;
-            text-shadow: none;
-            margin-bottom: 25px;
+        .scores-container {
+            background: rgba(42, 42, 53, 0.95); padding: 30px; border-radius: 12px; border: 2px solid #f39c12; 
+            max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
+        .scores-container h2 { font-size: 32px; color: #f39c12; border-bottom: none; margin-bottom: 20px;}
+        .score-row { display: flex; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 16px; font-weight: 600; color: #ecf0f1;}
+        .score-row:hover { background: rgba(255,255,255,0.05); border-radius: 6px; }
+        .score-row:last-child { border-bottom: none; }
+        .score-val { color: #2ecc71; font-weight: 800; font-size: 18px; }
 
         button { 
             font-family: 'Montserrat', sans-serif; padding: 12px 24px; font-size: 15px; cursor: pointer; 
@@ -249,38 +268,36 @@
 
         #btn-pause { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-color: rgba(255,255,255,0.15);}
         #btn-pause:hover { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); }
-        
-        #menu-config button { 
-            font-size: 18px; padding: 15px 30px; background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); color: #1e1e24; 
-            border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
-        }
-        #menu-config button:hover { background: linear-gradient(135deg, #fff 0%, #f1c40f 100%); box-shadow: 0 0 30px rgba(241, 196, 15, 0.5); }
     </style>
 </head>
 <body>
 
     <div class="top-controls">
-        <div style="display: flex; align-items: center; gap: 15px;">
+        <div class="top-controls-left">
             <div class="main-title"><a href="https://www.pianotement.fr/" target="_blank">Pianotement.fr</a></div>
             <a href="https://youtube.com/@pianotement" target="_blank" class="youtube-link">
                 <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93 .502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 YouTube
             </a>
-        </div>
-        <div class="top-controls-right">
             <div id="midi-badge" class="midi-badge" data-i18n="midiWaiting">MIDI</div>
             <select id="cfg-lang" onchange="changerLangue(this.value)" style="width: auto; padding: 5px 30px 5px 10px; font-size: 13px;">
                 <option value="fr">Français</option>
                 <option value="en">English</option>
                 <option value="es">Español</option>
             </select>
+        </div>
+        <div class="top-controls-right">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="mode-indicator" data-i18n="btnModes">MODES :</div>
+                <select id="cfg-presets" onchange="appliquerPresetSelectionne(this.value)">
+                    <option value="" data-i18n="presetChoose">-- Modes de jeu --</option>
+                    <optgroup label="Mode Arcade (Défis)" id="presets-arcade" data-i18n="presetArcade"></optgroup>
+                    <optgroup label="Parties Enregistrées" id="presets-utilisateurs" data-i18n="presetUser"></optgroup>
+                </select>
+            </div>
             
-            <select id="cfg-presets" onchange="appliquerPresetSelectionne(this.value)" style="width: auto; max-width: 220px; padding: 5px 30px 5px 10px; font-size: 13px; font-weight: 600; border: 1px solid #f39c12;">
-                <option value="" data-i18n="presetChoose">-- Choisir un Preset --</option>
-                <optgroup label="Mode Arcade (Défis)" id="presets-arcade" data-i18n="presetArcade"></optgroup>
-                <optgroup label="Parties Enregistrées" id="presets-utilisateurs" data-i18n="presetUser"></optgroup>
-            </select>
             <button class="btn-secondary" onclick="creerNouveauPreset()" style="padding: 6px 12px; font-size: 12px;" data-i18n="btnSavePreset">+ Sauver</button>
+            <button class="btn-scores" onclick="afficherScores()" data-i18n="btnScores">Scores</button>
         </div>
     </div>
 
@@ -412,8 +429,9 @@
                 </select>
             </div>
 
-            <div class="panel">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <!-- PANNEAU COMPACT AMBITUS + BOUTON DÉMARRER -->
+            <div class="panel" style="display: flex; align-items: stretch; gap: 20px; flex-wrap: wrap;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; flex-grow: 1;">
                     <div class="config-group">
                         <label data-i18n="lblAmbitusTreble">Ambitus Clé de Sol :</label>
                         <select id="cfg-ambitus-treble" onchange="toggleCustomAmbitus()">
@@ -442,10 +460,10 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="config-group" style="justify-content: flex-end; grid-column: span 2; text-align: center;">
-                <button style="width: 50%; margin: 24px auto 0 auto;" onclick="lancerJeu()" data-i18n="btnStart">Démarrer</button>
+                
+                <div style="display: flex; align-items: center; justify-content: center; min-width: 180px; flex-grow: 1;">
+                    <button style="width: 100%; height: 100%; min-height: 60px; font-size: 20px; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);" onclick="lancerJeu()" data-i18n="btnStart">Démarrer</button>
+                </div>
             </div>
         </div>
     </div>
@@ -480,11 +498,23 @@
         </div>
     </div>
 
+    <!-- OVERLAY DES SCORES -->
+    <div id="scores-screen" class="overlay-screen">
+        <div class="scores-container">
+            <h2 data-i18n="scoresTitle">Tableau des Scores</h2>
+            <div id="scores-list" style="margin-bottom: 30px;">
+                <!-- Les scores seront injectés ici par le JS -->
+            </div>
+            <div style="text-align: center;">
+                <button onclick="fermerScores()" data-i18n="btnClose" style="background: #e74c3c; box-shadow: none;">Fermer</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const VF = Vex.Flow;
         
         // --- 1. PRESETS ARCADE D'USINE ---
-        // Ajoute ici tes défis Arcade prédéfinis. Ils apparaîtront automatiquement dans le menu.
         const PRESETS_ARCADE_USINE = {
             "initiation_do": { nom: "Initiation Do", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "off", "cfg-ambitus-treble": "facile", "cfg-vitesse": "25", "cfg-acceleration": "0", "cfg-fautes": "5", "cfg-debit-treble": "220" },
             "blues_classic": { nom: "Grip Blues Standard", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "accords", "cfg-ambitus-treble": "normal", "cfg-vitesse": "36", "cfg-acceleration": "5", "cfg-intervalle": "3" },
@@ -513,8 +543,8 @@
             fr: {
                 midiWaiting: "MIDI ATTENTE", midiReady: "MIDI PRÊT", midiError: "Pas de MIDI",
                 micReady: "MICRO PRÊT", micWaiting: "MICRO OFF",
-                btnSavePreset: "+ Sauver", presetChoose: "-- Choisir un Preset --", presetArcade: "Mode Arcade (Défis)", presetUser: "Parties Enregistrées", menuTitle: "Paramètres de la partie",
-                lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
+                btnSavePreset: "+ Sauver", btnScores: "Scores", presetChoose: "-- Modes de jeu --", presetArcade: "Mode Arcade (Défis)", presetUser: "Parties Enregistrées", menuTitle: "Paramètres de la partie",
+                btnModes: "MODES :", lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
                 lblMD: "Main Droite (Clé de Sol) :", lblMG: "Main Gauche (Clé de Fa) :", optMelody: "Mélodie",
                 optChords: "Accords", optChordsMelody: "Accords + Mélodie", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
                 lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant", debitNorm: "Normal",
@@ -532,13 +562,14 @@
                 hudLevel: "Niveau", hudFautes: "Fautes", btnPause: "Pause (Espace)", btnMenu: "Menu",
                 pauseTitle: "JEU EN PAUSE", btnResume: "Reprendre (Espace)", btnReplay: "Rejouer", infiniteLabel: "Infini",
                 lblAccordsInv: "Structure des Accords :", optFondamental: "Fondamental uniquement", optRenversements: "Fondamental & Renversements",
-                lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé"
+                lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé",
+                scoresTitle: "Tableau des Scores", btnClose: "Fermer"
             },
             en: {
                 midiWaiting: "MIDI WAITING", midiReady: "MIDI READY", midiError: "No MIDI",
                 micReady: "MIC READY", micWaiting: "MIC OFF",
-                btnSavePreset: "+ Save", presetChoose: "-- Choose Preset --", presetArcade: "Arcade Mode", presetUser: "Saved Games", menuTitle: "Game Settings",
-                lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
+                btnSavePreset: "+ Save", btnScores: "Scores", presetChoose: "-- Game Modes --", presetArcade: "Arcade Mode", presetUser: "Saved Games", menuTitle: "Game Settings",
+                btnModes: "MODES :", lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
                 lblMD: "Right Hand (Treble Clef):", lblMG: "Left Hand (Bass Clef):", optMelody: "Melody",
                 optChords: "Chords", optChordsMelody: "Chords + Melody", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
                 lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner", debitNorm: "Normal",
@@ -556,13 +587,14 @@
                 hudLevel: "Level", hudFautes: "Mistakes", btnPause: "Space (Pause)", btnMenu: "Menu",
                 pauseTitle: "GAME PAUSED", btnResume: "Resume (Space)", btnReplay: "Replay", infiniteLabel: "Infinite",
                 lblAccordsInv: "Chord Structure:", optFondamental: "Root Position Only", optRenversements: "Root & Inversions",
-                lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled"
+                lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled",
+                scoresTitle: "High Scores", btnClose: "Close"
             },
             es: {
                 midiWaiting: "ESPERANDO MIDI", midiReady: "MIDI LISTO", midiError: "Sin MIDI",
                 micReady: "MICRO LISTO", micWaiting: "MICRO APAGADO",
-                btnSavePreset: "+ Guardar", presetChoose: "-- Elegir Preset --", presetArcade: "Modo Arcade", presetUser: "Partidas Guardadas", menuTitle: "Ajustes de la partida",
-                lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
+                btnSavePreset: "+ Guardar", btnScores: "Puntuación", presetChoose: "-- Modos de juego --", presetArcade: "Modo Arcade", presetUser: "Partidas Guardadas", menuTitle: "Ajustes de la partida",
+                btnModes: "MODOS :", lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
                 lblMD: "Mano Derecha (Clave de Sol):", lblMG: "Mano Izquierda (Clave de Fa):", optMelody: "Melodía",
                 optChords: "Acordes", optChordsMelody: "Acordes + Melodía", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
                 lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante", debitNorm: "Normal",
@@ -580,7 +612,8 @@
                 hudLevel: "Nivel", hudFautes: "Errores", btnPause: "Pausa (Espacio)", btnMenu: "Menú",
                 pauseTitle: "JUEGO EN PAUSE", btnResume: "Reanudar (Espacio)", btnReplay: "Volver a jugar", infiniteLabel: "Infinito",
                 lblAccordsInv: "Estructura de Acordes:", optFondamental: "Solo fundamental", optRenversements: "Fundamental e Inversiones",
-                lblSansErreur: "Modo sin errores:", optSeOn: "Activado (Penalización)", optSeOff: "Désactivado"
+                lblSansErreur: "Modo sin errores:", optSeOn: "Activado (Penalización)", optSeOff: "Désactivado",
+                scoresTitle: "Tabla de puntuación", btnClose: "Cerrar"
             }
         };
 
@@ -597,7 +630,7 @@
             "bass-min", "bass-max", "cfg-gamme", "cfg-lang", "cfg-sans-erreur", "cfg-input-source"
         ];
 
-        // --- GESTIONNAIRE DE PRESETS LOCAUX ---
+        // --- GESTIONNAIRE DE PRESETS ET SCORES ---
         function initialiserGestionnairePresets() {
             if (!localStorage.getItem("pianotement_user_presets")) {
                 localStorage.setItem("pianotement_user_presets", JSON.stringify({}));
@@ -613,28 +646,56 @@
             const userGroup = document.getElementById("presets-utilisateurs");
             
             const userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-            const highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
             
             arcadeGroup.innerHTML = "";
             userGroup.innerHTML = "";
             
             for (let id in PRESETS_ARCADE_USINE) {
                 let p = PRESETS_ARCADE_USINE[id];
-                let score = highScores[id] || 0;
                 let opt = document.createElement("option");
                 opt.value = "arcade_" + id;
-                opt.textContent = `${p.nom} ${score > 0 ? `🏆 (${score})` : ''}`;
+                opt.textContent = p.nom;
                 arcadeGroup.appendChild(opt);
             }
             
             for (let id in userPresets) {
                 let p = userPresets[id];
-                let score = highScores[id] || 0;
                 let opt = document.createElement("option");
                 opt.value = "user_" + id;
-                opt.textContent = `${p.nom} ${score > 0 ? `⭐ (${score})` : ''}`;
+                opt.textContent = p.nom;
                 userGroup.appendChild(opt);
             }
+        }
+
+        function afficherScores() {
+            const scoresDiv = document.getElementById("scores-list");
+            scoresDiv.innerHTML = "";
+            
+            const highScores = JSON.parse(localStorage.getItem("pianotement_high_scores")) || {};
+            const userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets")) || {};
+            
+            // Partie Arcade
+            let html = `<h3 style="color:#f1c40f; border-bottom: 2px solid #555; padding-bottom:5px; margin-top:0;">Mode Arcade</h3>`;
+            for (let id in PRESETS_ARCADE_USINE) {
+                let score = highScores[id] || "--";
+                html += `<div class="score-row"><span>${PRESETS_ARCADE_USINE[id].nom}</span> <span class="score-val">${score}</span></div>`;
+            }
+            
+            // Partie Utilisateurs
+            if (Object.keys(userPresets).length > 0) {
+                html += `<h3 style="color:#3498db; border-bottom: 2px solid #555; padding-bottom:5px; margin-top: 30px;">Parties Enregistrées</h3>`;
+                for (let id in userPresets) {
+                    let score = highScores[id] || "--";
+                    html += `<div class="score-row"><span>${userPresets[id].nom}</span> <span class="score-val">${score}</span></div>`;
+                }
+            }
+            
+            scoresDiv.innerHTML = html;
+            document.getElementById("scores-screen").style.display = "flex";
+        }
+
+        function fermerScores() {
+            document.getElementById("scores-screen").style.display = "none";
         }
 
         function creerNouveauPreset() {
@@ -858,7 +919,13 @@
             langueActuelle = lang;
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
-                if (DICTIONNAIRE[lang][key]) el.innerText = DICTIONNAIRE[lang][key];
+                if (DICTIONNAIRE[lang][key]) {
+                    if (el.tagName === "OPTGROUP") {
+                        el.label = DICTIONNAIRE[lang][key];
+                    } else {
+                        el.innerText = DICTIONNAIRE[lang][key];
+                    }
+                }
             });
             
             let valTMin = document.getElementById("treble-min").value;
@@ -1104,7 +1171,6 @@
             score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0;
             currentX = 0; 
             
-            // DÉCALAGE MICRO DE 25% AU DÉMARRAGE
             if (config.inputSource === "mic") {
                 let baseVal = parseInt(document.getElementById("cfg-debit-bass").value);
                 if (isNaN(baseVal)) baseVal = 180;
@@ -1277,7 +1343,6 @@
             document.getElementById("final-score").innerText = `Niveau ${niveau} | Score : ${score} pts`;
             document.getElementById("game-over-screen").style.display = "flex";
             
-            // SAUVEGARDE DU HIGH SCORE SI UN PRESET EST JOUÉ
             enregistrerScoreFinDePartie(score);
         }
 
@@ -1412,7 +1477,6 @@
             }
         }
 
-        // Lancement initial de l'application
         peuplerSelectsAmbitus();
         chargerDepuisLocalStorage();
         initialiserGestionnairePresets();
