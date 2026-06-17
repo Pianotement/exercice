@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.4 (Scores & Ergonomie Tablette)</title>
+    <title>Arcade Piano - V14.5 (Mode Arpèges Stricts & Ergonomie)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -42,7 +42,7 @@
             border-radius: 12px;
             backdrop-filter: blur(5px);
             box-sizing: border-box;
-            flex-wrap: wrap; /* Adaptation responsive */
+            flex-wrap: wrap; 
         }
 
         .top-controls-left {
@@ -111,73 +111,39 @@
             border-radius: 8px;
             cursor: pointer;
         }
-        
         .btn-secondary:hover { 
             background: linear-gradient(135deg, #50565d 0%, #34495e 100%); 
-            color: #fff; 
-            border-color: #777; 
-            box-shadow: 0 7px 12px rgba(0,0,0,0.4);
-            transform: translateY(-2px);
+            color: #fff; border-color: #777; box-shadow: 0 7px 12px rgba(0,0,0,0.4); transform: translateY(-2px);
         }
+        .btn-erase { background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%); border-color: #c0392b; color: #fff;}
+        .btn-erase:hover { background: linear-gradient(135deg, #e74c3c 0%, #ff7675 100%); border-color: #e74c3c;}
 
-        .btn-scores {
+        .btn-scores, #btn-start-game {
             background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
-            color: #1e1e24;
-            font-size: 13px; 
-            padding: 8px 16px; 
-            border: 1px solid rgba(255,255,255,0.3);
-            text-transform: uppercase;
-            font-weight: 800;
-            flex-shrink: 0; 
-            transition: all 0.3s ease;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            color: #1e1e24; border: 1px solid rgba(255,255,255,0.3);
+            text-transform: uppercase; font-weight: 800; flex-shrink: 0; transition: all 0.3s ease; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(243, 156, 18, 0.4);
         }
-        .btn-scores:hover {
-            background: linear-gradient(135deg, #fff 0%, #f1c40f 100%); 
-            box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
-            transform: translateY(-2px);
+        .btn-scores { font-size: 13px; padding: 8px 16px; }
+        .btn-scores:hover, #btn-start-game:hover {
+            background: linear-gradient(135deg, #fff 0%, #f1c40f 100%); box-shadow: 0 0 20px rgba(241, 196, 15, 0.6); transform: translateY(-2px);
         }
 
-        /* BOUTON MODES - BLEU NUIT MÉTALLIQUE */
         .mode-indicator {
             background: linear-gradient(135deg, #1a2a6c 0%, #11347a 50%, #1a2a6c 100%);
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 14px;
-            padding: 9px 16px;
-            border-radius: 8px;
-            border: 1px solid #4a7ab5;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.25);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: default;
-            user-select: none;
-            flex-shrink: 0;
+            color: #ffffff; font-weight: 800; font-size: 14px; padding: 9px 16px; border-radius: 8px; border: 1px solid #4a7ab5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.25); text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            text-transform: uppercase; letter-spacing: 1px; cursor: default; user-select: none; flex-shrink: 0;
         }
 
         #cfg-presets {
-            font-size: 16px; 
-            font-weight: 700;
-            padding: 10px 35px 10px 15px;
-            border: 2px solid #bdc3c7; 
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            max-width: 260px;
-            color: #fff;
+            font-size: 16px; font-weight: 700; padding: 10px 35px 10px 15px; border: 2px solid #bdc3c7; 
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.3); max-width: 260px; color: #fff;
         }
-        #cfg-presets:focus {
-            border-color: #f39c12;
-            box-shadow: 0 0 12px rgba(243, 156, 18, 0.5);
-        }
+        #cfg-presets:focus { border-color: #f39c12; box-shadow: 0 0 12px rgba(243, 156, 18, 0.5); }
 
         select { 
-            font-family: 'Montserrat', sans-serif;
-            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
-            background: linear-gradient(135deg, #2a2a35 0%, #1e1e24 100%); color: white; 
-            font-size: 14px; box-sizing: border-box; cursor: pointer; appearance: none; -webkit-appearance: none;
+            font-family: 'Montserrat', sans-serif; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; 
+            background: linear-gradient(135deg, #2a2a35 0%, #1e1e24 100%); color: white; font-size: 14px; box-sizing: border-box; cursor: pointer; appearance: none; -webkit-appearance: none;
             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23bdc3c7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
             background-repeat: no-repeat; background-position: right 12px top 50%; background-size: 10px auto; transition: border-color 0.3s, box-shadow 0.3s;
         }
@@ -186,18 +152,14 @@
         select option { background-color: #2a2a35; color: #ffffff; padding: 10px; }
 
         #menu-config { 
-            background: rgba(42, 42, 53, 0.35); max-width: 100%; margin: 10px auto 20px auto; 
-            padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
-            text-align: left; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.05);
-            box-sizing: border-box;
+            background: rgba(42, 42, 53, 0.35); max-width: 100%; margin: 10px auto 20px auto; padding: 25px; border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); text-align: left; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.05); box-sizing: border-box;
         }
-        #menu-config h2 { margin-top: 0; color: #f39c12; text-align: center; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; border-bottom: 2px solid #444; padding-bottom: 15px; margin-bottom: 25px;}
         
         .config-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .config-grid .config-group { display: flex; flex-direction: column; }
+        .config-grid .config-group { display: flex; flex-direction: column; justify-content: center;}
         .config-group label { font-weight: 600; margin-bottom: 8px; color: #bdc3c7; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;}
         
-        /* Modif pour accoler le bouton Démarrer */
         .panel { background: rgba(30, 30, 36, 0.6); padding: 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); grid-column: span 2; }
         @media (max-width: 768px) { .panel { grid-column: span 1; } }
         .custom-ambitus-panel { display: none; margin-top: 15px; border: 1px dashed #555; padding: 10px; gap: 15px; border-radius: 8px;}
@@ -205,10 +167,8 @@
         /* HUD DU JEU */
         #game-ui { display: none; width: 100%; }
         #hud { 
-            display: flex; justify-content: center; gap: 15px; font-size: 16px; font-weight: 600; 
-            margin: 10px auto; max-width: 100%; background: rgba(42, 42, 53, 0.9); 
-            padding: 12px 20px; border-radius: 12px; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.5); text-transform: uppercase;
-            box-sizing: border-box;
+            display: flex; justify-content: center; gap: 15px; font-size: 16px; font-weight: 600; margin: 10px auto; max-width: 100%; background: rgba(42, 42, 53, 0.9); 
+            padding: 12px 20px; border-radius: 12px; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.5); text-transform: uppercase; box-sizing: border-box;
         }
         .stat { 
             padding: 8px 18px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
@@ -220,9 +180,8 @@
         
         #viewport-wrapper { width: 100%; padding: 15px 0; box-sizing: border-box; }
         #viewport { 
-            position: relative; width: 100%; height: 560px; background: #ffffff; 
-            border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); 
-            border: 2px solid #f39c12; box-sizing: border-box;
+            position: relative; width: 100%; height: 560px; background: #ffffff; border-radius: 12px; overflow: hidden; 
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #f39c12; box-sizing: border-box;
         }
         #bg-staves { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 1; }
         #fixed-clefs { position: absolute; left: 0; top: 0; width: 180px; height: 100%; z-index: 10; background: #ffffff; border-right: 1px solid #e5e5e5; }
@@ -230,24 +189,19 @@
         #track { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 5; }
         
         .note-column { 
-            position: absolute; top: 0; left: 0; height: 100%; width: 170px; 
-            will-change: transform; transform: translateZ(0); backface-visibility: hidden; perspective: 1000px;
+            position: absolute; top: 0; left: 0; height: 100%; will-change: transform; transform: translateZ(0); backface-visibility: hidden; perspective: 1000px;
         }
 
         /* OVERLAYS ÉCRANS */
         .overlay-screen { 
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.88); z-index: 30; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.88); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(8px);
         }
         .overlay-screen h2 { color: #e74c3c; font-size: 56px; margin: 0 0 15px 0; text-transform: uppercase; font-weight: 700;}
         
-        #pause-screen { background: rgba(0, 0, 0, 0.12); backdrop-filter: none; }
+        #pause-screen { background: rgba(0, 0, 0, 0.12); backdrop-filter: none; position: absolute; z-index:30;}
         #pause-screen h2 { color: #1e1e24; background: rgba(255, 255, 255, 0.98); padding: 15px 40px; border-radius: 12px; font-size: 38px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); border: 2px solid #f39c12; text-shadow: none; margin-bottom: 25px; }
 
-        /* OVERLAY GLOBAL SCORES */
-        #scores-screen {
-            position: fixed; z-index: 9999;
-        }
         .scores-container {
             background: rgba(42, 42, 53, 0.95); padding: 30px; border-radius: 12px; border: 2px solid #f39c12; 
             max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
@@ -268,6 +222,9 @@
 
         #btn-pause { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-color: rgba(255,255,255,0.15);}
         #btn-pause:hover { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); }
+        
+        .chk-label { display: flex; align-items: center; cursor: pointer; }
+        .chk-label input { transform: scale(1.5); margin-right: 15px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -286,7 +243,8 @@
                 <option value="es">Español</option>
             </select>
         </div>
-        <div class="top-controls-right">
+        
+        <div id="top-controls-modes" class="top-controls-right">
             <div style="display: flex; align-items: center; gap: 8px;">
                 <div class="mode-indicator" data-i18n="btnModes">MODES :</div>
                 <select id="cfg-presets" onchange="appliquerPresetSelectionne(this.value)">
@@ -297,13 +255,12 @@
             </div>
             
             <button class="btn-secondary" onclick="creerNouveauPreset()" style="padding: 6px 12px; font-size: 12px;" data-i18n="btnSavePreset">+ Sauver</button>
+            <button class="btn-secondary btn-erase" onclick="effacerPreset()" style="padding: 6px 12px; font-size: 12px;" data-i18n="btnErase">Effacer</button>
             <button class="btn-scores" onclick="afficherScores()" data-i18n="btnScores">Scores</button>
         </div>
     </div>
 
     <div id="menu-config">
-        <h2 data-i18n="menuTitle">Paramètres de la partie</h2>
-        
         <div class="config-grid">
             <div class="config-group">
                 <label data-i18n="lblInputSource">Source d'entrée :</label>
@@ -326,7 +283,7 @@
                 <select id="cfg-mode-md">
                     <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
                     <option value="accords" id="opt-md-chord" data-i18n="optChords">Accords</option>
-                    <option value="accords_melodie" id="opt-md-chord-melody" data-i18n="optChordsMelody">Accords + Mélodie</option>
+                    <option value="accords_melodie" id="opt-md-chord-melody" data-i18n="optChordsMelody">Mélodie + Accords</option>
                     <option value="off" data-i18n="optOff">Désactivée</option>
                 </select>
             </div>
@@ -335,17 +292,14 @@
                 <select id="cfg-mode-mg">
                     <option value="melodie" selected data-i18n="optMelody">Mélodie</option>
                     <option value="accords" id="opt-mg-chord" data-i18n="optChords">Accords</option>
-                    <option value="accords_melodie" id="opt-mg-chord-melody" data-i18n="optChordsMelody">Accords + Mélodie</option>
+                    <option value="accords_melodie" id="opt-mg-chord-melody" data-i18n="optChordsMelody">Mélodie + Accords</option>
                     <option value="off" data-i18n="optOff">Désactivée</option>
                 </select>
             </div>
 
             <div class="config-group">
                 <label data-i18n="lblAccordsInv">Structure des Accords :</label>
-                <select id="cfg-accords-inv">
-                    <option value="fondamentale" selected data-i18n="optFondamental">Fondamental uniquement</option>
-                    <option value="renversements" data-i18n="optRenversements">Fondamental & Renversements</option>
-                </select>
+                <button onclick="document.getElementById('accords-config-screen').style.display='flex';" class="btn-secondary" style="padding: 10px; width: 100%; text-align: left; background: #2a2a35; border: 1px solid #444;" data-i18n="btnConfigAccords">⚙️ Configurer...</button>
             </div>
 
             <div class="config-group">
@@ -429,7 +383,6 @@
                 </select>
             </div>
 
-            <!-- PANNEAU COMPACT AMBITUS + BOUTON DÉMARRER -->
             <div class="panel" style="display: flex; align-items: stretch; gap: 20px; flex-wrap: wrap;">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; flex-grow: 1;">
                     <div class="config-group">
@@ -462,8 +415,34 @@
                 </div>
                 
                 <div style="display: flex; align-items: center; justify-content: center; min-width: 180px; flex-grow: 1;">
-                    <button style="width: 100%; height: 100%; min-height: 60px; font-size: 20px; box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);" onclick="lancerJeu()" data-i18n="btnStart">Démarrer</button>
+                    <button id="btn-start-game" style="width: 100%; height: 100%; min-height: 60px; font-size: 20px;" onclick="lancerJeu()" data-i18n="btnStart">Démarrer</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="accords-config-screen" class="overlay-screen">
+        <div class="scores-container" style="text-align: left; max-width: 400px;">
+            <h2 data-i18n="titleAccordsConfig" style="color:#2ecc71; margin-bottom: 25px; font-size: 24px;">Structure des Accords</h2>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; font-size: 16px;">
+                <label class="chk-label"><input type="checkbox" id="cfg-chk-fondamental" checked> <span data-i18n="chkFond">Fondamental</span></label>
+                <label class="chk-label"><input type="checkbox" id="cfg-chk-renversement"> <span data-i18n="chkRenv">Renversements</span></label>
+                <label class="chk-label"><input type="checkbox" id="cfg-chk-arpege-simple"> <span data-i18n="chkArpS">Arpèges Simples</span></label>
+                <label class="chk-label"><input type="checkbox" id="cfg-chk-arpege-complexe"> <span data-i18n="chkArpC">Arpèges Complexes</span></label>
+            </div>
+            <div style="text-align: center;">
+                <button onclick="document.getElementById('accords-config-screen').style.display='none'; sauvegarderDansLocalStorage();" data-i18n="btnOk">Valider</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="scores-screen" class="overlay-screen">
+        <div class="scores-container">
+            <h2 data-i18n="scoresTitle">Tableau des Scores</h2>
+            <div id="scores-list" style="margin-bottom: 30px;">
+                </div>
+            <div style="text-align: center;">
+                <button onclick="document.getElementById('scores-screen').style.display='none';" data-i18n="btnClose" style="background: #e74c3c; box-shadow: none;">Fermer</button>
             </div>
         </div>
     </div>
@@ -484,12 +463,12 @@
                 <div id="hitzone"></div> 
                 <div id="track"></div>
                 
-                <div id="pause-screen" class="overlay-screen">
+                <div id="pause-screen" class="overlay-screen" style="position: absolute; z-index:30;">
                     <h2 data-i18n="pauseTitle">JEU EN PAUSE</h2>
                     <button onclick="togglePause()" data-i18n="btnResume">Reprendre (Espace)</button>
                 </div>
 
-                <div id="game-over-screen" class="overlay-screen">
+                <div id="game-over-screen" class="overlay-screen" style="position: absolute; z-index:30;">
                     <h2>GAME OVER</h2>
                     <p id="final-score" style="font-size: 24px; color:white; margin-bottom: 25px; font-weight:600;"></p>
                     <button onclick="lancerJeu()" data-i18n="btnReplay">Rejouer</button>
@@ -498,27 +477,38 @@
         </div>
     </div>
 
-    <!-- OVERLAY DES SCORES -->
-    <div id="scores-screen" class="overlay-screen">
-        <div class="scores-container">
-            <h2 data-i18n="scoresTitle">Tableau des Scores</h2>
-            <div id="scores-list" style="margin-bottom: 30px;">
-                <!-- Les scores seront injectés ici par le JS -->
-            </div>
-            <div style="text-align: center;">
-                <button onclick="fermerScores()" data-i18n="btnClose" style="background: #e74c3c; box-shadow: none;">Fermer</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         const VF = Vex.Flow;
         
-        // --- 1. PRESETS ARCADE D'USINE ---
+        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES (V14.5) ---
+        const ARPEGES_SIMPLES = [
+            [0, 2, 4], // Triolet Montant
+            [4, 2, 0], // Triolet Descendant
+            [0, 2, 4, 2], // Aller-Retour Simple
+            [0, 4, 2, 4]  // Basse d'Alberti
+        ];
+        const ARPEGES_COMPLEXES = [
+            [0, 2, 4, 7], // Montant Standard
+            [7, 4, 2, 0], // Descendant Standard
+            [0, 2, 4, 7, 4, 2, 0], // Montant et Descendant
+            [0, 4, 9], // Grand Écart Montant
+            [9, 4, 0], // Grand Écart Descendant
+            [0, 4, 9, 4, 0], // Grand Écart Aller-Retour
+            [0, 2, 4, 2, 4, 2], // Balancement Intérieur
+            [0, 7, 4, 2, 4, 2], // Balancement Large
+            [0, 2, 4, 7, 9, 11], // Double Octave Montant
+            [11, 9, 7, 4, 2, 0], // Double Octave Descendant
+            [0, 2, 4, 7, 9, 11, 9, 7, 4, 2, 0], // Double Octave Aller-Retour
+            [0, 2, 1, 3, 2, 4], // En Vague Montante
+            [4, 2, 3, 1, 2, 0]  // En Vague Descendante
+        ];
+
+        // --- 2. PRESETS ARCADE D'USINE ---
         const PRESETS_ARCADE_USINE = {
             "initiation_do": { nom: "Initiation Do", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "off", "cfg-ambitus-treble": "facile", "cfg-vitesse": "25", "cfg-acceleration": "0", "cfg-fautes": "5", "cfg-debit-treble": "220" },
-            "blues_classic": { nom: "Grip Blues Standard", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "accords", "cfg-ambitus-treble": "normal", "cfg-vitesse": "36", "cfg-acceleration": "5", "cfg-intervalle": "3" },
-            "ombre_lumiere_3": { nom: "De l'Ombre à la Lumière", "cfg-gamme": "G", "cfg-mode-md": "accords", "cfg-mode-mg": "melodie", "cfg-ambitus-treble": "difficile", "cfg-vitesse": "65", "cfg-acceleration": "10", "cfg-sans-erreur": "on" }
+            "blues_classic": { nom: "Grip Blues Standard", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "accords", "cfg-ambitus-treble": "normal", "cfg-vitesse": "36", "cfg-acceleration": "5", "cfg-intervalle": "3", "cfg-chk-fondamental": true },
+            "ombre_lumiere_3": { nom: "De l'Ombre à la Lumière", "cfg-gamme": "G", "cfg-mode-md": "accords", "cfg-mode-mg": "melodie", "cfg-ambitus-treble": "difficile", "cfg-vitesse": "65", "cfg-acceleration": "10", "cfg-sans-erreur": "on", "cfg-chk-fondamental": true, "cfg-chk-renversement": true },
+            "maitrise_arpeges": { nom: "Maîtrise des Arpèges", "cfg-gamme": "C", "cfg-mode-md": "accords", "cfg-mode-mg": "off", "cfg-ambitus-treble": "difficile", "cfg-vitesse": "45", "cfg-acceleration": "5", "cfg-chk-fondamental": false, "cfg-chk-renversement": false, "cfg-chk-arpege-simple": true, "cfg-chk-arpege-complexe": true }
         };
 
         let idPresetActif = "";
@@ -543,10 +533,10 @@
             fr: {
                 midiWaiting: "MIDI ATTENTE", midiReady: "MIDI PRÊT", midiError: "Pas de MIDI",
                 micReady: "MICRO PRÊT", micWaiting: "MICRO OFF",
-                btnSavePreset: "+ Sauver", btnScores: "Scores", presetChoose: "-- Modes de jeu --", presetArcade: "Mode Arcade (Défis)", presetUser: "Parties Enregistrées", menuTitle: "Paramètres de la partie",
+                btnSavePreset: "+ Sauver", btnErase: "Effacer", btnScores: "Scores", presetChoose: "-- Modes de jeu --", presetArcade: "Mode Arcade (Défis)", presetUser: "Parties Enregistrées", menuTitle: "Paramètres de la partie",
                 btnModes: "MODES :", lblInputSource: "Source d'entrée :", srcMidi: "Clavier numérique (MIDI USB)", srcMic: "Piano Acoustique (Microphone)",
                 lblMD: "Main Droite (Clé de Sol) :", lblMG: "Main Gauche (Clé de Fa) :", optMelody: "Mélodie",
-                optChords: "Accords", optChordsMelody: "Accords + Mélodie", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
+                optChords: "Accords", optChordsMelody: "Mélodie + Accords", optOff: "Désactivée", lblDebitTreble: "Débit Clé de Sol (Densité) :",
                 lblDebitBass: "Débit Clé de Fa (Densité) :", debitBeg: "Débutant", debitNorm: "Normal",
                 debitInt: "Intermédiaire", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalle maximal :", intTierce: "Tierce (Seconde, Tierce, Rep.)",
@@ -561,17 +551,18 @@
                 lblDe: "De :", lblA: "À :", lblTonalite: "Tonalité (Armure) :", btnStart: "Démarrer",
                 hudLevel: "Niveau", hudFautes: "Fautes", btnPause: "Pause (Espace)", btnMenu: "Menu",
                 pauseTitle: "JEU EN PAUSE", btnResume: "Reprendre (Espace)", btnReplay: "Rejouer", infiniteLabel: "Infini",
-                lblAccordsInv: "Structure des Accords :", optFondamental: "Fondamental uniquement", optRenversements: "Fondamental & Renversements",
+                lblAccordsInv: "Structure des Accords :", btnConfigAccords: "⚙️ Configurer...", titleAccordsConfig: "Structure des Accords",
+                chkFond: "Fondamental", chkRenv: "Renversements", chkArpS: "Arpèges Simples", chkArpC: "Arpèges Complexes", btnOk: "Valider",
                 lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé",
-                scoresTitle: "Tableau des Scores", btnClose: "Fermer"
+                scoresTitle: "Tableau des Scores", btnClose: "Fermer", errErase: "Vous ne pouvez effacer que vos modes enregistrés, pas les modes Arcade.", confirmErase: "Voulez-vous vraiment effacer ce mode ?"
             },
             en: {
                 midiWaiting: "MIDI WAITING", midiReady: "MIDI READY", midiError: "No MIDI",
                 micReady: "MIC READY", micWaiting: "MIC OFF",
-                btnSavePreset: "+ Save", btnScores: "Scores", presetChoose: "-- Game Modes --", presetArcade: "Arcade Mode", presetUser: "Saved Games", menuTitle: "Game Settings",
+                btnSavePreset: "+ Save", btnErase: "Delete", btnScores: "Scores", presetChoose: "-- Game Modes --", presetArcade: "Arcade Mode", presetUser: "Saved Games", menuTitle: "Game Settings",
                 btnModes: "MODES :", lblInputSource: "Input Source:", srcMidi: "Digital Keyboard (MIDI USB)", srcMic: "Acoustic Piano (Microphone)",
                 lblMD: "Right Hand (Treble Clef):", lblMG: "Left Hand (Bass Clef):", optMelody: "Melody",
-                optChords: "Chords", optChordsMelody: "Chords + Melody", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
+                optChords: "Chords", optChordsMelody: "Melody + Chords", optOff: "Disabled", lblDebitTreble: "Density Treble Clef:",
                 lblDebitBass: "Density Bass Clef:", debitBeg: "Beginner", debitNorm: "Normal",
                 debitInt: "Intermediate", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Maximum Interval (Jump):", intTierce: "Third (2nd, 3rd, Rep.)",
@@ -586,17 +577,18 @@
                 lblDe: "From:", lblA: "To:", lblTonalite: "Key Signature:", btnStart: "Start",
                 hudLevel: "Level", hudFautes: "Mistakes", btnPause: "Space (Pause)", btnMenu: "Menu",
                 pauseTitle: "GAME PAUSED", btnResume: "Resume (Space)", btnReplay: "Replay", infiniteLabel: "Infinite",
-                lblAccordsInv: "Chord Structure:", optFondamental: "Root Position Only", optRenversements: "Root & Inversions",
+                lblAccordsInv: "Chord Structure:", btnConfigAccords: "⚙️ Configure...", titleAccordsConfig: "Chord Structure",
+                chkFond: "Root Position", chkRenv: "Inversions", chkArpS: "Simple Arpeggios", chkArpC: "Complex Arpeggios", btnOk: "OK",
                 lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled",
-                scoresTitle: "High Scores", btnClose: "Close"
+                scoresTitle: "High Scores", btnClose: "Close", errErase: "You can only delete saved games, not built-in Arcade modes.", confirmErase: "Do you really want to delete this mode?"
             },
             es: {
                 midiWaiting: "ESPERANDO MIDI", midiReady: "MIDI LISTO", midiError: "Sin MIDI",
                 micReady: "MICRO LISTO", micWaiting: "MICRO APAGADO",
-                btnSavePreset: "+ Guardar", btnScores: "Puntuación", presetChoose: "-- Modos de juego --", presetArcade: "Modo Arcade", presetUser: "Partidas Guardadas", menuTitle: "Ajustes de la partida",
+                btnSavePreset: "+ Guardar", btnErase: "Borrar", btnScores: "Puntuación", presetChoose: "-- Modos de juego --", presetArcade: "Modo Arcade", presetUser: "Partidas Guardadas", menuTitle: "Ajustes de la partida",
                 btnModes: "MODOS :", lblInputSource: "Fuente de entrada:", srcMidi: "Teclado digital (MIDI USB)", srcMic: "Piano acústico (Micrófono)",
                 lblMD: "Mano Derecha (Clave de Sol):", lblMG: "Mano Izquierda (Clave de Fa):", optMelody: "Melodía",
-                optChords: "Acordes", optChordsMelody: "Acordes + Melodía", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
+                optChords: "Acordes", optChordsMelody: "Melodía + Acordes", optOff: "Desactivada", lblDebitTreble: "Densidad Clave de Sol:",
                 lblDebitBass: "Densidad Clave de Fa:", debitBeg: "Principiante", debitNorm: "Normal",
                 debitInt: "Intermedio", debitVar25: "Variable (0-25%)", debitVar50: "Variable (0-50%)", debitVar75: "Variable (0-75%)",
                 lblIntervalle: "Intervalo máximo:", intTierce: "Tercera (Segunda, Tercera, Rep.)",
@@ -611,9 +603,10 @@
                 lblDe: "De:", lblA: "A:", lblTonalite: "Tonalidad (Armadura):", btnStart: "Comenzar",
                 hudLevel: "Nivel", hudFautes: "Errores", btnPause: "Pausa (Espacio)", btnMenu: "Menú",
                 pauseTitle: "JUEGO EN PAUSE", btnResume: "Reanudar (Espacio)", btnReplay: "Volver a jugar", infiniteLabel: "Infinito",
-                lblAccordsInv: "Estructura de Acordes:", optFondamental: "Solo fundamental", optRenversements: "Fundamental e Inversiones",
+                lblAccordsInv: "Estructura de Acordes:", btnConfigAccords: "⚙️ Configurar...", titleAccordsConfig: "Estructura de Acordes",
+                chkFond: "Fundamental", chkRenv: "Inversiones", chkArpS: "Arpegios Simples", chkArpC: "Arpegios Complejos", btnOk: "Validar",
                 lblSansErreur: "Modo sin errores:", optSeOn: "Activado (Penalización)", optSeOff: "Désactivado",
-                scoresTitle: "Tabla de puntuación", btnClose: "Cerrar"
+                scoresTitle: "Tabla de puntuación", btnClose: "Cerrar", errErase: "Solo puedes borrar tus partidas guardadas.", confirmErase: "¿Seguro que quieres borrar este modo?"
             }
         };
 
@@ -624,10 +617,11 @@
         };
 
         const CONFIG_KEYS = [
-            "cfg-mode-md", "cfg-mode-mg", "cfg-accords-inv", "cfg-debit-treble", "cfg-debit-bass",
+            "cfg-mode-md", "cfg-mode-mg", "cfg-debit-treble", "cfg-debit-bass",
             "cfg-intervalle", "cfg-acceleration", "cfg-vitesse", "cfg-fautes",
             "cfg-ambitus-treble", "cfg-ambitus-bass", "treble-min", "treble-max",
-            "bass-min", "bass-max", "cfg-gamme", "cfg-lang", "cfg-sans-erreur", "cfg-input-source"
+            "bass-min", "bass-max", "cfg-gamme", "cfg-lang", "cfg-sans-erreur", "cfg-input-source",
+            "cfg-chk-fondamental", "cfg-chk-renversement", "cfg-chk-arpege-simple", "cfg-chk-arpege-complexe"
         ];
 
         // --- GESTIONNAIRE DE PRESETS ET SCORES ---
@@ -667,6 +661,27 @@
             }
         }
 
+        function effacerPreset() {
+            if (!idPresetActif || !idPresetActif.startsWith('user_')) {
+                alert(DICTIONNAIRE[langueActuelle].errErase);
+                return;
+            }
+            if(confirm(DICTIONNAIRE[langueActuelle].confirmErase)) {
+                let cleanId = idPresetActif.replace("user_", "");
+                let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
+                delete userPresets[cleanId];
+                localStorage.setItem("pianotement_user_presets", JSON.stringify(userPresets));
+                
+                let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
+                delete highScores[cleanId];
+                localStorage.setItem("pianotement_high_scores", JSON.stringify(highScores));
+                
+                rafraichirMenuPresets();
+                document.getElementById("cfg-presets").value = "";
+                idPresetActif = "";
+            }
+        }
+
         function afficherScores() {
             const scoresDiv = document.getElementById("scores-list");
             scoresDiv.innerHTML = "";
@@ -674,14 +689,12 @@
             const highScores = JSON.parse(localStorage.getItem("pianotement_high_scores")) || {};
             const userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets")) || {};
             
-            // Partie Arcade
             let html = `<h3 style="color:#f1c40f; border-bottom: 2px solid #555; padding-bottom:5px; margin-top:0;">Mode Arcade</h3>`;
             for (let id in PRESETS_ARCADE_USINE) {
                 let score = highScores[id] || "--";
                 html += `<div class="score-row"><span>${PRESETS_ARCADE_USINE[id].nom}</span> <span class="score-val">${score}</span></div>`;
             }
             
-            // Partie Utilisateurs
             if (Object.keys(userPresets).length > 0) {
                 html += `<h3 style="color:#3498db; border-bottom: 2px solid #555; padding-bottom:5px; margin-top: 30px;">Parties Enregistrées</h3>`;
                 for (let id in userPresets) {
@@ -694,48 +707,41 @@
             document.getElementById("scores-screen").style.display = "flex";
         }
 
-        function fermerScores() {
-            document.getElementById("scores-screen").style.display = "none";
-        }
-
         function creerNouveauPreset() {
             let nomUtilisateur = prompt("Donnez un nom à cette partie (ex: Ma partie en Dom) :");
             if (!nomUtilisateur || nomUtilisateur.trim() === "") return;
             
             nomUtilisateur = nomUtilisateur.trim();
-            let idPreset = "custom_" + nomUtilisateur.toLowerCase().replace(/[^a-z0-9]/g, "_");
+            let cleanId = "custom_" + nomUtilisateur.toLowerCase().replace(/[^a-z0-9]/g, "_");
             
             let configActuelle = JSON.parse(extraireConfigurationJson());
             configActuelle.nom = nomUtilisateur; 
             
             let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-            userPresets[idPreset] = configActuelle;
+            userPresets[cleanId] = configActuelle;
             localStorage.setItem("pianotement_user_presets", JSON.stringify(userPresets));
             
             rafraichirMenuPresets();
-            document.getElementById("cfg-presets").value = "user_" + idPreset;
-            idPresetActif = idPreset;
+            document.getElementById("cfg-presets").value = "user_" + cleanId;
+            idPresetActif = "user_" + cleanId;
         }
 
         function appliquerPresetSelectionne(valeurSelect) {
-            if (!valeurSelect) {
-                idPresetActif = "";
-                return;
-            }
-            
+            if (!valeurSelect) { idPresetActif = ""; return; }
             let configAAppliquer = null;
             
             if (valeurSelect.startsWith("arcade_")) {
-                idPresetActif = valeurSelect.replace("arcade_", "");
-                configAAppliquer = PRESETS_ARCADE_USINE[idPresetActif];
+                let cleanId = valeurSelect.replace("arcade_", "");
+                configAAppliquer = PRESETS_ARCADE_USINE[cleanId];
             } else if (valeurSelect.startsWith("user_")) {
-                idPresetActif = valeurSelect.replace("user_", "");
+                let cleanId = valeurSelect.replace("user_", "");
                 let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-                configAAppliquer = userPresets[idPresetActif];
+                configAAppliquer = userPresets[cleanId];
             }
             
             if (configAAppliquer) {
                 appliquerConfigurationJson(JSON.stringify(configAAppliquer));
+                idPresetActif = valeurSelect;
                 toggleInputSource(); 
                 toggleCustomAmbitus();
             }
@@ -743,11 +749,12 @@
 
         function enregistrerScoreFinDePartie(scoreObtenu) {
             if (!idPresetActif) return; 
+            let cleanId = idPresetActif.replace("user_", "").replace("arcade_", "");
             let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
-            let ancienRecord = highScores[idPresetActif] || 0;
+            let ancienRecord = highScores[cleanId] || 0;
             
             if (scoreObtenu > ancienRecord) {
-                highScores[idPresetActif] = scoreObtenu;
+                highScores[cleanId] = scoreObtenu;
                 localStorage.setItem("pianotement_high_scores", JSON.stringify(highScores));
                 rafraichirMenuPresets();
             }
@@ -762,15 +769,11 @@
                 for (let i = 0; i < 7; i++) {
                     let midiNum = (oct + 1) * 12 + offsets[i];
                     if (midiNum > 108) break;
-                    
                     let labelFr = `${nomsFr[i]}${oct}`;
                     let labelEn = `${nomsEn[i].toUpperCase()}${oct}`;
-                    
                     TOUTES_LES_NOTES.push({
-                        id: `${notesCmaj[i]}/${oct}`,
-                        labelFr: labelFr, labelEn: labelEn,
-                        keys: [`${notesCmaj[i]}/${oct}`], acc: [""], midi: [midiNum],
-                        diatonicIndex: absoluteIndex
+                        id: `${notesCmaj[i]}/${oct}`, labelFr: labelFr, labelEn: labelEn,
+                        keys: [`${notesCmaj[i]}/${oct}`], acc: [""], midi: [midiNum], diatonicIndex: absoluteIndex
                     });
                     absoluteIndex++;
                 }
@@ -782,23 +785,12 @@
         function updateBadgeVisual() {
             const badge = document.getElementById("midi-badge");
             const src = document.getElementById("cfg-input-source").value;
-            
             if (src === "midi") {
-                if (midiGlobalConnected) {
-                    badge.innerText = DICTIONNAIRE[langueActuelle].midiReady;
-                    badge.className = "midi-badge midi-connected";
-                } else {
-                    badge.innerText = DICTIONNAIRE[langueActuelle].midiWaiting;
-                    badge.className = "midi-badge";
-                }
+                if (midiGlobalConnected) { badge.innerText = DICTIONNAIRE[langueActuelle].midiReady; badge.className = "midi-badge midi-connected"; } 
+                else { badge.innerText = DICTIONNAIRE[langueActuelle].midiWaiting; badge.className = "midi-badge"; }
             } else {
-                if (audioCtx && audioAnalyser) {
-                    badge.innerText = DICTIONNAIRE[langueActuelle].micReady;
-                    badge.className = "midi-badge midi-connected";
-                } else {
-                    badge.innerText = DICTIONNAIRE[langueActuelle].micWaiting;
-                    badge.className = "midi-badge";
-                }
+                if (audioCtx && audioAnalyser) { badge.innerText = DICTIONNAIRE[langueActuelle].micReady; badge.className = "midi-badge midi-connected"; } 
+                else { badge.innerText = DICTIONNAIRE[langueActuelle].micWaiting; badge.className = "midi-badge"; }
             }
         }
 
@@ -806,35 +798,24 @@
             const src = document.getElementById("cfg-input-source").value;
             const selectMD = document.getElementById("cfg-mode-md");
             const selectMG = document.getElementById("cfg-mode-mg");
-            const selectInv = document.getElementById("cfg-accords-inv");
             const optMdChord = document.getElementById("opt-md-chord");
             const optMgChord = document.getElementById("opt-mg-chord");
             const optMdChordMelody = document.getElementById("opt-md-chord-melody");
             const optMgChordMelody = document.getElementById("opt-mg-chord-melody");
-            
             const selectTreble = document.getElementById("cfg-debit-treble");
             const selectBass = document.getElementById("cfg-debit-bass");
 
             if (src === "mic") {
                 if(selectMD.value === "accords" || selectMD.value === "accords_melodie") selectMD.value = "melodie";
                 if(selectMG.value === "accords" || selectMG.value === "accords_melodie") selectMG.value = "melodie";
-                optMdChord.style.display = "none";
-                optMgChord.style.display = "none";
-                optMdChordMelody.style.display = "none";
-                optMgChordMelody.style.display = "none";
-                selectInv.disabled = true;
-                selectTreble.disabled = true;
-                selectBass.disabled = true;
-                
+                optMdChord.style.display = "none"; optMgChord.style.display = "none";
+                optMdChordMelody.style.display = "none"; optMgChordMelody.style.display = "none";
+                selectTreble.disabled = true; selectBass.disabled = true;
                 initMicrophone();
             } else {
-                optMdChord.style.display = "block";
-                optMgChord.style.display = "block";
-                optMdChordMelody.style.display = "block";
-                optMgChordMelody.style.display = "block";
-                selectInv.disabled = false;
-                selectTreble.disabled = false;
-                selectBass.disabled = false;
+                optMdChord.style.display = "block"; optMgChord.style.display = "block";
+                optMdChordMelody.style.display = "block"; optMgChordMelody.style.display = "block";
+                selectTreble.disabled = false; selectBass.disabled = false;
                 updateBadgeVisual();
             }
             sauvegarderDansLocalStorage();
@@ -842,58 +823,31 @@
 
         function initMicrophone() {
             if (audioCtx) { updateBadgeVisual(); return Promise.resolve(); }
-            return navigator.mediaDevices.getUserMedia({ audio: true })
-                .then(stream => {
-                    audioStream = stream;
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    audioAnalyser = audioCtx.createAnalyser();
-                    audioAnalyser.fftSize = 2048;
-                    let source = audioCtx.createMediaStreamSource(stream);
-                    source.connect(audioAnalyser);
-                    updateBadgeVisual();
-                })
-                .catch(err => {
-                    console.error("Accès micro refusé ou indisponible:", err);
-                    document.getElementById("cfg-input-source").value = "midi";
-                    toggleInputSource();
-                });
+            return navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                audioStream = stream; audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                audioAnalyser = audioCtx.createAnalyser(); audioAnalyser.fftSize = 2048;
+                audioCtx.createMediaStreamSource(stream).connect(audioAnalyser);
+                updateBadgeVisual();
+            }).catch(err => {
+                document.getElementById("cfg-input-source").value = "midi"; toggleInputSource();
+            });
         }
 
         function autoCorrelate(buffer, sampleRate) {
-            let rms = 0;
-            for (let i = 0; i < buffer.length; i++) {
-                rms += buffer[i] * buffer[i];
-            }
-            rms = Math.sqrt(rms / buffer.length);
-            if (rms < 0.02) return -1;
+            let rms = 0; for (let i = 0; i < buffer.length; i++) rms += buffer[i] * buffer[i];
+            rms = Math.sqrt(rms / buffer.length); if (rms < 0.02) return -1;
 
-            let r1 = 0, r2 = buffer.length - 1;
-            let thres = 0.2;
-            for (let i = 0; i < buffer.length / 2; i++) {
-                if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
-            }
-            for (let i = buffer.length - 1; i >= buffer.length / 2; i--) {
-                if (Math.abs(buffer[i]) < thres) { r2 = i; break; }
-            }
+            let r1 = 0, r2 = buffer.length - 1; let thres = 0.2;
+            for (let i = 0; i < buffer.length / 2; i++) if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
+            for (let i = buffer.length - 1; i >= buffer.length / 2; i--) if (Math.abs(buffer[i]) < thres) { r2 = i; break; }
             let buf = buffer.slice(r1, r2);
-
             let c = new Float32Array(buf.length);
-            for (let i = 0; i < buf.length; i++) {
-                for (let j = 0; j < buf.length - i; j++) {
-                    c[i] += buf[j] * buf[j + i];
-                }
-            }
+            for (let i = 0; i < buf.length; i++) for (let j = 0; j < buf.length - i; j++) c[i] += buf[j] * buf[j + i];
 
-            let d = 0;
-            while (c[d] > c[d + 1]) d++;
+            let d = 0; while (c[d] > c[d + 1]) d++;
             let maxval = -1, maxpos = -1;
-            for (let i = d; i < c.length; i++) {
-                if (c[i] > maxval && c[i] > c[i - 1] && c[i] > c[i + 1]) {
-                    maxval = c[i]; maxpos = i;
-                }
-            }
-
-            if (maxpos !== -1) { return sampleRate / maxpos; }
+            for (let i = d; i < c.length; i++) if (c[i] > maxval && c[i] > c[i - 1] && c[i] > c[i + 1]) { maxval = c[i]; maxpos = i; }
+            if (maxpos !== -1) return sampleRate / maxpos;
             return -1;
         }
 
@@ -901,18 +855,14 @@
             if (!jeuActif || enPause || !audioAnalyser) return;
             audioAnalyser.getFloatTimeDomainData(audioBuffer);
             let freq = autoCorrelate(audioBuffer, audioCtx.sampleRate);
-            
             if (freq !== -1) {
                 let midiNote = Math.round(12 * Math.log2(freq / 440) + 69);
                 if (midiNote >= 21 && midiNote <= 108) {
                     if (midiNote !== dernierPitchMidiDetecte) {
-                        dernierPitchMidiDetecte = midiNote;
-                        traiterEntreeNote(midiNote);
+                        dernierPitchMidiDetecte = midiNote; traiterEntreeNote(midiNote);
                     }
                 }
-            } else {
-                dernierPitchMidiDetecte = null;
-            }
+            } else dernierPitchMidiDetecte = null;
         }
 
         function changerLangue(lang) {
@@ -920,40 +870,28 @@
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
                 if (DICTIONNAIRE[lang][key]) {
-                    if (el.tagName === "OPTGROUP") {
-                        el.label = DICTIONNAIRE[lang][key];
-                    } else {
-                        el.innerText = DICTIONNAIRE[lang][key];
-                    }
+                    if (el.tagName === "OPTGROUP") el.label = DICTIONNAIRE[lang][key];
+                    else el.innerText = DICTIONNAIRE[lang][key];
                 }
             });
             
-            let valTMin = document.getElementById("treble-min").value;
-            let valTMax = document.getElementById("treble-max").value;
-            let valBMin = document.getElementById("bass-min").value;
-            let valBMax = document.getElementById("bass-max").value;
-            
+            let valTMin = document.getElementById("treble-min").value; let valTMax = document.getElementById("treble-max").value;
+            let valBMin = document.getElementById("bass-min").value; let valBMax = document.getElementById("bass-max").value;
             peuplerSelectsAmbitus();
-            
             if(valTMin) document.getElementById("treble-min").value = valTMin;
             if(valTMax) document.getElementById("treble-max").value = valTMax;
             if(valBMin) document.getElementById("bass-min").value = valBMin;
             if(valBMax) document.getElementById("bass-max").value = valBMax;
-            
-            updateBadgeVisual();
-            sauvegarderDansLocalStorage();
+            updateBadgeVisual(); sauvegarderDansLocalStorage();
         }
 
         function peuplerSelectsAmbitus() {
             const p = (id, def) => {
-                const s = document.getElementById(id);
-                s.innerHTML = "";
+                const s = document.getElementById(id); s.innerHTML = "";
                 TOUTES_LES_NOTES.forEach(n => {
-                    let o = document.createElement("option");
-                    o.value = n.id;
+                    let o = document.createElement("option"); o.value = n.id;
                     o.innerText = (langueActuelle === "fr") ? n.labelFr : n.labelEn;
-                    if(n.id === def) o.selected = true;
-                    s.appendChild(o);
+                    if(n.id === def) o.selected = true; s.appendChild(o);
                 });
             };
             p("treble-min", "c/4"); p("treble-max", "b/5");
@@ -970,7 +908,7 @@
             let idxMin = TOUTES_LES_NOTES.findIndex(n => n.id === idMin);
             let idxMax = TOUTES_LES_NOTES.findIndex(n => n.id === idMax);
             if (idxMin > idxMax) [idxMin, idxMax] = [idxMax, idxMin]; 
-            return TOUTES_LES_NOTES.slice(idxMin, idxMax + 1);
+            return TOUTES_LES_NOTES.slice(idxMin, idxMax + 1).map(n => ({ type: 'chord', keys: [n.keys[0]], acc: [""], midi: [n.midi[0]], diatonicIndex: n.diatonicIndex }));
         }
 
         function generateTriad(rootIndex, inversionLevel) {
@@ -978,130 +916,88 @@
             if (inversionLevel === 1) i1 += 7;
             if (inversionLevel === 2) { i1 += 7; i2 += 7; }
             let indices = [i1, i2, i3].sort((a,b) => a-b);
-            
             let n1 = TOUTES_LES_NOTES[indices[0]] || TOUTES_LES_NOTES[0];
             let n2 = TOUTES_LES_NOTES[indices[1]] || TOUTES_LES_NOTES[0];
             let n3 = TOUTES_LES_NOTES[indices[2]] || TOUTES_LES_NOTES[0];
+            return { type: 'chord', keys: [n1.keys[0], n2.keys[0], n3.keys[0]], acc: ["", "", ""], midi: [n1.midi[0], n2.midi[0], n3.midi[0]], diatonicIndex: n1.diatonicIndex };
+        }
 
-            return {
-                keys: [n1.keys[0], n2.keys[0], n3.keys[0]],
-                acc: ["", "", ""],
-                midi: [n1.midi[0], n2.midi[0], n3.midi[0]],
-                diatonicIndex: n1.diatonicIndex
-            };
+        function generateArpeggio(rootIndex, pattern) {
+            let sequence = [];
+            for (let offset of pattern) {
+                let n = TOUTES_LES_NOTES[rootIndex + offset];
+                if (!n) return null; 
+                sequence.push({ keys: [n.keys[0]], acc: [""], midi: [n.midi[0]] });
+            }
+            return { type: 'arpeggio', sequence: sequence, diatonicIndex: rootIndex };
         }
 
         let config = { maxFautes: 10, modeInfini: false, vitesse: 65, acceleration: 5, modeMD: 'melodie', modeMG: 'melodie', intervalleMax: 'libre', modeSansErreur: true, inputSource: "midi" };
         let poolTreble = [], poolBass = [];
-        
         let trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
         let trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
-        
-        let dernierDiatonicIndexTreble = null;
-        let dernierDiatonicIndexBass = null;
-
-        let jeuActif = false, enPause = false;
-        let score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
-        
-        let currentX = 0; 
-        let dernierXTreble = 250, dernierXBass = 250;
-        let colonnesEnCours = [];
-        let dernierTimestamp = 0;
+        let dernierDiatonicIndexTreble = null; let dernierDiatonicIndexBass = null;
+        let jeuActif = false, enPause = false; let score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
+        let currentX = 0; let dernierXTreble = 250, dernierXBass = 250;
+        let colonnesEnCours = []; let dernierTimestamp = 0;
         const trackDOM = document.getElementById("track");
 
         function dessinerEnvironnementStatique() {
             const armure = document.getElementById("cfg-gamme").value; 
             const viewport = document.getElementById("viewport");
             const largeurTotale = viewport.clientWidth || window.innerWidth;
-
-            const bgDiv = document.getElementById("bg-staves");
-            bgDiv.innerHTML = "";
+            const bgDiv = document.getElementById("bg-staves"); bgDiv.innerHTML = "";
             const rendererBg = new VF.Renderer(bgDiv, VF.Renderer.Backends.SVG);
-            rendererBg.resize(largeurTotale, 560);
-            const ctxBg = rendererBg.getContext();
-            ctxBg.scale(1.4, 1.4);
-            
+            rendererBg.resize(largeurTotale, 560); const ctxBg = rendererBg.getContext(); ctxBg.scale(1.4, 1.4);
             new VF.Stave(125, 50, (largeurTotale - 175) / 1.4).setContext(ctxBg).draw();
             new VF.Stave(125, 230, (largeurTotale - 175) / 1.4).setContext(ctxBg).draw();
-
-            const clefsDiv = document.getElementById("fixed-clefs");
-            clefsDiv.innerHTML = "";
+            const clefsDiv = document.getElementById("fixed-clefs"); clefsDiv.innerHTML = "";
             const rendererClefs = new VF.Renderer(clefsDiv, VF.Renderer.Backends.SVG);
-            rendererClefs.resize(180, 560);
-            const ctxClefs = rendererClefs.getContext();
-            ctxClefs.scale(1.4, 1.4);
-            
+            rendererClefs.resize(180, 560); const ctxClefs = rendererClefs.getContext(); ctxClefs.scale(1.4, 1.4);
             new VF.Stave(10, 50, 110).addClef("treble").addKeySignature(armure).setContext(ctxClefs).draw();
             new VF.Stave(10, 230, 110).addClef("bass").addKeySignature(armure).setContext(ctxClefs).draw();
         }
 
         function piocherNoteOptimisee(pool, tracker, dernierDiatonicIndex, maxIntervalleConfig) {
             tracker.notesGenereesCount++;
-            if (tracker.historiqueVisites.size >= pool.length || tracker.notesGenereesCount % 75 === 0) {
-                tracker.historiqueVisites.clear();
-            }
-
-            let candidatsParIntervalle = pool;
+            if (tracker.historiqueVisites.size >= pool.length || tracker.notesGenereesCount % 75 === 0) tracker.historiqueVisites.clear();
+            let candidats = pool;
             if (maxIntervalleConfig !== "libre" && dernierDiatonicIndex !== null) {
-                const intervalleMaxAutorise = parseInt(maxIntervalleConfig); 
-                candidatsParIntervalle = pool.filter(note => {
-                    let distance = Math.abs(note.diatonicIndex - dernierDiatonicIndex);
-                    return distance <= intervalleMaxAutorise;
-                });
-                if (candidatsParIntervalle.length === 0) candidatsParIntervalle = pool;
+                const intervalleMax = parseInt(maxIntervalleConfig); 
+                candidats = pool.filter(n => Math.abs(n.diatonicIndex - dernierDiatonicIndex) <= intervalleMax);
+                if (candidats.length === 0) candidats = pool;
             }
-
-            let candidatsNonVisites = candidatsParIntervalle.filter(note => !tracker.historiqueVisites.has(note.id || JSON.stringify(note.keys)));
-            let noteChoisie = candidatsNonVisites.length > 0 
-                ? candidatsNonVisites[Math.floor(Math.random() * candidatsNonVisites.length)]
-                : candidatsParIntervalle[Math.floor(Math.random() * candidatsParIntervalle.length)];
-
-            tracker.historiqueVisites.add(noteChoisie.id || JSON.stringify(noteChoisie.keys));
-            return noteChoisie;
+            let strKey = n => n.type === 'arpeggio' ? JSON.stringify(n.sequence.map(s=>s.midi)) : JSON.stringify(n.keys);
+            let nonVisites = candidats.filter(n => !tracker.historiqueVisites.has(strKey(n)));
+            let choisi = nonVisites.length > 0 ? nonVisites[Math.floor(Math.random() * nonVisites.length)] : candidats[Math.floor(Math.random() * candidats.length)];
+            tracker.historiqueVisites.add(strKey(choisi));
+            return choisi;
         }
 
         function calculerProchainEspacementTreble() {
-            if (config.inputSource === "mic") {
-                let baseVal = parseInt(document.getElementById("cfg-debit-bass").value);
-                return isNaN(baseVal) ? 180 : baseVal;
-            }
-            
+            if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); return isNaN(baseVal) ? 180 : baseVal; }
             let mode = document.getElementById("cfg-debit-treble").value;
             if (mode.startsWith("var")) {
                 if (varCompteurTreble >= varTargetTreble) {
-                    varCompteurTreble = 0;
-                    varTargetTreble = Math.floor(Math.random() * 6) + 5; 
-                    let maxPct = 0.25;
-                    if (mode === "var50") maxPct = 0.50;
-                    if (mode === "var75") maxPct = 0.75;
-                    
+                    varCompteurTreble = 0; varTargetTreble = Math.floor(Math.random() * 6) + 5; 
+                    let maxPct = mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25);
                     varFacteurTreble = 1 + ((Math.random() * 2 - 1) * maxPct);
                 }
-                varCompteurTreble++;
-                return 180 * varFacteurTreble;
+                varCompteurTreble++; return 180 * varFacteurTreble;
             }
             return parseInt(mode);
         }
 
         function calculerProchainEspacementBass() {
-            if (config.inputSource === "mic") {
-                let baseVal = parseInt(document.getElementById("cfg-debit-bass").value);
-                return isNaN(baseVal) ? 180 : baseVal;
-            }
-
+            if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); return isNaN(baseVal) ? 180 : baseVal; }
             let mode = document.getElementById("cfg-debit-bass").value;
             if (mode.startsWith("var")) {
                 if (varCompteurBass >= varTargetBass) {
-                    varCompteurBass = 0;
-                    varTargetBass = Math.floor(Math.random() * 6) + 5; 
-                    let maxPct = 0.25;
-                    if (mode === "var50") maxPct = 0.50;
-                    if (mode === "var75") maxPct = 0.75;
-                    
+                    varCompteurBass = 0; varTargetBass = Math.floor(Math.random() * 6) + 5; 
+                    let maxPct = mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25);
                     varFacteurBass = 1 + ((Math.random() * 2 - 1) * maxPct);
                 }
-                varCompteurBass++;
-                return 180 * varFacteurBass;
+                varCompteurBass++; return 180 * varFacteurBass;
             }
             return parseInt(mode);
         }
@@ -1109,28 +1005,26 @@
         async function lancerJeu() {
             sauvegarderDansLocalStorage();
             config.inputSource = document.getElementById("cfg-input-source").value;
-            
-            if (config.inputSource === "mic") {
-                await initMicrophone();
-            }
+            if (config.inputSource === "mic") await initMicrophone();
 
             let armureChoisie = document.getElementById("cfg-gamme").value;
             genererBaseDeNotes(armureChoisie);
             
             let f = document.getElementById("cfg-fautes").value;
-            config.modeInfini = (f === "infinity");
-            config.maxFautes = config.modeInfini ? 0 : parseInt(f);
+            config.modeInfini = (f === "infinity"); config.maxFautes = config.modeInfini ? 0 : parseInt(f);
             config.vitesse = parseInt(document.getElementById("cfg-vitesse").value);
             config.acceleration = parseInt(document.getElementById("cfg-acceleration").value);
-            config.modeMD = document.getElementById("cfg-mode-md").value;
-            config.modeMG = document.getElementById("cfg-mode-mg").value;
-            config.intervalleMax = document.getElementById("cfg-intervalle").value;
-            config.modeSansErreur = (document.getElementById("cfg-sans-erreur").value === "on");
-            let invMode = document.getElementById("cfg-accords-inv").value;
+            config.modeMD = document.getElementById("cfg-mode-md").value; config.modeMG = document.getElementById("cfg-mode-mg").value;
+            config.intervalleMax = document.getElementById("cfg-intervalle").value; config.modeSansErreur = (document.getElementById("cfg-sans-erreur").value === "on");
+
+            let chkFond = document.getElementById("cfg-chk-fondamental").checked;
+            let chkRenv = document.getElementById("cfg-chk-renversement").checked;
+            let chkArpS = document.getElementById("cfg-chk-arpege-simple").checked;
+            let chkArpC = document.getElementById("cfg-chk-arpege-complexe").checked;
+            if (!chkFond && !chkRenv && !chkArpS && !chkArpC) chkFond = true;
 
             varCompteurTreble = 0; varTargetTreble = Math.floor(Math.random() * 6) + 5; varFacteurTreble = 1.0;
             varCompteurBass = 0; varTargetBass = Math.floor(Math.random() * 6) + 5; varFacteurBass = 1.0;
-
             poolTreble = []; poolBass = [];
 
             const tMode = document.getElementById("cfg-ambitus-treble").value;
@@ -1141,9 +1035,11 @@
                 else poolTreble = getPool(document.getElementById("treble-min").value, document.getElementById("treble-max").value);
             }
             if (config.modeMD === 'accords' || config.modeMD === 'accords_melodie') {
-                for(let r=21; r<=27; r++) {
-                    poolTreble.push(generateTriad(r, 0));
-                    if(invMode === "renversements") { poolTreble.push(generateTriad(r, 1)); poolTreble.push(generateTriad(r, 2)); }
+                for(let r=21; r<=27; r++) { // Do4 à Si4
+                    if (chkFond) poolTreble.push(generateTriad(r, 0));
+                    if (chkRenv) { poolTreble.push(generateTriad(r, 1)); poolTreble.push(generateTriad(r, 2)); }
+                    if (chkArpS) ARPEGES_SIMPLES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolTreble.push(a); });
+                    if (chkArpC) ARPEGES_COMPLEXES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolTreble.push(a); });
                 }
             }
 
@@ -1155,133 +1051,115 @@
                 else poolBass = getPool(document.getElementById("bass-min").value, document.getElementById("bass-max").value);
             }
             if (config.modeMG === 'accords' || config.modeMG === 'accords_melodie') {
-                for(let r=7; r<=13; r++) {
-                    poolBass.push(generateTriad(r, 0));
-                    if(invMode === "renversements") { poolBass.push(generateTriad(r, 1)); poolBass.push(generateTriad(r, 2)); }
+                for(let r=7; r<=13; r++) { // Do2 à Si2
+                    if (chkFond) poolBass.push(generateTriad(r, 0));
+                    if (chkRenv) { poolBass.push(generateTriad(r, 1)); poolBass.push(generateTriad(r, 2)); }
+                    if (chkArpS) ARPEGES_SIMPLES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolBass.push(a); });
+                    if (chkArpC) ARPEGES_COMPLEXES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolBass.push(a); });
                 }
             }
 
+            document.getElementById("top-controls-modes").style.display = "none";
             document.getElementById("menu-config").style.display = "none";
             document.getElementById("game-ui").style.display = "block";
             document.getElementById("game-over-screen").style.display = "none";
             document.getElementById("pause-screen").style.display = "none";
 
             dessinerEnvironnementStatique();
-
-            score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0;
-            currentX = 0; 
+            score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0; currentX = 0; 
             
             if (config.inputSource === "mic") {
                 let baseVal = parseInt(document.getElementById("cfg-debit-bass").value);
                 if (isNaN(baseVal)) baseVal = 180;
-                dernierXBass = 250;
-                dernierXTreble = 250 + (baseVal * 0.25);
+                dernierXBass = 250; dernierXTreble = 250 + (baseVal * 0.25);
             } else {
-                dernierXTreble = 250; 
-                dernierXBass = 250;
+                dernierXTreble = 250; dernierXBass = 250;
             }
 
-            dernierDiatonicIndexTreble = null; dernierDiatonicIndexBass = null;
-            dernierPitchMidiDetecte = null;
-            
+            dernierDiatonicIndexTreble = null; dernierDiatonicIndexBass = null; dernierPitchMidiDetecte = null;
             trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
             trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
+            colonnesEnCours = []; trackDOM.innerHTML = ""; enPause = false;
             
-            colonnesEnCours = [];
-            trackDOM.innerHTML = "";
-            enPause = false;
-            
-            document.getElementById("lbl-score").innerText = score;
-            document.getElementById("lbl-level").innerText = niveau;
+            document.getElementById("lbl-score").innerText = score; document.getElementById("lbl-level").innerText = niveau;
             document.getElementById("lbl-fautes").innerText = config.modeInfini ? `0 (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `0 / ${config.maxFautes}`;
             
             const dynamicWidth = document.getElementById("viewport").clientWidth || window.innerWidth;
-            
             while (dernierXTreble < dynamicWidth + 250) {
                 dernierXTreble += calculerProchainEspacementTreble();
-                if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
+                if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true);
             }
             while (dernierXBass < dynamicWidth + 250) {
                 dernierXBass += calculerProchainEspacementBass();
-                if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
+                if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false);
             }
             
-            jeuActif = true;
-            dernierTimestamp = performance.now();
-            requestAnimationFrame(boucleDeJeu);
+            jeuActif = true; dernierTimestamp = performance.now(); requestAnimationFrame(boucleDeJeu);
         }
 
         function togglePause() {
-            if (!jeuActif) return;
-            enPause = !enPause;
+            if (!jeuActif) return; enPause = !enPause;
             document.getElementById("pause-screen").style.display = enPause ? "flex" : "none";
             if (!enPause) { dernierTimestamp = performance.now(); requestAnimationFrame(boucleDeJeu); }
         }
 
         window.addEventListener('keydown', function(e) {
-            if (e.code === 'Space' && document.getElementById("game-ui").style.display === "block") {
-                e.preventDefault(); togglePause();
-            }
+            if (e.code === 'Space' && document.getElementById("game-ui").style.display === "block") { e.preventDefault(); togglePause(); }
         });
+        window.addEventListener('resize', function() { if (jeuActif) dessinerEnvironnementStatique(); });
 
-        window.addEventListener('resize', function() {
-            if (jeuActif) {
-                dessinerEnvironnementStatique();
-            }
-        });
-
-        function creerColonne(absoluteX, includeTreble, includeBass) {
-            let tItem = null, bItem = null;
-            if (includeTreble && poolTreble.length > 0) {
-                tItem = piocherNoteOptimisee(poolTreble, trackerTreble, dernierDiatonicIndexTreble, config.intervalleMax);
-                dernierDiatonicIndexTreble = tItem.diatonicIndex;
-            }
-            if (includeBass && poolBass.length > 0) {
-                bItem = piocherNoteOptimisee(poolBass, trackerBass, dernierDiatonicIndexBass, config.intervalleMax);
-                dernierDiatonicIndexBass = bItem.diatonicIndex;
-            }
+        function creerColonne(absoluteX, isTreble) {
+            let pool = isTreble ? poolTreble : poolBass;
+            let tracker = isTreble ? trackerTreble : trackerBass;
+            let dernierDiatonic = isTreble ? dernierDiatonicIndexTreble : dernierDiatonicIndexBass;
+            
+            let item = piocherNoteOptimisee(pool, tracker, dernierDiatonic, config.intervalleMax);
+            if (isTreble) dernierDiatonicIndexTreble = item.diatonicIndex;
+            else dernierDiatonicIndexBass = item.diatonicIndex;
 
             const colDiv = document.createElement("div");
-            colDiv.className = "note-column";
-            trackDOM.appendChild(colDiv);
+            colDiv.className = "note-column"; trackDOM.appendChild(colDiv);
 
-            const colonneObj = {
-                xBase: absoluteX, element: colDiv, processed: false,
-                treble: includeTreble && tItem ? { keys: tItem.keys, acc: tItem.acc, midi: tItem.midi, pressed: [], status: 'pending' } : { status: 'ignored' },
-                bass: includeBass && bItem ? { keys: bItem.keys, acc: bItem.acc, midi: bItem.midi, pressed: [], status: 'pending' } : { status: 'ignored' }
-            };
+            const colObj = { xBase: absoluteX, element: colDiv, processed: false, clef: isTreble ? 'treble' : 'bass', type: item.type, subNotes: [] };
+            
+            if (item.type === 'arpeggio') {
+                colObj.subNotes = item.sequence.map(n => ({ keys: n.keys, acc: n.acc, midi: n.midi, pressed: [], status: 'pending', localX: 0 }));
+            } else {
+                colObj.subNotes = [{ keys: item.keys, acc: item.acc, midi: item.midi, pressed: [], status: 'pending', localX: 0 }];
+            }
 
-            redessinerColonne(colonneObj);
-            colonnesEnCours.push(colonneObj);
+            redessinerColonne(colObj); colonnesEnCours.push(colObj);
+            return (item.type === 'arpeggio') ? (item.sequence.length - 1) * 45 : 0;
         }
 
         function redessinerColonne(col) {
             col.element.innerHTML = ""; 
-            const renderer = new VF.Renderer(col.element, VF.Renderer.Backends.SVG);
-            renderer.resize(170, 560); 
-            const context = renderer.getContext();
-            context.scale(1.4, 1.4);
-
-            const staveTreble = new VF.Stave(0, 50, 120);
-            const staveBass = new VF.Stave(0, 230, 120);
-
-            if (col.treble.status !== 'ignored') {
-                const noteT = new VF.StaveNote({ clef: "treble", keys: col.treble.keys, duration: "q" });
-                col.treble.acc.forEach((a, i) => { if(a) noteT.addModifier(new VF.Accidental(a), i); });
-                appliquerCouleur(noteT, col.treble.status);
-                const voiceT = new VF.Voice({num_beats: 1, beat_value: 4}).addTickables([noteT]);
-                new VF.Formatter().joinVoices([voiceT]).format([voiceT], 80);
-                voiceT.draw(context, staveTreble);
-            }
+            let isArp = col.type === 'arpeggio';
+            let baseWidth = isArp ? Math.max(170, col.subNotes.length * 45 + 50) : 170;
+            col.element.style.width = baseWidth + "px";
             
-            if (col.bass.status !== 'ignored') {
-                const noteB = new VF.StaveNote({ clef: "bass", keys: col.bass.keys, duration: "q" });
-                col.bass.acc.forEach((a, i) => { if(a) noteB.addModifier(new VF.Accidental(a), i); });
-                appliquerCouleur(noteB, col.bass.status);
-                const voiceB = new VF.Voice({num_beats: 1, beat_value: 4}).addTickables([noteB]);
-                new VF.Formatter().joinVoices([voiceB]).format([voiceB], 80);
-                voiceB.draw(context, staveBass);
-            }
+            const renderer = new VF.Renderer(col.element, VF.Renderer.Backends.SVG);
+            renderer.resize(baseWidth * 1.4, 560); 
+            const context = renderer.getContext(); context.scale(1.4, 1.4);
+            const stave = new VF.Stave(0, col.clef === 'treble' ? 50 : 230, baseWidth);
+
+            let staveNotes = [];
+            col.subNotes.forEach(sub => {
+                let note = new VF.StaveNote({ clef: col.clef, keys: sub.keys, duration: isArp ? "8" : "q" });
+                sub.acc.forEach((a, i) => { if(a) note.addModifier(new VF.Accidental(a), i); });
+                appliquerCouleur(note, sub.status); staveNotes.push(note);
+            });
+
+            let voice = new VF.Voice({num_beats: staveNotes.length, beat_value: isArp ? 8 : 4}).addTickables(staveNotes);
+            new VF.Formatter().joinVoices([voice]).format([voice], baseWidth - 40);
+
+            let beam = null;
+            if (isArp && staveNotes.length > 1) beam = new VF.Beam(staveNotes);
+
+            voice.draw(context, stave);
+            if (beam) beam.setContext(context).draw();
+
+            staveNotes.forEach((sn, idx) => { col.subNotes[idx].localX = sn.getAbsoluteX() * 1.4; });
         }
 
         function appliquerCouleur(staveNote, status) {
@@ -1292,14 +1170,9 @@
 
         function boucleDeJeu(timestamp) {
             if (!jeuActif || enPause) return;
-            let dt = (timestamp - dernierTimestamp) / 1000;
-            
-            if (dt > 0.1) { dt = 0.0166; }
-            
-            dernierTimestamp = timestamp;
-            currentX += config.vitesse * dt;
-
-            if (config.inputSource === "mic") { analyserFrequenceMicro(); }
+            let dt = (timestamp - dernierTimestamp) / 1000; if (dt > 0.1) dt = 0.0166;
+            dernierTimestamp = timestamp; currentX += config.vitesse * dt;
+            if (config.inputSource === "mic") analyserFrequenceMicro();
 
             const viewWidth = document.getElementById("viewport").clientWidth || window.innerWidth;
 
@@ -1307,32 +1180,38 @@
                 let positionEcran = col.xBase - currentX;
                 col.element.style.transform = `translate3d(${positionEcran}px, 0, 0)`;
 
-                if (!col.processed && positionEcran < 135) { 
-                    let updated = false;
-                    if (col.treble.status === 'pending') { col.treble.status = 'missed'; fautes++; updated = true; }
-                    if (col.bass.status === 'pending') { col.bass.status = 'missed'; fautes++; updated = true; }
-                    
-                    if(updated) {
-                        col.processed = true;
+                if (!col.processed) {
+                    let allProcessed = true; let reqRedraw = false;
+                    col.subNotes.forEach(sub => {
+                        let notePos = positionEcran + sub.localX;
+                        if (sub.status === 'pending') {
+                            if (notePos < 135) {
+                                sub.status = 'missed'; fautes++; reqRedraw = true;
+                            } else allProcessed = false;
+                        }
+                    });
+
+                    if (reqRedraw) {
                         redessinerColonne(col);
                         document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
                         if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
                     }
+                    if (allProcessed) col.processed = true;
                 }
             }
 
             colonnesEnCours = colonnesEnCours.filter(col => {
-                if (col.xBase - currentX < -170) { col.element.remove(); return false; }
+                if ((col.xBase - currentX + (col.subNotes.length * 45 * 1.4)) < -170) { col.element.remove(); return false; }
                 return true; 
             });
 
             while (dernierXTreble < currentX + viewWidth + 250) {
                 dernierXTreble += calculerProchainEspacementTreble();
-                if (config.modeMD !== "off") creerColonne(dernierXTreble, true, false);
+                if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true);
             }
             while (dernierXBass < currentX + viewWidth + 250) {
                 dernierXBass += calculerProchainEspacementBass();
-                if (config.modeMG !== "off") creerColonne(dernierXBass, false, true);
+                if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false);
             }
 
             requestAnimationFrame(boucleDeJeu);
@@ -1342,7 +1221,7 @@
             jeuActif = false;
             document.getElementById("final-score").innerText = `Niveau ${niveau} | Score : ${score} pts`;
             document.getElementById("game-over-screen").style.display = "flex";
-            
+            document.getElementById("top-controls-modes").style.display = "flex";
             enregistrerScoreFinDePartie(score);
         }
 
@@ -1350,84 +1229,74 @@
             jeuActif = false; enPause = false;
             document.getElementById("game-ui").style.display = "none";
             document.getElementById("menu-config").style.display = "block";
+            document.getElementById("top-controls-modes").style.display = "flex";
             updateBadgeVisual();
         }
 
         function traiterEntreeNote(noteJouee) {
-            let cibles = colonnesEnCours.filter(col => {
-                let posEcr = col.xBase - currentX;
-                return !col.processed && posEcr >= 140 && posEcr <= 380; 
-            });
-            
+            let cibles = colonnesEnCours.filter(col => !col.processed);
             let noteTrouvee = false;
 
-            for (let cible of cibles) {
-                let noteValideeSurCetteCle = false;
-
-                if (cible.treble.status === 'pending' && cible.treble.midi.includes(noteJouee)) {
-                    noteTrouvee = true;
-                    if (!cible.treble.pressed.includes(noteJouee)) cible.treble.pressed.push(noteJouee);
-                    if (cible.treble.pressed.length === cible.treble.midi.length) {
-                        cible.treble.status = 'hit'; 
-                        score += (10 * cible.treble.midi.length); 
-                        noteValideeSurCetteCle = true;
-                    }
-                }
+            for (let col of cibles) {
+                let positionEcran = col.xBase - currentX;
+                let firstNotePos = positionEcran + col.subNotes[0].localX;
                 
-                if (cible.bass.status === 'pending' && cible.bass.midi.includes(noteJouee)) {
-                    noteTrouvee = true;
-                    if (!cible.bass.pressed.includes(noteJouee)) cible.bass.pressed.push(noteJouee);
-                    if (cible.bass.pressed.length === cible.bass.midi.length) {
-                        cible.bass.status = 'hit'; 
-                        score += (10 * cible.bass.midi.length); 
-                        noteValideeSurCetteCle = true;
-                    }
-                }
-
-                if (noteTrouvee) {
-                    if (noteValideeSurCetteCle) {
-                        document.getElementById("lbl-score").innerText = score;
-                        redessinerColonne(cible);
-                    }
-                    if ((cible.treble.status === 'hit' || cible.treble.status === 'ignored') && 
-                        (cible.bass.status === 'hit' || cible.bass.status === 'ignored')) {
-                        cible.processed = true;
-                        notesValideesCeNiveau++;
-                        if (notesValideesCeNiveau >= 15) {
-                            niveau++; notesValideesCeNiveau = 0; 
-                            config.vitesse *= (1 + (config.acceleration / 100));
-                            document.getElementById("lbl-level").innerText = niveau;
+                if (firstNotePos <= 420) { 
+                    if (col.type === 'arpeggio') {
+                        // V14.5 Fix: On cherche STRICTEMENT la première note en attente
+                        let firstPending = col.subNotes.find(s => s.status === 'pending');
+                        if (firstPending && firstPending.midi.includes(noteJouee)) {
+                            noteTrouvee = true;
+                            if (!firstPending.pressed.includes(noteJouee)) firstPending.pressed.push(noteJouee);
+                            if (firstPending.pressed.length === firstPending.midi.length) {
+                                firstPending.status = 'hit'; score += (10 * firstPending.midi.length);
+                            }
+                        }
+                    } else {
+                        // Accords ou Notes simples: n'importe quelle note en attente peut être validée
+                        for (let sub of col.subNotes) {
+                            if (sub.status === 'pending' && sub.midi.includes(noteJouee)) {
+                                noteTrouvee = true;
+                                if (!sub.pressed.includes(noteJouee)) sub.pressed.push(noteJouee);
+                                if (sub.pressed.length === sub.midi.length) {
+                                    sub.status = 'hit'; score += (10 * sub.midi.length);
+                                }
+                                break; 
+                            }
                         }
                     }
-                    break;
+
+                    if (noteTrouvee) {
+                        document.getElementById("lbl-score").innerText = score;
+                        redessinerColonne(col);
+                        let allProcessed = col.subNotes.every(s => s.status !== 'pending');
+                        if (allProcessed && col.subNotes.every(s => s.status === 'hit')) {
+                            col.processed = true; notesValideesCeNiveau++;
+                            if (notesValideesCeNiveau >= 15) {
+                                niveau++; notesValideesCeNiveau = 0; config.vitesse *= (1 + (config.acceleration / 100));
+                                document.getElementById("lbl-level").innerText = niveau;
+                            }
+                        }
+                        break;
+                    }
                 }
             }
 
             if (config.modeSansErreur && !noteTrouvee) {
-                fautes++;
-                document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
+                fautes++; document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
                 if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
             }
         }
 
         function getMIDIMessage(midiMessage) {
             if (!jeuActif || enPause || config.inputSource !== "midi") return;
-            const command = midiMessage.data[0];
-            const noteJouee = midiMessage.data[1];
-            const velocity = (midiMessage.data.length > 2) ? midiMessage.data[2] : 0;
-
-            if (command === 144 && velocity > 0) {
-                traiterEntreeNote(noteJouee);
-            }
+            const command = midiMessage.data[0]; const noteJouee = midiMessage.data[1]; const velocity = (midiMessage.data.length > 2) ? midiMessage.data[2] : 0;
+            if (command === 144 && velocity > 0) traiterEntreeNote(noteJouee);
         }
 
         if (navigator.requestMIDIAccess) {
             navigator.requestMIDIAccess().then(
-                midiAccess => {
-                    midiGlobalConnected = true;
-                    updateBadgeVisual();
-                    for (let input of midiAccess.inputs.values()) input.onmidimessage = getMIDIMessage;
-                },
+                midiAccess => { midiGlobalConnected = true; updateBadgeVisual(); for (let input of midiAccess.inputs.values()) input.onmidimessage = getMIDIMessage; },
                 () => { midiGlobalConnected = false; updateBadgeVisual(); }
             );
         }
@@ -1436,7 +1305,10 @@
             let configObj = {};
             CONFIG_KEYS.forEach(key => {
                 const el = document.getElementById(key);
-                if (el) configObj[key] = el.value;
+                if (el) {
+                    if (el.type === 'checkbox') configObj[key] = el.checked;
+                    else configObj[key] = el.value;
+                }
             });
             return JSON.stringify(configObj, null, 2);
         }
@@ -1444,42 +1316,39 @@
         function appliquerConfigurationJson(jsonStr) {
             try {
                 let configObj = JSON.parse(jsonStr);
+                
+                // Rétrocompatibilité anciens JSON
+                if (configObj["cfg-accords-inv"]) {
+                    document.getElementById("cfg-chk-fondamental").checked = true;
+                    document.getElementById("cfg-chk-renversement").checked = (configObj["cfg-accords-inv"] === "renversements");
+                    document.getElementById("cfg-chk-arpege-simple").checked = false;
+                    document.getElementById("cfg-chk-arpege-complexe").checked = false;
+                }
+
                 CONFIG_KEYS.forEach(key => {
                     if (configObj[key] !== undefined && document.getElementById(key)) {
-                        document.getElementById(key).value = configObj[key];
+                        let el = document.getElementById(key);
+                        if (el.type === 'checkbox') el.checked = configObj[key];
+                        else el.value = configObj[key];
                     }
                 });
                 if(configObj["cfg-lang"]) changerLangue(configObj["cfg-lang"]);
-            } catch(e) {
-                console.error("Erreur lors de l'application de la config", e);
-            }
+            } catch(e) { console.error("Erreur lors de l'application de la config", e); }
         }
 
-        function sauvegarderDansLocalStorage() {
-            localStorage.setItem("pianotement_config", extraireConfigurationJson());
-        }
-
+        function sauvegarderDansLocalStorage() { localStorage.setItem("pianotement_config", extraireConfigurationJson()); }
         function chargerDepuisLocalStorage() {
             let saved = localStorage.getItem("pianotement_config");
             if(saved) {
-                appliquerConfigurationJson(saved);
-                toggleInputSource();
-                toggleCustomAmbitus();
+                appliquerConfigurationJson(saved); toggleInputSource(); toggleCustomAmbitus();
             } else {
-                let osLang = navigator.language || navigator.userLanguage || "fr";
-                osLang = osLang.substring(0, 2).toLowerCase();
-                if (["fr", "en", "es"].includes(osLang)) {
-                    document.getElementById("cfg-lang").value = osLang;
-                    changerLangue(osLang);
-                } else {
-                    changerLangue("fr");
-                }
+                let osLang = navigator.language || navigator.userLanguage || "fr"; osLang = osLang.substring(0, 2).toLowerCase();
+                if (["fr", "en", "es"].includes(osLang)) { document.getElementById("cfg-lang").value = osLang; changerLangue(osLang); } 
+                else changerLangue("fr");
             }
         }
 
-        peuplerSelectsAmbitus();
-        chargerDepuisLocalStorage();
-        initialiserGestionnairePresets();
+        peuplerSelectsAmbitus(); chargerDepuisLocalStorage(); initialiserGestionnairePresets();
     </script>
 </body>
 </html>
