@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.6 (Mode Arpèges Stricts & Ergonomie)</title>
+    <title>Arcade Piano - V14.7 (Équilibrage Arpèges & Palmares)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -439,8 +439,7 @@
     <div id="scores-screen" class="overlay-screen">
         <div class="scores-container">
             <h2 data-i18n="scoresTitle">Tableau des Scores</h2>
-            <div id="scores-list" style="margin-bottom: 30px;">
-                </div>
+            <div id="scores-list" style="margin-bottom: 30px;"></div>
             <div style="text-align: center;">
                 <button onclick="document.getElementById('scores-screen').style.display='none';" data-i18n="btnClose" style="background: #e74c3c; box-shadow: none;">Fermer</button>
             </div>
@@ -470,7 +469,8 @@
 
                 <div id="game-over-screen" class="overlay-screen" style="position: absolute; z-index:30;">
                     <h2>GAME OVER</h2>
-                    <p id="final-score" style="font-size: 24px; color:white; margin-bottom: 25px; font-weight:600;"></p>
+                    <p id="final-score" style="font-size: 28px; color:#f39c12; margin-bottom: 10px; font-weight:800;"></p>
+                    <p id="game-over-quote" style="font-size: 16px; font-style:italic; color:#ecf0f1; margin-bottom: 30px; padding: 0 20px; min-height: 40px;"></p>
                     <button onclick="lancerJeu()" data-i18n="btnReplay">Rejouer</button>
                 </div>
             </div>
@@ -480,47 +480,178 @@
     <script>
         const VF = Vex.Flow;
         
-        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES (V14.6 - Nouvelle Liste Intuitive) ---
+        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES ---
         const ARPEGES_SIMPLES = [
-            [0, 2, 4], // Triolet Montant
-            [4, 2, 0], // Triolet Descendant
-            [0, 2, 4, 2], // Aller-Retour Simple
-            [0, 4, 2, 4]  // Basse d'Alberti
+            [0, 2, 4], [4, 2, 0], [0, 2, 4, 2], [0, 4, 2, 4]
         ];
         const ARPEGES_COMPLEXES = [
-            // Motifs avec Octave (4 notes)
-            [0, 2, 4, 7], // Montant Standard : Do4 Mi4 Sol4 Do5
-            [7, 4, 2, 0], // Descendant Standard : Do5 Sol4 Mi4 Do4
-            [0, 2, 4, 7, 4, 2, 0], // Montant et Descendant : Do4 Mi4 Sol4 Do5 Sol4 Mi4 Do4
-            
-            // Motifs à Grands Intervalles (Ouverts / "Cools" - Dixième)
-            [0, 4, 9], // Grand Écart Montant : Do4 Sol4 Mi5
-            [9, 4, 0], // Grand Écart Descendant : Mi5 Sol4 Do4
-            [0, 4, 9, 4, 0], // Grand Écart Aller-Retour : Do4 Sol4 Mi5 Sol4 Do4
-            
-            // Motifs Répétitifs (Ostinato / Balancement)
-            [0, 2, 4, 2, 4, 2], // Balancement Intérieur : Do4 Mi4 Sol4 Mi4 Sol4 Mi4
-            [0, 7, 4, 2, 4, 2], // Balancement Large (avec octave) : Do4 Do5 Sol4 Mi4 Sol4 Mi4
-            
-            // Motifs sur Deux Octaves
-            [0, 2, 4, 7, 9, 11], // Double Octave Montant : Do4 Mi4 Sol4 Do5 Mi5 Sol5
-            [11, 9, 7, 4, 2, 0], // Double Octave Descendant : Sol5 Mi5 Do5 Sol4 Mi4 Do4
-            
-            // Motifs Brisés (Progression par paliers)
-            [0, 2, 1, 3, 2, 4], // En Vague Montante : Do4 Mi4 Ré4 Fa4 Mi4 Sol4
-            [4, 2, 3, 1, 2, 0]  // En Vague Descendante : Sol4 Mi4 Fa4 Ré4 Mi4 Do4
+            [0, 2, 4, 7], [7, 4, 2, 0], [0, 2, 4, 7, 4, 2, 0], 
+            [0, 4, 9], [9, 4, 0], [0, 4, 9, 4, 0], 
+            [0, 2, 4, 2, 4, 2], [0, 7, 4, 2, 4, 2], 
+            [0, 2, 4, 7, 9, 11], [11, 9, 7, 4, 2, 0], 
+            [0, 2, 1, 3, 2, 4], [4, 2, 3, 1, 2, 0]  
         ];
 
-        // --- 2. PRESETS ARCADE D'USINE ---
+        // --- 2. PALMARÈS & PHRASES D'ENCOURAGEMENT ---
+        const PHRASES_SCORE = {
+            RECORD: [
+                "Nouveau meilleur score, félicitations ! 🏆", "C'est l'histoire d'un record qui vient d'être pulvérisé. 🏆", "L'Olympe vous tend les bras. 🏆", 
+                "Vous êtes la définition même du mot 'victoire'. 🏆", "Même Mozart aurait transpiré. 🏆", "Le boss final, c'est vous. 🏆", 
+                "Un chef-d'œuvre absolu de dextérité. 🏆", "C'est un record. Un vrai. Qui inspire le respect. 🏆", "La légende raconte que votre clavier fume encore. 🏆",
+                "Vous venez de redéfinir la notion de virtuosité. 🏆", "Personne ne pensait cela possible. Et pourtant... 🏆", "C'est beau comme du Bach, mais en plus rapide. 🏆",
+                "On va devoir inventer de nouveaux niveaux pour vous. 🏆", "Les lois de la physique ne s'appliquent visiblement plus à vos doigts. 🏆",
+                "C'est un triomphe. Modeste, mais mondial. 🏆", "L'histoire se souviendra de ce moment. Peut-être. 🏆", "Un score digne du conservatoire intergalactique. 🏆",
+                "Si la perfection existait, elle vous demanderait des autographes. 🏆", "Vous avez cassé le jeu. Dans le bon sens du terme. 🏆", "Magistral. Tout simplement. 🏆"
+            ],
+            TIER_90: [
+                "Bravo, un de vos meilleurs scores !", "On sent que le record n'est plus très loin.", "Presque ! C'est comme rater le bus de 2 secondes, mais avec panache.",
+                "La perfection est une chimère, mais vous étiez à deux doigts de l'attraper.", "Excellent travail, la prochaine c'est la bonne.",
+                "C'est ce qu'on appelle frôler le soleil.", "Une prestation de très haute volée.", "Le record vacille, il finira par tomber.",
+                "Il a manqué un rien. Un tout petit rien.", "Vous étiez dans la zone. On a tous vu la zone.", "Quelle intensité ! Le record a tremblé.",
+                "C'est un score magnifique. Et je dis ça en tant que code binaire.", "Presque légendaire.", "La prochaine partie sera la bonne, c'est une certitude statistique.",
+                "Vous avez du talent à revendre.", "Chopin aurait approuvé cette performance.", "C'était chaud, très chaud.", "Une maîtrise impressionnante du clavier.",
+                "Vous flirtez avec le sommet du classement.", "Ne vous arrêtez pas en si bon chemin !"
+            ],
+            TIER_70: [
+                "Bien, vous consolidez vos progrès !", "La régularité, c'est la clé du succès.", "C'est un score très honnête. Pas de quoi s'extasier, mais très honnête.",
+                "Comme disait Churchill: 'Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.'", "Vous avez les bases, reste à affiner la vitesse.",
+                "C'est du solide. Un bon travail d'artisan.", "Vous êtes sur la bonne voie.", "Encore un peu d'huile de coude et le top 90% est à vous.",
+                "C'est ce qu'on appelle une performance 'sympa'.", "Pas mal du tout ! L'échauffement est terminé ?", "On sent le potentiel.",
+                "La persévérance est la noblesse de l'effort.", "Un bon score de milieu de tableau, confortable et rassurant.", "Vous avez survécu plus longtemps que la moyenne.",
+                "La technique est là, il manque l'étincelle.", "C'est bien. C'est pas exceptionnel, mais c'est bien.", "On ne construit pas Rome en un jour.",
+                "Un effort tout à fait louable.", "C'est une étape nécessaire vers la grandeur.", "Vous pouvez être fier. Modérément, mais fier."
+            ],
+            TIER_50: [
+                "La route est encore longue, mais le paysage est joli.", "C'est un début. Ou une fin précipitée, ça dépend de comment on voit les choses.",
+                "L'important c'est de participer. Enfin, c'est ce qu'on dit en général.", "Un score tiède. Ni bouillant, ni glacial. Tiède.",
+                "Ne baissez pas les bras, vos doigts peuvent mieux faire.", "Comme on dit: 'C'est en forgeant qu'on devient forgeron'.",
+                "Vous prenez vos marques, c'est tout à fait normal.", "Il faut bien que quelqu'un fasse des scores moyens pour mettre les autres en valeur.",
+                "Une petite pause café et on y retourne ?", "C'est un score qui existe. Voilà. Il existe.", "La marge de progression est... vaste.",
+                "Ne laissez pas ce score définir qui vous êtes.", "On a vu mieux. Mais on a aussi vu pire. Rarement, mais on a vu pire.",
+                "Un peu de concentration que diable !", "L'apprentissage est fait de hauts et de bas. Là, c'est un bas.", "Rome ne s'est pas faite en un jour, ni ce score.",
+                "Il y a de l'idée. Surtout de l'idée.", "Vous vous échauffiez les poignets, n'est-ce pas ?", "C'est audacieux de s'arrêter là.",
+                "La prochaine fois, essayez de taper sur les bonnes touches au bon moment."
+            ],
+            TIER_LOW: [
+                "Il y a des jours avec, et des jours sans. Aujourd'hui, c'était très clairement sans.", "Avez-vous essayé d'appuyer sur les touches ?",
+                "Je ne suis pas en colère, je suis juste déçu.", "C'est audacieux d'appeler ça de la musique.", "Nelson Mandela a dit: 'Je ne perds jamais, soit je gagne, soit j'apprends'. Vous avez beaucoup appris.",
+                "Il faut bien commencer quelque part. Le sous-sol est un excellent point de départ.", "C'est très intéressant. Mais c'est faux.",
+                "Vos doigts sont-ils engourdis ?", "Pourquoi faire bien quand on peut faire ça ?", "Edison a fait 1000 essais avant l'ampoule. Vous en êtes au premier.",
+                "C'est une performance... conceptuelle.", "Même mon algorithme de hasard aurait fait mieux.", "Un faux pas magistral.",
+                "Oublions ça et recommençons incognito.", "Ce score restera entre nous. Promis.", "C'était fulgurant de brièveté.",
+                "Vous avez confondu le clavier avec une machine à écrire ?", "Il n'y a pas d'échec, que du feedback. Voici le mien: aïe.",
+                "Le silence est parfois le plus beau des accords.", "C'est un record à l'envers. Félicitations."
+            ]
+        };
+
+        // --- 3. PRESETS ARCADE D'USINE (Équilibrés & Commentés) ---
         const PRESETS_ARCADE_USINE = {
-            "initiation_do": { nom: "Initiation Do", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "off", "cfg-ambitus-treble": "facile", "cfg-vitesse": "25", "cfg-acceleration": "0", "cfg-fautes": "5", "cfg-debit-treble": "220" },
-            "blues_classic": { nom: "Grip Blues Standard", "cfg-gamme": "C", "cfg-mode-md": "melodie", "cfg-mode-mg": "accords", "cfg-ambitus-treble": "normal", "cfg-vitesse": "36", "cfg-acceleration": "5", "cfg-intervalle": "3", "cfg-chk-fondamental": true },
-            "ombre_lumiere_3": { nom: "De l'Ombre à la Lumière", "cfg-gamme": "G", "cfg-mode-md": "accords", "cfg-mode-mg": "melodie", "cfg-ambitus-treble": "difficile", "cfg-vitesse": "65", "cfg-acceleration": "10", "cfg-sans-erreur": "on", "cfg-chk-fondamental": true, "cfg-chk-renversement": true },
-            "maitrise_arpeges": { nom: "Maîtrise des Arpèges", "cfg-gamme": "C", "cfg-mode-md": "accords", "cfg-mode-mg": "off", "cfg-ambitus-treble": "difficile", "cfg-vitesse": "45", "cfg-acceleration": "5", "cfg-chk-fondamental": false, "cfg-chk-renversement": false, "cfg-chk-arpege-simple": true, "cfg-chk-arpege-complexe": true }
+            "grand_debutant": { 
+                nom: "1. Grand Débutant", 
+                "cfg-gamme": "C", // Tonalité (C = Do Majeur sans altération)
+                "cfg-mode-md": "melodie", // Main Droite: mélodie simple
+                "cfg-mode-mg": "off", // Main Gauche: désactivée
+                "cfg-ambitus-treble": "facile", // Ambitus: très resserré (Do4 - Do5)
+                "cfg-intervalle": "2", // Sauts max: Seulement notes conjointes ou répétées
+                "cfg-debit-treble": "220", // Espacement entre les notes: très espacé (220px)
+                "cfg-vitesse": "25", // Vitesse de base: très lent
+                "cfg-acceleration": "0", // Accélération par niveau: Aucune (0%)
+                "cfg-fautes": "infinity", // Fautes permises: Infini (pas de Game Over)
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true
+            },
+            "facile": { 
+                nom: "2. Facile", 
+                "cfg-gamme": "C", 
+                "cfg-mode-md": "melodie", 
+                "cfg-mode-mg": "melodie", // Les deux mains jouent des mélodies
+                "cfg-ambitus-treble": "facile", 
+                "cfg-ambitus-bass": "facile", 
+                "cfg-intervalle": "3", // Sauts max: Jusqu'à la tierce
+                "cfg-debit-treble": "180", // Espacement: Normal
+                "cfg-debit-bass": "180",
+                "cfg-vitesse": "36", // Vitesse de base: Lent
+                "cfg-acceleration": "5", // Accélération: Légère (5%)
+                "cfg-fautes": "10", // 10 fautes avant de perdre
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true
+            },
+            "intermediaire": { 
+                nom: "3. Intermédiaire", 
+                "cfg-gamme": "G", // 1 Dièse à l'armure
+                "cfg-mode-md": "accords_melodie", // Mélange d'accords et mélodies
+                "cfg-mode-mg": "melodie", 
+                "cfg-ambitus-treble": "normal", 
+                "cfg-ambitus-bass": "normal", 
+                "cfg-intervalle": "5", // Sauts max: Jusqu'à la quinte
+                "cfg-debit-treble": "var25", // Espacement: Variable pour casser la monotonie
+                "cfg-debit-bass": "var25",
+                "cfg-vitesse": "50", 
+                "cfg-acceleration": "10", // Accélération: Normale (10%)
+                "cfg-fautes": "10", 
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true,
+                "cfg-chk-renversement": true // Accords renversés autorisés
+            },
+            "normal": { 
+                nom: "4. Normal", 
+                "cfg-gamme": "D", // 2 Dièses
+                "cfg-mode-md": "accords_melodie", 
+                "cfg-mode-mg": "accords_melodie", // Accords et mélodies aux deux mains
+                "cfg-ambitus-treble": "normal", 
+                "cfg-ambitus-bass": "normal", 
+                "cfg-intervalle": "libre", // N'importe quel saut possible
+                "cfg-debit-treble": "var50", 
+                "cfg-debit-bass": "var50",
+                "cfg-vitesse": "65", // Vitesse: Initié
+                "cfg-acceleration": "10", 
+                "cfg-fautes": "5", // Droit à l'erreur réduit
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true,
+                "cfg-chk-renversement": true,
+                "cfg-chk-arpege-simple": true // Arpèges simples activés
+            },
+            "difficile": { 
+                nom: "5. Difficile", 
+                "cfg-gamme": "A", // 3 Dièses
+                "cfg-mode-md": "accords_melodie", 
+                "cfg-mode-mg": "accords_melodie", 
+                "cfg-ambitus-treble": "difficile", // Registre complet
+                "cfg-ambitus-bass": "difficile", 
+                "cfg-intervalle": "libre", 
+                "cfg-debit-treble": "var75", // Débit très imprévisible
+                "cfg-debit-bass": "var75",
+                "cfg-vitesse": "80", 
+                "cfg-acceleration": "15", // Forte accélération (15%)
+                "cfg-fautes": "5", 
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true,
+                "cfg-chk-renversement": true,
+                "cfg-chk-arpege-simple": true,
+                "cfg-chk-arpege-complexe": true // Arpèges complexes ouverts activés
+            },
+            "extreme": { 
+                nom: "6. Extrême", 
+                "cfg-gamme": "E", // 4 Dièses
+                "cfg-mode-md": "accords_melodie", 
+                "cfg-mode-mg": "accords_melodie", 
+                "cfg-ambitus-treble": "difficile", 
+                "cfg-ambitus-bass": "difficile", 
+                "cfg-intervalle": "libre", 
+                "cfg-debit-treble": "140", // Débit dense constant (rafale)
+                "cfg-debit-bass": "140",
+                "cfg-vitesse": "95", // Vitesse: Rapide dès le début
+                "cfg-acceleration": "15", 
+                "cfg-fautes": "1", // Mort subite !
+                "cfg-sans-erreur": "on",
+                "cfg-chk-fondamental": true,
+                "cfg-chk-renversement": true,
+                "cfg-chk-arpege-simple": true,
+                "cfg-chk-arpege-complexe": true
+            }
         };
 
         let idPresetActif = "";
-
         let TOUTES_LES_NOTES = [];
         const notesCmaj = ["c", "d", "e", "f", "g", "a", "b"];
         const nomsFr = ["Do", "Ré", "Mi", "Fa", "Sol", "La", "Si"];
@@ -562,7 +693,7 @@
                 lblAccordsInv: "Structure des Accords :", btnConfigAccords: "⚙️ Configurer...", titleAccordsConfig: "Structure des Accords",
                 chkFond: "Fondamental", chkRenv: "Renversements", chkArpS: "Arpèges Simples", chkArpC: "Arpèges Complexes", btnOk: "Valider",
                 lblSansErreur: "Mode sans erreur :", optSeOn: "Activé (Pénalité)", optSeOff: "Désactivé",
-                scoresTitle: "Tableau des Scores", btnClose: "Fermer", errErase: "Vous ne pouvez effacer que vos modes enregistrés, pas les modes Arcade.", confirmErase: "Voulez-vous vraiment effacer ce mode ?"
+                scoresTitle: "Tableau des Scores", btnClose: "Fermer", errErase: "Vous ne pouvez effacer que vos modes enregistrés.", confirmErase: "Voulez-vous vraiment effacer ce mode ?"
             },
             en: {
                 midiWaiting: "MIDI WAITING", midiReady: "MIDI READY", midiError: "No MIDI",
@@ -588,7 +719,7 @@
                 lblAccordsInv: "Chord Structure:", btnConfigAccords: "⚙️ Configure...", titleAccordsConfig: "Chord Structure",
                 chkFond: "Root Position", chkRenv: "Inversions", chkArpS: "Simple Arpeggios", chkArpC: "Complex Arpeggios", btnOk: "OK",
                 lblSansErreur: "Error-free mode:", optSeOn: "Enabled (Strict)", optSeOff: "Disabled",
-                scoresTitle: "High Scores", btnClose: "Close", errErase: "You can only delete saved games, not built-in Arcade modes.", confirmErase: "Do you really want to delete this mode?"
+                scoresTitle: "High Scores", btnClose: "Close", errErase: "You can only delete saved games.", confirmErase: "Do you really want to delete this mode?"
             },
             es: {
                 midiWaiting: "ESPERANDO MIDI", midiReady: "MIDI LISTO", midiError: "Sin MIDI",
@@ -632,155 +763,104 @@
             "cfg-chk-fondamental", "cfg-chk-renversement", "cfg-chk-arpege-simple", "cfg-chk-arpege-complexe"
         ];
 
-        // --- GESTIONNAIRE DE PRESETS ET SCORES ---
         function initialiserGestionnairePresets() {
-            if (!localStorage.getItem("pianotement_user_presets")) {
-                localStorage.setItem("pianotement_user_presets", JSON.stringify({}));
-            }
-            if (!localStorage.getItem("pianotement_high_scores")) {
-                localStorage.setItem("pianotement_high_scores", JSON.stringify({}));
-            }
+            if (!localStorage.getItem("pianotement_user_presets")) localStorage.setItem("pianotement_user_presets", JSON.stringify({}));
+            if (!localStorage.getItem("pianotement_high_scores")) localStorage.setItem("pianotement_high_scores", JSON.stringify({}));
             rafraichirMenuPresets();
         }
 
         function rafraichirMenuPresets() {
             const arcadeGroup = document.getElementById("presets-arcade");
             const userGroup = document.getElementById("presets-utilisateurs");
-            
             const userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
             
-            arcadeGroup.innerHTML = "";
-            userGroup.innerHTML = "";
-            
+            arcadeGroup.innerHTML = ""; userGroup.innerHTML = "";
             for (let id in PRESETS_ARCADE_USINE) {
-                let p = PRESETS_ARCADE_USINE[id];
-                let opt = document.createElement("option");
-                opt.value = "arcade_" + id;
-                opt.textContent = p.nom;
-                arcadeGroup.appendChild(opt);
+                let opt = document.createElement("option"); opt.value = "arcade_" + id; opt.textContent = PRESETS_ARCADE_USINE[id].nom; arcadeGroup.appendChild(opt);
             }
-            
             for (let id in userPresets) {
-                let p = userPresets[id];
-                let opt = document.createElement("option");
-                opt.value = "user_" + id;
-                opt.textContent = p.nom;
-                userGroup.appendChild(opt);
+                let opt = document.createElement("option"); opt.value = "user_" + id; opt.textContent = userPresets[id].nom; userGroup.appendChild(opt);
             }
         }
 
         function effacerPreset() {
-            if (!idPresetActif || !idPresetActif.startsWith('user_')) {
-                alert(DICTIONNAIRE[langueActuelle].errErase);
-                return;
-            }
+            if (!idPresetActif || !idPresetActif.startsWith('user_')) { alert(DICTIONNAIRE[langueActuelle].errErase); return; }
             if(confirm(DICTIONNAIRE[langueActuelle].confirmErase)) {
                 let cleanId = idPresetActif.replace("user_", "");
-                let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-                delete userPresets[cleanId];
+                let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets")); delete userPresets[cleanId];
                 localStorage.setItem("pianotement_user_presets", JSON.stringify(userPresets));
-                
-                let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
-                delete highScores[cleanId];
+                let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores")); delete highScores[cleanId];
                 localStorage.setItem("pianotement_high_scores", JSON.stringify(highScores));
-                
-                rafraichirMenuPresets();
-                document.getElementById("cfg-presets").value = "";
-                idPresetActif = "";
+                rafraichirMenuPresets(); document.getElementById("cfg-presets").value = ""; idPresetActif = "";
             }
         }
 
         function afficherScores() {
-            const scoresDiv = document.getElementById("scores-list");
-            scoresDiv.innerHTML = "";
-            
+            const scoresDiv = document.getElementById("scores-list"); scoresDiv.innerHTML = "";
             const highScores = JSON.parse(localStorage.getItem("pianotement_high_scores")) || {};
             const userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets")) || {};
             
             let html = `<h3 style="color:#f1c40f; border-bottom: 2px solid #555; padding-bottom:5px; margin-top:0;">Mode Arcade</h3>`;
-            for (let id in PRESETS_ARCADE_USINE) {
-                let score = highScores[id] || "--";
-                html += `<div class="score-row"><span>${PRESETS_ARCADE_USINE[id].nom}</span> <span class="score-val">${score}</span></div>`;
-            }
-            
+            for (let id in PRESETS_ARCADE_USINE) html += `<div class="score-row"><span>${PRESETS_ARCADE_USINE[id].nom}</span> <span class="score-val">${highScores[id] || "--"}</span></div>`;
             if (Object.keys(userPresets).length > 0) {
                 html += `<h3 style="color:#3498db; border-bottom: 2px solid #555; padding-bottom:5px; margin-top: 30px;">Parties Enregistrées</h3>`;
-                for (let id in userPresets) {
-                    let score = highScores[id] || "--";
-                    html += `<div class="score-row"><span>${userPresets[id].nom}</span> <span class="score-val">${score}</span></div>`;
-                }
+                for (let id in userPresets) html += `<div class="score-row"><span>${userPresets[id].nom}</span> <span class="score-val">${highScores[id] || "--"}</span></div>`;
             }
-            
-            scoresDiv.innerHTML = html;
-            document.getElementById("scores-screen").style.display = "flex";
+            scoresDiv.innerHTML = html; document.getElementById("scores-screen").style.display = "flex";
         }
 
         function creerNouveauPreset() {
             let nomUtilisateur = prompt("Donnez un nom à cette partie (ex: Ma partie en Dom) :");
             if (!nomUtilisateur || nomUtilisateur.trim() === "") return;
-            
-            nomUtilisateur = nomUtilisateur.trim();
-            let cleanId = "custom_" + nomUtilisateur.toLowerCase().replace(/[^a-z0-9]/g, "_");
-            
-            let configActuelle = JSON.parse(extraireConfigurationJson());
-            configActuelle.nom = nomUtilisateur; 
-            
-            let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-            userPresets[cleanId] = configActuelle;
+            let cleanId = "custom_" + nomUtilisateur.trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+            let configActuelle = JSON.parse(extraireConfigurationJson()); configActuelle.nom = nomUtilisateur.trim(); 
+            let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets")); userPresets[cleanId] = configActuelle;
             localStorage.setItem("pianotement_user_presets", JSON.stringify(userPresets));
-            
-            rafraichirMenuPresets();
-            document.getElementById("cfg-presets").value = "user_" + cleanId;
-            idPresetActif = "user_" + cleanId;
+            rafraichirMenuPresets(); document.getElementById("cfg-presets").value = "user_" + cleanId; idPresetActif = "user_" + cleanId;
         }
 
         function appliquerPresetSelectionne(valeurSelect) {
             if (!valeurSelect) { idPresetActif = ""; return; }
             let configAAppliquer = null;
+            if (valeurSelect.startsWith("arcade_")) configAAppliquer = PRESETS_ARCADE_USINE[valeurSelect.replace("arcade_", "")];
+            else if (valeurSelect.startsWith("user_")) configAAppliquer = JSON.parse(localStorage.getItem("pianotement_user_presets"))[valeurSelect.replace("user_", "")];
             
-            if (valeurSelect.startsWith("arcade_")) {
-                let cleanId = valeurSelect.replace("arcade_", "");
-                configAAppliquer = PRESETS_ARCADE_USINE[cleanId];
-            } else if (valeurSelect.startsWith("user_")) {
-                let cleanId = valeurSelect.replace("user_", "");
-                let userPresets = JSON.parse(localStorage.getItem("pianotement_user_presets"));
-                configAAppliquer = userPresets[cleanId];
-            }
-            
-            if (configAAppliquer) {
-                appliquerConfigurationJson(JSON.stringify(configAAppliquer));
-                idPresetActif = valeurSelect;
-                toggleInputSource(); 
-                toggleCustomAmbitus();
-            }
+            if (configAAppliquer) { appliquerConfigurationJson(JSON.stringify(configAAppliquer)); idPresetActif = valeurSelect; toggleInputSource(); toggleCustomAmbitus(); }
+        }
+
+        function obtenirMessageFin(scoreObtenu, ancienRecord) {
+            let pct = ancienRecord > 0 ? (scoreObtenu / ancienRecord) * 100 : 100;
+            let tableauAUtiliser = [];
+            if (scoreObtenu > ancienRecord || ancienRecord === 0) tableauAUtiliser = PHRASES_SCORE.RECORD;
+            else if (pct >= 90) tableauAUtiliser = PHRASES_SCORE.TIER_90;
+            else if (pct >= 70) tableauAUtiliser = PHRASES_SCORE.TIER_70;
+            else if (pct >= 50) tableauAUtiliser = PHRASES_SCORE.TIER_50;
+            else tableauAUtiliser = PHRASES_SCORE.TIER_LOW;
+            return tableauAUtiliser[Math.floor(Math.random() * tableauAUtiliser.length)];
         }
 
         function enregistrerScoreFinDePartie(scoreObtenu) {
-            if (!idPresetActif) return; 
-            let cleanId = idPresetActif.replace("user_", "").replace("arcade_", "");
-            let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
-            let ancienRecord = highScores[cleanId] || 0;
-            
-            if (scoreObtenu > ancienRecord) {
-                highScores[cleanId] = scoreObtenu;
-                localStorage.setItem("pianotement_high_scores", JSON.stringify(highScores));
-                rafraichirMenuPresets();
+            let ancienRecord = 0;
+            if (idPresetActif) {
+                let cleanId = idPresetActif.replace("user_", "").replace("arcade_", "");
+                let highScores = JSON.parse(localStorage.getItem("pianotement_high_scores"));
+                ancienRecord = highScores[cleanId] || 0;
+                if (scoreObtenu > ancienRecord) {
+                    highScores[cleanId] = scoreObtenu;
+                    localStorage.setItem("pianotement_high_scores", JSON.stringify(highScores));
+                    rafraichirMenuPresets();
+                }
             }
+            document.getElementById("game-over-quote").innerText = obtenirMessageFin(scoreObtenu, ancienRecord);
         }
 
-        // --- FONCTIONS DE BASE DU JEU ---
         function genererBaseDeNotes(cleArmure) {
-            TOUTES_LES_NOTES = [];
-            const offsets = GAMMES[cleArmure];
-            let absoluteIndex = 0;
+            TOUTES_LES_NOTES = []; const offsets = GAMMES[cleArmure]; let absoluteIndex = 0;
             for (let oct = 1; oct <= 7; oct++) {
                 for (let i = 0; i < 7; i++) {
-                    let midiNum = (oct + 1) * 12 + offsets[i];
-                    if (midiNum > 108) break;
-                    let labelFr = `${nomsFr[i]}${oct}`;
-                    let labelEn = `${nomsEn[i].toUpperCase()}${oct}`;
+                    let midiNum = (oct + 1) * 12 + offsets[i]; if (midiNum > 108) break;
                     TOUTES_LES_NOTES.push({
-                        id: `${notesCmaj[i]}/${oct}`, labelFr: labelFr, labelEn: labelEn,
+                        id: `${notesCmaj[i]}/${oct}`, labelFr: `${nomsFr[i]}${oct}`, labelEn: `${nomsEn[i].toUpperCase()}${oct}`,
                         keys: [`${notesCmaj[i]}/${oct}`], acc: [""], midi: [midiNum], diatonicIndex: absoluteIndex
                     });
                     absoluteIndex++;
@@ -788,11 +868,8 @@
             }
         }
         
-        genererBaseDeNotes("C");
-
         function updateBadgeVisual() {
-            const badge = document.getElementById("midi-badge");
-            const src = document.getElementById("cfg-input-source").value;
+            const badge = document.getElementById("midi-badge"); const src = document.getElementById("cfg-input-source").value;
             if (src === "midi") {
                 if (midiGlobalConnected) { badge.innerText = DICTIONNAIRE[langueActuelle].midiReady; badge.className = "midi-badge midi-connected"; } 
                 else { badge.innerText = DICTIONNAIRE[langueActuelle].midiWaiting; badge.className = "midi-badge"; }
@@ -804,26 +881,18 @@
 
         function toggleInputSource() {
             const src = document.getElementById("cfg-input-source").value;
-            const selectMD = document.getElementById("cfg-mode-md");
-            const selectMG = document.getElementById("cfg-mode-mg");
-            const optMdChord = document.getElementById("opt-md-chord");
-            const optMgChord = document.getElementById("opt-mg-chord");
-            const optMdChordMelody = document.getElementById("opt-md-chord-melody");
-            const optMgChordMelody = document.getElementById("opt-mg-chord-melody");
-            const selectTreble = document.getElementById("cfg-debit-treble");
-            const selectBass = document.getElementById("cfg-debit-bass");
-
+            const selectMD = document.getElementById("cfg-mode-md"); const selectMG = document.getElementById("cfg-mode-mg");
             if (src === "mic") {
                 if(selectMD.value === "accords" || selectMD.value === "accords_melodie") selectMD.value = "melodie";
                 if(selectMG.value === "accords" || selectMG.value === "accords_melodie") selectMG.value = "melodie";
-                optMdChord.style.display = "none"; optMgChord.style.display = "none";
-                optMdChordMelody.style.display = "none"; optMgChordMelody.style.display = "none";
-                selectTreble.disabled = true; selectBass.disabled = true;
+                document.getElementById("opt-md-chord").style.display = "none"; document.getElementById("opt-mg-chord").style.display = "none";
+                document.getElementById("opt-md-chord-melody").style.display = "none"; document.getElementById("opt-mg-chord-melody").style.display = "none";
+                document.getElementById("cfg-debit-treble").disabled = true; document.getElementById("cfg-debit-bass").disabled = true;
                 initMicrophone();
             } else {
-                optMdChord.style.display = "block"; optMgChord.style.display = "block";
-                optMdChordMelody.style.display = "block"; optMgChordMelody.style.display = "block";
-                selectTreble.disabled = false; selectBass.disabled = false;
+                document.getElementById("opt-md-chord").style.display = "block"; document.getElementById("opt-mg-chord").style.display = "block";
+                document.getElementById("opt-md-chord-melody").style.display = "block"; document.getElementById("opt-mg-chord-melody").style.display = "block";
+                document.getElementById("cfg-debit-treble").disabled = false; document.getElementById("cfg-debit-bass").disabled = false;
                 updateBadgeVisual();
             }
             sauvegarderDansLocalStorage();
@@ -834,29 +903,21 @@
             return navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                 audioStream = stream; audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 audioAnalyser = audioCtx.createAnalyser(); audioAnalyser.fftSize = 2048;
-                audioCtx.createMediaStreamSource(stream).connect(audioAnalyser);
-                updateBadgeVisual();
-            }).catch(err => {
-                document.getElementById("cfg-input-source").value = "midi"; toggleInputSource();
-            });
+                audioCtx.createMediaStreamSource(stream).connect(audioAnalyser); updateBadgeVisual();
+            }).catch(() => { document.getElementById("cfg-input-source").value = "midi"; toggleInputSource(); });
         }
 
         function autoCorrelate(buffer, sampleRate) {
             let rms = 0; for (let i = 0; i < buffer.length; i++) rms += buffer[i] * buffer[i];
             rms = Math.sqrt(rms / buffer.length); if (rms < 0.02) return -1;
-
             let r1 = 0, r2 = buffer.length - 1; let thres = 0.2;
             for (let i = 0; i < buffer.length / 2; i++) if (Math.abs(buffer[i]) < thres) { r1 = i; break; }
             for (let i = buffer.length - 1; i >= buffer.length / 2; i--) if (Math.abs(buffer[i]) < thres) { r2 = i; break; }
-            let buf = buffer.slice(r1, r2);
-            let c = new Float32Array(buf.length);
+            let buf = buffer.slice(r1, r2); let c = new Float32Array(buf.length);
             for (let i = 0; i < buf.length; i++) for (let j = 0; j < buf.length - i; j++) c[i] += buf[j] * buf[j + i];
-
-            let d = 0; while (c[d] > c[d + 1]) d++;
-            let maxval = -1, maxpos = -1;
+            let d = 0; while (c[d] > c[d + 1]) d++; let maxval = -1, maxpos = -1;
             for (let i = d; i < c.length; i++) if (c[i] > maxval && c[i] > c[i - 1] && c[i] > c[i + 1]) { maxval = c[i]; maxpos = i; }
-            if (maxpos !== -1) return sampleRate / maxpos;
-            return -1;
+            if (maxpos !== -1) return sampleRate / maxpos; return -1;
         }
 
         function analyserFrequenceMicro() {
@@ -865,11 +926,7 @@
             let freq = autoCorrelate(audioBuffer, audioCtx.sampleRate);
             if (freq !== -1) {
                 let midiNote = Math.round(12 * Math.log2(freq / 440) + 69);
-                if (midiNote >= 21 && midiNote <= 108) {
-                    if (midiNote !== dernierPitchMidiDetecte) {
-                        dernierPitchMidiDetecte = midiNote; traiterEntreeNote(midiNote);
-                    }
-                }
+                if (midiNote >= 21 && midiNote <= 108 && midiNote !== dernierPitchMidiDetecte) { dernierPitchMidiDetecte = midiNote; traiterEntreeNote(midiNote); }
             } else dernierPitchMidiDetecte = null;
         }
 
@@ -877,19 +934,12 @@
             langueActuelle = lang;
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
-                if (DICTIONNAIRE[lang][key]) {
-                    if (el.tagName === "OPTGROUP") el.label = DICTIONNAIRE[lang][key];
-                    else el.innerText = DICTIONNAIRE[lang][key];
-                }
+                if (DICTIONNAIRE[lang][key]) { if (el.tagName === "OPTGROUP") el.label = DICTIONNAIRE[lang][key]; else el.innerText = DICTIONNAIRE[lang][key]; }
             });
-            
-            let valTMin = document.getElementById("treble-min").value; let valTMax = document.getElementById("treble-max").value;
-            let valBMin = document.getElementById("bass-min").value; let valBMax = document.getElementById("bass-max").value;
+            let vals = [document.getElementById("treble-min").value, document.getElementById("treble-max").value, document.getElementById("bass-min").value, document.getElementById("bass-max").value];
             peuplerSelectsAmbitus();
-            if(valTMin) document.getElementById("treble-min").value = valTMin;
-            if(valTMax) document.getElementById("treble-max").value = valTMax;
-            if(valBMin) document.getElementById("bass-min").value = valBMin;
-            if(valBMax) document.getElementById("bass-max").value = valBMax;
+            if(vals[0]) document.getElementById("treble-min").value = vals[0]; if(vals[1]) document.getElementById("treble-max").value = vals[1];
+            if(vals[2]) document.getElementById("bass-min").value = vals[2]; if(vals[3]) document.getElementById("bass-max").value = vals[3];
             updateBadgeVisual(); sauvegarderDansLocalStorage();
         }
 
@@ -897,13 +947,11 @@
             const p = (id, def) => {
                 const s = document.getElementById(id); s.innerHTML = "";
                 TOUTES_LES_NOTES.forEach(n => {
-                    let o = document.createElement("option"); o.value = n.id;
-                    o.innerText = (langueActuelle === "fr") ? n.labelFr : n.labelEn;
+                    let o = document.createElement("option"); o.value = n.id; o.innerText = (langueActuelle === "fr") ? n.labelFr : n.labelEn;
                     if(n.id === def) o.selected = true; s.appendChild(o);
                 });
             };
-            p("treble-min", "c/4"); p("treble-max", "b/5");
-            p("bass-min", "c/2"); p("bass-max", "c/4");
+            p("treble-min", "c/4"); p("treble-max", "b/5"); p("bass-min", "c/2"); p("bass-max", "c/4");
         }
 
         function toggleCustomAmbitus() {
@@ -913,28 +961,23 @@
         }
 
         function getPool(idMin, idMax) {
-            let idxMin = TOUTES_LES_NOTES.findIndex(n => n.id === idMin);
-            let idxMax = TOUTES_LES_NOTES.findIndex(n => n.id === idMax);
+            let idxMin = TOUTES_LES_NOTES.findIndex(n => n.id === idMin), idxMax = TOUTES_LES_NOTES.findIndex(n => n.id === idMax);
             if (idxMin > idxMax) [idxMin, idxMax] = [idxMax, idxMin]; 
             return TOUTES_LES_NOTES.slice(idxMin, idxMax + 1).map(n => ({ type: 'chord', keys: [n.keys[0]], acc: [""], midi: [n.midi[0]], diatonicIndex: n.diatonicIndex }));
         }
 
         function generateTriad(rootIndex, inversionLevel) {
             let i1 = rootIndex, i2 = rootIndex + 2, i3 = rootIndex + 4;
-            if (inversionLevel === 1) i1 += 7;
-            if (inversionLevel === 2) { i1 += 7; i2 += 7; }
+            if (inversionLevel === 1) i1 += 7; if (inversionLevel === 2) { i1 += 7; i2 += 7; }
             let indices = [i1, i2, i3].sort((a,b) => a-b);
-            let n1 = TOUTES_LES_NOTES[indices[0]] || TOUTES_LES_NOTES[0];
-            let n2 = TOUTES_LES_NOTES[indices[1]] || TOUTES_LES_NOTES[0];
-            let n3 = TOUTES_LES_NOTES[indices[2]] || TOUTES_LES_NOTES[0];
+            let n1 = TOUTES_LES_NOTES[indices[0]] || TOUTES_LES_NOTES[0], n2 = TOUTES_LES_NOTES[indices[1]] || TOUTES_LES_NOTES[0], n3 = TOUTES_LES_NOTES[indices[2]] || TOUTES_LES_NOTES[0];
             return { type: 'chord', keys: [n1.keys[0], n2.keys[0], n3.keys[0]], acc: ["", "", ""], midi: [n1.midi[0], n2.midi[0], n3.midi[0]], diatonicIndex: n1.diatonicIndex };
         }
 
         function generateArpeggio(rootIndex, pattern) {
             let sequence = [];
             for (let offset of pattern) {
-                let n = TOUTES_LES_NOTES[rootIndex + offset];
-                if (!n) return null; 
+                let n = TOUTES_LES_NOTES[rootIndex + offset]; if (!n) return null; 
                 sequence.push({ keys: [n.keys[0]], acc: [""], midi: [n.midi[0]] });
             }
             return { type: 'arpeggio', sequence: sequence, diatonicIndex: rootIndex };
@@ -942,12 +985,11 @@
 
         let config = { maxFautes: 10, modeInfini: false, vitesse: 65, acceleration: 5, modeMD: 'melodie', modeMG: 'melodie', intervalleMax: 'libre', modeSansErreur: true, inputSource: "midi" };
         let poolTreble = [], poolBass = [];
-        let trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
-        let trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
-        let dernierDiatonicIndexTreble = null; let dernierDiatonicIndexBass = null;
-        let jeuActif = false, enPause = false; let score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
-        let currentX = 0; let dernierXTreble = 250, dernierXBass = 250;
-        let colonnesEnCours = []; let dernierTimestamp = 0;
+        let trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set(), arpegesAForcer: 0, dernierArpege: null, vientDeJouerArpege: false };
+        let trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set(), arpegesAForcer: 0, dernierArpege: null, vientDeJouerArpege: false };
+        let dernierDiatonicIndexTreble = null, dernierDiatonicIndexBass = null;
+        let jeuActif = false, enPause = false, score = 0, fautes = 0, niveau = 1, notesValideesCeNiveau = 0;
+        let currentX = 0, dernierXTreble = 250, dernierXBass = 250, colonnesEnCours = [], dernierTimestamp = 0;
         const trackDOM = document.getElementById("track");
 
         function dessinerEnvironnementStatique() {
@@ -970,6 +1012,20 @@
             tracker.notesGenereesCount++;
             if (tracker.historiqueVisites.size >= pool.length || tracker.notesGenereesCount % 75 === 0) tracker.historiqueVisites.clear();
             
+            if (tracker.arpegesAForcer > 0) {
+                tracker.arpegesAForcer--;
+                tracker.vientDeJouerArpege = true;
+                if (tracker.dernierArpege && Math.random() < 0.6) {
+                    return tracker.dernierArpege;
+                } else {
+                    let arps = pool.filter(c => c.type === 'arpeggio');
+                    if (arps.length > 0) {
+                        let pick = arps[Math.floor(Math.random() * arps.length)];
+                        tracker.dernierArpege = pick; return pick;
+                    }
+                }
+            }
+
             let candidats = pool;
             if (maxIntervalleConfig !== "libre" && dernierDiatonicIndex !== null) {
                 const intervalleMax = parseInt(maxIntervalleConfig); 
@@ -977,16 +1033,13 @@
                 if (candidats.length === 0) candidats = pool;
             }
 
-            // --- V14.6: Équilibrage intelligent Arpèges vs Accords/Mélodie ---
             let arpCandidates = candidats.filter(c => c.type === 'arpeggio');
             let baseCandidates = candidats.filter(c => c.type !== 'arpeggio');
             
-            // Si on a des arpèges ET des notes normales dans le vivier
             if (arpCandidates.length > 0 && baseCandidates.length > 0) {
-                // Seulement 25% de chance de forcer un arpège pour équilibrer le nombre total de notes affichées à l'écran
                 let pickArp = Math.random() < 0.25;
                 candidats = pickArp ? arpCandidates : baseCandidates;
-                if (candidats.length === 0) candidats = pool; // Fallback sécurité
+                if (candidats.length === 0) candidats = pool; 
             }
 
             let strKey = n => n.type === 'arpeggio' ? JSON.stringify(n.sequence.map(s=>s.midi)) : JSON.stringify(n.keys);
@@ -994,31 +1047,43 @@
             let choisi = nonVisites.length > 0 ? nonVisites[Math.floor(Math.random() * nonVisites.length)] : candidats[Math.floor(Math.random() * candidats.length)];
             
             tracker.historiqueVisites.add(strKey(choisi));
+
+            if (choisi.type === 'arpeggio') {
+                tracker.arpegesAForcer = Math.floor(Math.random() * 2) + 1;
+                tracker.dernierArpege = choisi;
+                tracker.vientDeJouerArpege = true;
+            } else {
+                tracker.vientDeJouerArpege = false;
+            }
+
             return choisi;
         }
 
-        function calculerProchainEspacementTreble() {
+        function calculerProchainEspacementTreble(tracker) {
+            // V14.7.1 : Ajustement pour garantir que le prochain bloc ne s'empile pas visuellement
+            if (tracker.vientDeJouerArpege) return 35; 
+            
             if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); return isNaN(baseVal) ? 180 : baseVal; }
             let mode = document.getElementById("cfg-debit-treble").value;
             if (mode.startsWith("var")) {
                 if (varCompteurTreble >= varTargetTreble) {
                     varCompteurTreble = 0; varTargetTreble = Math.floor(Math.random() * 6) + 5; 
-                    let maxPct = mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25);
-                    varFacteurTreble = 1 + ((Math.random() * 2 - 1) * maxPct);
+                    varFacteurTreble = 1 + ((Math.random() * 2 - 1) * (mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25)));
                 }
                 varCompteurTreble++; return 180 * varFacteurTreble;
             }
             return parseInt(mode);
         }
 
-        function calculerProchainEspacementBass() {
+        function calculerProchainEspacementBass(tracker) {
+            if (tracker.vientDeJouerArpege) return 35;
+
             if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); return isNaN(baseVal) ? 180 : baseVal; }
             let mode = document.getElementById("cfg-debit-bass").value;
             if (mode.startsWith("var")) {
                 if (varCompteurBass >= varTargetBass) {
                     varCompteurBass = 0; varTargetBass = Math.floor(Math.random() * 6) + 5; 
-                    let maxPct = mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25);
-                    varFacteurBass = 1 + ((Math.random() * 2 - 1) * maxPct);
+                    varFacteurBass = 1 + ((Math.random() * 2 - 1) * (mode === "var50" ? 0.50 : (mode === "var75" ? 0.75 : 0.25)));
                 }
                 varCompteurBass++; return 180 * varFacteurBass;
             }
@@ -1030,20 +1095,15 @@
             config.inputSource = document.getElementById("cfg-input-source").value;
             if (config.inputSource === "mic") await initMicrophone();
 
-            let armureChoisie = document.getElementById("cfg-gamme").value;
-            genererBaseDeNotes(armureChoisie);
-            
+            let armureChoisie = document.getElementById("cfg-gamme").value; genererBaseDeNotes(armureChoisie);
             let f = document.getElementById("cfg-fautes").value;
             config.modeInfini = (f === "infinity"); config.maxFautes = config.modeInfini ? 0 : parseInt(f);
-            config.vitesse = parseInt(document.getElementById("cfg-vitesse").value);
-            config.acceleration = parseInt(document.getElementById("cfg-acceleration").value);
+            config.vitesse = parseInt(document.getElementById("cfg-vitesse").value); config.acceleration = parseInt(document.getElementById("cfg-acceleration").value);
             config.modeMD = document.getElementById("cfg-mode-md").value; config.modeMG = document.getElementById("cfg-mode-mg").value;
             config.intervalleMax = document.getElementById("cfg-intervalle").value; config.modeSansErreur = (document.getElementById("cfg-sans-erreur").value === "on");
 
-            let chkFond = document.getElementById("cfg-chk-fondamental").checked;
-            let chkRenv = document.getElementById("cfg-chk-renversement").checked;
-            let chkArpS = document.getElementById("cfg-chk-arpege-simple").checked;
-            let chkArpC = document.getElementById("cfg-chk-arpege-complexe").checked;
+            let chkFond = document.getElementById("cfg-chk-fondamental").checked; let chkRenv = document.getElementById("cfg-chk-renversement").checked;
+            let chkArpS = document.getElementById("cfg-chk-arpege-simple").checked; let chkArpC = document.getElementById("cfg-chk-arpege-complexe").checked;
             if (!chkFond && !chkRenv && !chkArpS && !chkArpC) chkFond = true;
 
             varCompteurTreble = 0; varTargetTreble = Math.floor(Math.random() * 6) + 5; varFacteurTreble = 1.0;
@@ -1052,13 +1112,11 @@
 
             const tMode = document.getElementById("cfg-ambitus-treble").value;
             if (config.modeMD === 'melodie' || config.modeMD === 'accords_melodie') {
-                if(tMode === "facile") poolTreble = getPool("c/4", "c/5");
-                else if(tMode === "normal") poolTreble = getPool("c/4", "c/6");
-                else if(tMode === "difficile") poolTreble = getPool("f/3", "b/5");
-                else poolTreble = getPool(document.getElementById("treble-min").value, document.getElementById("treble-max").value);
+                if(tMode === "facile") poolTreble = getPool("c/4", "c/5"); else if(tMode === "normal") poolTreble = getPool("c/4", "c/6");
+                else if(tMode === "difficile") poolTreble = getPool("f/3", "b/5"); else poolTreble = getPool(document.getElementById("treble-min").value, document.getElementById("treble-max").value);
             }
             if (config.modeMD === 'accords' || config.modeMD === 'accords_melodie') {
-                for(let r=21; r<=27; r++) { // Do4 à Si4
+                for(let r=21; r<=27; r++) { 
                     if (chkFond) poolTreble.push(generateTriad(r, 0));
                     if (chkRenv) { poolTreble.push(generateTriad(r, 1)); poolTreble.push(generateTriad(r, 2)); }
                     if (chkArpS) ARPEGES_SIMPLES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolTreble.push(a); });
@@ -1068,13 +1126,11 @@
 
             const bMode = document.getElementById("cfg-ambitus-bass").value;
             if (config.modeMG === 'melodie' || config.modeMG === 'accords_melodie') {
-                if(bMode === "facile") poolBass = getPool("c/3", "c/4");
-                else if(bMode === "normal") poolBass = getPool("c/2", "c/4");
-                else if(bMode === "difficile") poolBass = getPool("f/2", "c/5");
-                else poolBass = getPool(document.getElementById("bass-min").value, document.getElementById("bass-max").value);
+                if(bMode === "facile") poolBass = getPool("c/3", "c/4"); else if(bMode === "normal") poolBass = getPool("c/2", "c/4");
+                else if(bMode === "difficile") poolBass = getPool("f/2", "c/5"); else poolBass = getPool(document.getElementById("bass-min").value, document.getElementById("bass-max").value);
             }
             if (config.modeMG === 'accords' || config.modeMG === 'accords_melodie') {
-                for(let r=7; r<=13; r++) { // Do2 à Si2
+                for(let r=7; r<=13; r++) { 
                     if (chkFond) poolBass.push(generateTriad(r, 0));
                     if (chkRenv) { poolBass.push(generateTriad(r, 1)); poolBass.push(generateTriad(r, 2)); }
                     if (chkArpS) ARPEGES_SIMPLES.forEach(pat => { let a = generateArpeggio(r, pat); if(a) poolBass.push(a); });
@@ -1082,95 +1138,66 @@
                 }
             }
 
-            // V14.6 : On masque la barre de titre pendant la partie
             document.getElementById("top-controls-bar").style.display = "none";
-            document.getElementById("menu-config").style.display = "none";
-            document.getElementById("game-ui").style.display = "block";
-            document.getElementById("game-over-screen").style.display = "none";
-            document.getElementById("pause-screen").style.display = "none";
-
+            document.getElementById("menu-config").style.display = "none"; document.getElementById("game-ui").style.display = "block";
+            document.getElementById("game-over-screen").style.display = "none"; document.getElementById("pause-screen").style.display = "none";
             dessinerEnvironnementStatique();
-            score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0; currentX = 0; 
             
-            if (config.inputSource === "mic") {
-                let baseVal = parseInt(document.getElementById("cfg-debit-bass").value);
-                if (isNaN(baseVal)) baseVal = 180;
-                dernierXBass = 250; dernierXTreble = 250 + (baseVal * 0.25);
-            } else {
-                dernierXTreble = 250; dernierXBass = 250;
-            }
+            score = 0; fautes = 0; niveau = 1; notesValideesCeNiveau = 0; currentX = 0; 
+            if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); if (isNaN(baseVal)) baseVal = 180; dernierXBass = 250; dernierXTreble = 250 + (baseVal * 0.25); } 
+            else { dernierXTreble = 250; dernierXBass = 250; }
 
             dernierDiatonicIndexTreble = null; dernierDiatonicIndexBass = null; dernierPitchMidiDetecte = null;
-            trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set() };
-            trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set() };
+            trackerTreble = { notesGenereesCount: 0, historiqueVisites: new Set(), arpegesAForcer: 0, dernierArpege: null, vientDeJouerArpege: false };
+            trackerBass = { notesGenereesCount: 0, historiqueVisites: new Set(), arpegesAForcer: 0, dernierArpege: null, vientDeJouerArpege: false };
             colonnesEnCours = []; trackDOM.innerHTML = ""; enPause = false;
             
             document.getElementById("lbl-score").innerText = score; document.getElementById("lbl-level").innerText = niveau;
             document.getElementById("lbl-fautes").innerText = config.modeInfini ? `0 (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `0 / ${config.maxFautes}`;
             
             const dynamicWidth = document.getElementById("viewport").clientWidth || window.innerWidth;
-            while (dernierXTreble < dynamicWidth + 250) {
-                dernierXTreble += calculerProchainEspacementTreble();
-                if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true);
-            }
-            while (dernierXBass < dynamicWidth + 250) {
-                dernierXBass += calculerProchainEspacementBass();
-                if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false);
-            }
-            
+            while (dernierXTreble < dynamicWidth + 250) { dernierXTreble += calculerProchainEspacementTreble(trackerTreble); if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true); }
+            while (dernierXBass < dynamicWidth + 250) { dernierXBass += calculerProchainEspacementBass(trackerBass); if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false); }
             jeuActif = true; dernierTimestamp = performance.now(); requestAnimationFrame(boucleDeJeu);
         }
 
         function togglePause() {
-            if (!jeuActif) return; enPause = !enPause;
-            document.getElementById("pause-screen").style.display = enPause ? "flex" : "none";
+            if (!jeuActif) return; enPause = !enPause; document.getElementById("pause-screen").style.display = enPause ? "flex" : "none";
             if (!enPause) { dernierTimestamp = performance.now(); requestAnimationFrame(boucleDeJeu); }
         }
 
-        window.addEventListener('keydown', function(e) {
-            if (e.code === 'Space' && document.getElementById("game-ui").style.display === "block") { e.preventDefault(); togglePause(); }
-        });
+        window.addEventListener('keydown', function(e) { if (e.code === 'Space' && document.getElementById("game-ui").style.display === "block") { e.preventDefault(); togglePause(); } });
         window.addEventListener('resize', function() { if (jeuActif) dessinerEnvironnementStatique(); });
 
         function creerColonne(absoluteX, isTreble) {
-            let pool = isTreble ? poolTreble : poolBass;
-            let tracker = isTreble ? trackerTreble : trackerBass;
+            let pool = isTreble ? poolTreble : poolBass; let tracker = isTreble ? trackerTreble : trackerBass;
             let dernierDiatonic = isTreble ? dernierDiatonicIndexTreble : dernierDiatonicIndexBass;
-            
             let item = piocherNoteOptimisee(pool, tracker, dernierDiatonic, config.intervalleMax);
-            if (isTreble) dernierDiatonicIndexTreble = item.diatonicIndex;
-            else dernierDiatonicIndexBass = item.diatonicIndex;
-
-            const colDiv = document.createElement("div");
-            colDiv.className = "note-column"; 
             
-            // V14.6 Fix Clipping : On applique immédiatement le transform avant l'injection dans le DOM
-            colDiv.style.transform = `translate3d(${absoluteX - currentX}px, 0, 0)`;
-            trackDOM.appendChild(colDiv);
+            if (isTreble) dernierDiatonicIndexTreble = item.diatonicIndex; else dernierDiatonicIndexBass = item.diatonicIndex;
+
+            const colDiv = document.createElement("div"); colDiv.className = "note-column"; 
+            colDiv.style.transform = `translate3d(${absoluteX - currentX}px, 0, 0)`; trackDOM.appendChild(colDiv);
 
             const colObj = { xBase: absoluteX, element: colDiv, processed: false, clef: isTreble ? 'treble' : 'bass', type: item.type, subNotes: [] };
-            
-            if (item.type === 'arpeggio') {
-                colObj.subNotes = item.sequence.map(n => ({ keys: n.keys, acc: n.acc, midi: n.midi, pressed: [], status: 'pending', localX: 0 }));
-            } else {
-                colObj.subNotes = [{ keys: item.keys, acc: item.acc, midi: item.midi, pressed: [], status: 'pending', localX: 0 }];
-            }
+            if (item.type === 'arpeggio') colObj.subNotes = item.sequence.map(n => ({ keys: n.keys, acc: n.acc, midi: n.midi, pressed: [], status: 'pending', localX: 0 }));
+            else colObj.subNotes = [{ keys: item.keys, acc: item.acc, midi: item.midi, pressed: [], status: 'pending', localX: 0 }];
 
             redessinerColonne(colObj); colonnesEnCours.push(colObj);
             
-            // V14.6 Fix Chevauchement : On retourne une valeur d'espacement plus généreuse pour l'arpège (55px au lieu de 45px par note)
-            return (item.type === 'arpeggio') ? (item.sequence.length) * 55 : 0;
+            // V14.7.1 : L'espacement de retour ajusté pour ne pas compresser l'apparition suivante
+            return (item.type === 'arpeggio') ? (item.sequence.length) * 35 : 0;
         }
 
         function redessinerColonne(col) {
-            col.element.innerHTML = ""; 
-            let isArp = col.type === 'arpeggio';
-            let baseWidth = isArp ? Math.max(170, col.subNotes.length * 45 + 50) : 170;
+            col.element.innerHTML = ""; let isArp = col.type === 'arpeggio';
+            
+            // V14.7.1 : Ajustement précis de la largeur de base. 35px par note donne la bonne marge à VexFlow pour étaler la ligature sans écraser.
+            let baseWidth = isArp ? Math.max(140, col.subNotes.length * 35 + 40) : 120;
             col.element.style.width = baseWidth + "px";
             
             const renderer = new VF.Renderer(col.element, VF.Renderer.Backends.SVG);
-            renderer.resize(baseWidth * 1.4, 560); 
-            const context = renderer.getContext(); context.scale(1.4, 1.4);
+            renderer.resize(baseWidth * 1.4, 560); const context = renderer.getContext(); context.scale(1.4, 1.4);
             const stave = new VF.Stave(0, col.clef === 'treble' ? 50 : 230, baseWidth);
 
             let staveNotes = [];
@@ -1181,14 +1208,13 @@
             });
 
             let voice = new VF.Voice({num_beats: staveNotes.length, beat_value: isArp ? 8 : 4}).addTickables(staveNotes);
-            new VF.Formatter().joinVoices([voice]).format([voice], baseWidth - 40);
+            
+            // V14.7.1 : On donne à VexFlow quasiment toute la largeur pour formater.
+            new VF.Formatter().joinVoices([voice]).format([voice], baseWidth - 30);
+            
+            let beam = null; if (isArp && staveNotes.length > 1) beam = new VF.Beam(staveNotes);
 
-            let beam = null;
-            if (isArp && staveNotes.length > 1) beam = new VF.Beam(staveNotes);
-
-            voice.draw(context, stave);
-            if (beam) beam.setContext(context).draw();
-
+            voice.draw(context, stave); if (beam) beam.setContext(context).draw();
             staveNotes.forEach((sn, idx) => { col.subNotes[idx].localX = sn.getAbsoluteX() * 1.4; });
         }
 
@@ -1207,23 +1233,17 @@
             const viewWidth = document.getElementById("viewport").clientWidth || window.innerWidth;
 
             for (let col of colonnesEnCours) {
-                let positionEcran = col.xBase - currentX;
-                col.element.style.transform = `translate3d(${positionEcran}px, 0, 0)`;
+                let positionEcran = col.xBase - currentX; col.element.style.transform = `translate3d(${positionEcran}px, 0, 0)`;
 
                 if (!col.processed) {
                     let allProcessed = true; let reqRedraw = false;
                     col.subNotes.forEach(sub => {
                         let notePos = positionEcran + sub.localX;
-                        if (sub.status === 'pending') {
-                            if (notePos < 135) {
-                                sub.status = 'missed'; fautes++; reqRedraw = true;
-                            } else allProcessed = false;
-                        }
+                        if (sub.status === 'pending') { if (notePos < 135) { sub.status = 'missed'; fautes++; reqRedraw = true; } else allProcessed = false; }
                     });
 
                     if (reqRedraw) {
-                        redessinerColonne(col);
-                        document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
+                        redessinerColonne(col); document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
                         if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
                     }
                     if (allProcessed) col.processed = true;
@@ -1231,81 +1251,56 @@
             }
 
             colonnesEnCours = colonnesEnCours.filter(col => {
-                if ((col.xBase - currentX + (col.subNotes.length * 45 * 1.4)) < -170) { col.element.remove(); return false; }
-                return true; 
+                if ((col.xBase - currentX + (col.subNotes.length * 45 * 1.4)) < -170) { col.element.remove(); return false; } return true; 
             });
 
-            while (dernierXTreble < currentX + viewWidth + 250) {
-                dernierXTreble += calculerProchainEspacementTreble();
-                if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true);
-            }
-            while (dernierXBass < currentX + viewWidth + 250) {
-                dernierXBass += calculerProchainEspacementBass();
-                if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false);
-            }
-
+            while (dernierXTreble < currentX + viewWidth + 250) { dernierXTreble += calculerProchainEspacementTreble(trackerTreble); if (config.modeMD !== "off") dernierXTreble += creerColonne(dernierXTreble, true); }
+            while (dernierXBass < currentX + viewWidth + 250) { dernierXBass += calculerProchainEspacementBass(trackerBass); if (config.modeMG !== "off") dernierXBass += creerColonne(dernierXBass, false); }
             requestAnimationFrame(boucleDeJeu);
         }
 
         function terminerJeu() {
             jeuActif = false;
             document.getElementById("final-score").innerText = `Niveau ${niveau} | Score : ${score} pts`;
+            enregistrerScoreFinDePartie(score); 
             document.getElementById("game-over-screen").style.display = "flex";
-            // V14.6 : On réaffiche la barre de titre globale en fin de partie
             document.getElementById("top-controls-bar").style.display = "flex";
-            enregistrerScoreFinDePartie(score);
         }
 
         function retourMenu() {
             jeuActif = false; enPause = false;
-            document.getElementById("game-ui").style.display = "none";
-            document.getElementById("menu-config").style.display = "block";
-            // V14.6 : On réaffiche la barre de titre globale au retour menu
-            document.getElementById("top-controls-bar").style.display = "flex";
-            updateBadgeVisual();
+            document.getElementById("game-ui").style.display = "none"; document.getElementById("menu-config").style.display = "block";
+            document.getElementById("top-controls-bar").style.display = "flex"; updateBadgeVisual();
         }
 
         function traiterEntreeNote(noteJouee) {
-            let cibles = colonnesEnCours.filter(col => !col.processed);
-            let noteTrouvee = false;
+            let cibles = colonnesEnCours.filter(col => !col.processed); let noteTrouvee = false;
 
             for (let col of cibles) {
-                let positionEcran = col.xBase - currentX;
-                let firstNotePos = positionEcran + col.subNotes[0].localX;
+                let positionEcran = col.xBase - currentX; let firstNotePos = positionEcran + col.subNotes[0].localX;
                 
                 if (firstNotePos <= 420) { 
                     if (col.type === 'arpeggio') {
                         let firstPending = col.subNotes.find(s => s.status === 'pending');
                         if (firstPending && firstPending.midi.includes(noteJouee)) {
-                            noteTrouvee = true;
-                            if (!firstPending.pressed.includes(noteJouee)) firstPending.pressed.push(noteJouee);
-                            if (firstPending.pressed.length === firstPending.midi.length) {
-                                firstPending.status = 'hit'; score += (10 * firstPending.midi.length);
-                            }
+                            noteTrouvee = true; if (!firstPending.pressed.includes(noteJouee)) firstPending.pressed.push(noteJouee);
+                            if (firstPending.pressed.length === firstPending.midi.length) { firstPending.status = 'hit'; score += (10 * firstPending.midi.length); }
                         }
                     } else {
                         for (let sub of col.subNotes) {
                             if (sub.status === 'pending' && sub.midi.includes(noteJouee)) {
-                                noteTrouvee = true;
-                                if (!sub.pressed.includes(noteJouee)) sub.pressed.push(noteJouee);
-                                if (sub.pressed.length === sub.midi.length) {
-                                    sub.status = 'hit'; score += (10 * sub.midi.length);
-                                }
-                                break; 
+                                noteTrouvee = true; if (!sub.pressed.includes(noteJouee)) sub.pressed.push(noteJouee);
+                                if (sub.pressed.length === sub.midi.length) { sub.status = 'hit'; score += (10 * sub.midi.length); } break; 
                             }
                         }
                     }
 
                     if (noteTrouvee) {
-                        document.getElementById("lbl-score").innerText = score;
-                        redessinerColonne(col);
+                        document.getElementById("lbl-score").innerText = score; redessinerColonne(col);
                         let allProcessed = col.subNotes.every(s => s.status !== 'pending');
                         if (allProcessed && col.subNotes.every(s => s.status === 'hit')) {
                             col.processed = true; notesValideesCeNiveau++;
-                            if (notesValideesCeNiveau >= 15) {
-                                niveau++; notesValideesCeNiveau = 0; config.vitesse *= (1 + (config.acceleration / 100));
-                                document.getElementById("lbl-level").innerText = niveau;
-                            }
+                            if (notesValideesCeNiveau >= 15) { niveau++; notesValideesCeNiveau = 0; config.vitesse *= (1 + (config.acceleration / 100)); document.getElementById("lbl-level").innerText = niveau; }
                         }
                         break;
                     }
@@ -1320,7 +1315,7 @@
 
         function getMIDIMessage(midiMessage) {
             if (!jeuActif || enPause || config.inputSource !== "midi") return;
-            const command = midiMessage.data[0]; const noteJouee = midiMessage.data[1]; const velocity = (midiMessage.data.length > 2) ? midiMessage.data[2] : 0;
+            const command = midiMessage.data[0], noteJouee = midiMessage.data[1], velocity = (midiMessage.data.length > 2) ? midiMessage.data[2] : 0;
             if (command === 144 && velocity > 0) traiterEntreeNote(noteJouee);
         }
 
@@ -1335,10 +1330,7 @@
             let configObj = {};
             CONFIG_KEYS.forEach(key => {
                 const el = document.getElementById(key);
-                if (el) {
-                    if (el.type === 'checkbox') configObj[key] = el.checked;
-                    else configObj[key] = el.value;
-                }
+                if (el) { if (el.type === 'checkbox') configObj[key] = el.checked; else configObj[key] = el.value; }
             });
             return JSON.stringify(configObj, null, 2);
         }
@@ -1346,21 +1338,8 @@
         function appliquerConfigurationJson(jsonStr) {
             try {
                 let configObj = JSON.parse(jsonStr);
-                
-                if (configObj["cfg-accords-inv"]) {
-                    document.getElementById("cfg-chk-fondamental").checked = true;
-                    document.getElementById("cfg-chk-renversement").checked = (configObj["cfg-accords-inv"] === "renversements");
-                    document.getElementById("cfg-chk-arpege-simple").checked = false;
-                    document.getElementById("cfg-chk-arpege-complexe").checked = false;
-                }
-
-                CONFIG_KEYS.forEach(key => {
-                    if (configObj[key] !== undefined && document.getElementById(key)) {
-                        let el = document.getElementById(key);
-                        if (el.type === 'checkbox') el.checked = configObj[key];
-                        else el.value = configObj[key];
-                    }
-                });
+                if (configObj["cfg-accords-inv"]) { document.getElementById("cfg-chk-fondamental").checked = true; document.getElementById("cfg-chk-renversement").checked = (configObj["cfg-accords-inv"] === "renversements"); document.getElementById("cfg-chk-arpege-simple").checked = false; document.getElementById("cfg-chk-arpege-complexe").checked = false; }
+                CONFIG_KEYS.forEach(key => { if (configObj[key] !== undefined && document.getElementById(key)) { let el = document.getElementById(key); if (el.type === 'checkbox') el.checked = configObj[key]; else el.value = configObj[key]; } });
                 if(configObj["cfg-lang"]) changerLangue(configObj["cfg-lang"]);
             } catch(e) { console.error("Erreur lors de l'application de la config", e); }
         }
@@ -1368,13 +1347,8 @@
         function sauvegarderDansLocalStorage() { localStorage.setItem("pianotement_config", extraireConfigurationJson()); }
         function chargerDepuisLocalStorage() {
             let saved = localStorage.getItem("pianotement_config");
-            if(saved) {
-                appliquerConfigurationJson(saved); toggleInputSource(); toggleCustomAmbitus();
-            } else {
-                let osLang = navigator.language || navigator.userLanguage || "fr"; osLang = osLang.substring(0, 2).toLowerCase();
-                if (["fr", "en", "es"].includes(osLang)) { document.getElementById("cfg-lang").value = osLang; changerLangue(osLang); } 
-                else changerLangue("fr");
-            }
+            if(saved) { appliquerConfigurationJson(saved); toggleInputSource(); toggleCustomAmbitus(); } 
+            else { let osLang = navigator.language || navigator.userLanguage || "fr"; osLang = osLang.substring(0, 2).toLowerCase(); if (["fr", "en", "es"].includes(osLang)) { document.getElementById("cfg-lang").value = osLang; changerLangue(osLang); } else changerLangue("fr"); }
         }
 
         peuplerSelectsAmbitus(); chargerDepuisLocalStorage(); initialiserGestionnairePresets();
