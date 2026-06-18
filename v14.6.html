@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.5 (Mode Arpèges Stricts & Ergonomie)</title>
+    <title>Arcade Piano - V14.6 (Mode Arpèges Stricts & Ergonomie)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -229,7 +229,7 @@
 </head>
 <body>
 
-    <div class="top-controls">
+    <div class="top-controls" id="top-controls-bar">
         <div class="top-controls-left">
             <div class="main-title"><a href="https://www.pianotement.fr/" target="_blank">Pianotement.fr</a></div>
             <a href="https://youtube.com/@pianotement" target="_blank" class="youtube-link">
@@ -480,7 +480,7 @@
     <script>
         const VF = Vex.Flow;
         
-        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES (V14.5) ---
+        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES (V14.6 - Nouvelle Liste Intuitive) ---
         const ARPEGES_SIMPLES = [
             [0, 2, 4], // Triolet Montant
             [4, 2, 0], // Triolet Descendant
@@ -488,19 +488,27 @@
             [0, 4, 2, 4]  // Basse d'Alberti
         ];
         const ARPEGES_COMPLEXES = [
-            [0, 2, 4, 7], // Montant Standard
-            [7, 4, 2, 0], // Descendant Standard
-            [0, 2, 4, 7, 4, 2, 0], // Montant et Descendant
-            [0, 4, 9], // Grand Écart Montant
-            [9, 4, 0], // Grand Écart Descendant
-            [0, 4, 9, 4, 0], // Grand Écart Aller-Retour
-            [0, 2, 4, 2, 4, 2], // Balancement Intérieur
-            [0, 7, 4, 2, 4, 2], // Balancement Large
-            [0, 2, 4, 7, 9, 11], // Double Octave Montant
-            [11, 9, 7, 4, 2, 0], // Double Octave Descendant
-            [0, 2, 4, 7, 9, 11, 9, 7, 4, 2, 0], // Double Octave Aller-Retour
-            [0, 2, 1, 3, 2, 4], // En Vague Montante
-            [4, 2, 3, 1, 2, 0]  // En Vague Descendante
+            // Motifs avec Octave (4 notes)
+            [0, 2, 4, 7], // Montant Standard : Do4 Mi4 Sol4 Do5
+            [7, 4, 2, 0], // Descendant Standard : Do5 Sol4 Mi4 Do4
+            [0, 2, 4, 7, 4, 2, 0], // Montant et Descendant : Do4 Mi4 Sol4 Do5 Sol4 Mi4 Do4
+            
+            // Motifs à Grands Intervalles (Ouverts / "Cools" - Dixième)
+            [0, 4, 9], // Grand Écart Montant : Do4 Sol4 Mi5
+            [9, 4, 0], // Grand Écart Descendant : Mi5 Sol4 Do4
+            [0, 4, 9, 4, 0], // Grand Écart Aller-Retour : Do4 Sol4 Mi5 Sol4 Do4
+            
+            // Motifs Répétitifs (Ostinato / Balancement)
+            [0, 2, 4, 2, 4, 2], // Balancement Intérieur : Do4 Mi4 Sol4 Mi4 Sol4 Mi4
+            [0, 7, 4, 2, 4, 2], // Balancement Large (avec octave) : Do4 Do5 Sol4 Mi4 Sol4 Mi4
+            
+            // Motifs sur Deux Octaves
+            [0, 2, 4, 7, 9, 11], // Double Octave Montant : Do4 Mi4 Sol4 Do5 Mi5 Sol5
+            [11, 9, 7, 4, 2, 0], // Double Octave Descendant : Sol5 Mi5 Do5 Sol4 Mi4 Do4
+            
+            // Motifs Brisés (Progression par paliers)
+            [0, 2, 1, 3, 2, 4], // En Vague Montante : Do4 Mi4 Ré4 Fa4 Mi4 Sol4
+            [4, 2, 3, 1, 2, 0]  // En Vague Descendante : Sol4 Mi4 Fa4 Ré4 Mi4 Do4
         ];
 
         // --- 2. PRESETS ARCADE D'USINE ---
@@ -961,15 +969,30 @@
         function piocherNoteOptimisee(pool, tracker, dernierDiatonicIndex, maxIntervalleConfig) {
             tracker.notesGenereesCount++;
             if (tracker.historiqueVisites.size >= pool.length || tracker.notesGenereesCount % 75 === 0) tracker.historiqueVisites.clear();
+            
             let candidats = pool;
             if (maxIntervalleConfig !== "libre" && dernierDiatonicIndex !== null) {
                 const intervalleMax = parseInt(maxIntervalleConfig); 
                 candidats = pool.filter(n => Math.abs(n.diatonicIndex - dernierDiatonicIndex) <= intervalleMax);
                 if (candidats.length === 0) candidats = pool;
             }
+
+            // --- V14.6: Équilibrage intelligent Arpèges vs Accords/Mélodie ---
+            let arpCandidates = candidats.filter(c => c.type === 'arpeggio');
+            let baseCandidates = candidats.filter(c => c.type !== 'arpeggio');
+            
+            // Si on a des arpèges ET des notes normales dans le vivier
+            if (arpCandidates.length > 0 && baseCandidates.length > 0) {
+                // Seulement 25% de chance de forcer un arpège pour équilibrer le nombre total de notes affichées à l'écran
+                let pickArp = Math.random() < 0.25;
+                candidats = pickArp ? arpCandidates : baseCandidates;
+                if (candidats.length === 0) candidats = pool; // Fallback sécurité
+            }
+
             let strKey = n => n.type === 'arpeggio' ? JSON.stringify(n.sequence.map(s=>s.midi)) : JSON.stringify(n.keys);
             let nonVisites = candidats.filter(n => !tracker.historiqueVisites.has(strKey(n)));
             let choisi = nonVisites.length > 0 ? nonVisites[Math.floor(Math.random() * nonVisites.length)] : candidats[Math.floor(Math.random() * candidats.length)];
+            
             tracker.historiqueVisites.add(strKey(choisi));
             return choisi;
         }
@@ -1059,7 +1082,8 @@
                 }
             }
 
-            document.getElementById("top-controls-modes").style.display = "none";
+            // V14.6 : On masque la barre de titre pendant la partie
+            document.getElementById("top-controls-bar").style.display = "none";
             document.getElementById("menu-config").style.display = "none";
             document.getElementById("game-ui").style.display = "block";
             document.getElementById("game-over-screen").style.display = "none";
@@ -1118,7 +1142,11 @@
             else dernierDiatonicIndexBass = item.diatonicIndex;
 
             const colDiv = document.createElement("div");
-            colDiv.className = "note-column"; trackDOM.appendChild(colDiv);
+            colDiv.className = "note-column"; 
+            
+            // V14.6 Fix Clipping : On applique immédiatement le transform avant l'injection dans le DOM
+            colDiv.style.transform = `translate3d(${absoluteX - currentX}px, 0, 0)`;
+            trackDOM.appendChild(colDiv);
 
             const colObj = { xBase: absoluteX, element: colDiv, processed: false, clef: isTreble ? 'treble' : 'bass', type: item.type, subNotes: [] };
             
@@ -1129,7 +1157,9 @@
             }
 
             redessinerColonne(colObj); colonnesEnCours.push(colObj);
-            return (item.type === 'arpeggio') ? (item.sequence.length - 1) * 45 : 0;
+            
+            // V14.6 Fix Chevauchement : On retourne une valeur d'espacement plus généreuse pour l'arpège (55px au lieu de 45px par note)
+            return (item.type === 'arpeggio') ? (item.sequence.length) * 55 : 0;
         }
 
         function redessinerColonne(col) {
@@ -1221,7 +1251,8 @@
             jeuActif = false;
             document.getElementById("final-score").innerText = `Niveau ${niveau} | Score : ${score} pts`;
             document.getElementById("game-over-screen").style.display = "flex";
-            document.getElementById("top-controls-modes").style.display = "flex";
+            // V14.6 : On réaffiche la barre de titre globale en fin de partie
+            document.getElementById("top-controls-bar").style.display = "flex";
             enregistrerScoreFinDePartie(score);
         }
 
@@ -1229,7 +1260,8 @@
             jeuActif = false; enPause = false;
             document.getElementById("game-ui").style.display = "none";
             document.getElementById("menu-config").style.display = "block";
-            document.getElementById("top-controls-modes").style.display = "flex";
+            // V14.6 : On réaffiche la barre de titre globale au retour menu
+            document.getElementById("top-controls-bar").style.display = "flex";
             updateBadgeVisual();
         }
 
@@ -1243,7 +1275,6 @@
                 
                 if (firstNotePos <= 420) { 
                     if (col.type === 'arpeggio') {
-                        // V14.5 Fix: On cherche STRICTEMENT la première note en attente
                         let firstPending = col.subNotes.find(s => s.status === 'pending');
                         if (firstPending && firstPending.midi.includes(noteJouee)) {
                             noteTrouvee = true;
@@ -1253,7 +1284,6 @@
                             }
                         }
                     } else {
-                        // Accords ou Notes simples: n'importe quelle note en attente peut être validée
                         for (let sub of col.subNotes) {
                             if (sub.status === 'pending' && sub.midi.includes(noteJouee)) {
                                 noteTrouvee = true;
@@ -1317,7 +1347,6 @@
             try {
                 let configObj = JSON.parse(jsonStr);
                 
-                // Rétrocompatibilité anciens JSON
                 if (configObj["cfg-accords-inv"]) {
                     document.getElementById("cfg-chk-fondamental").checked = true;
                     document.getElementById("cfg-chk-renversement").checked = (configObj["cfg-accords-inv"] === "renversements");
