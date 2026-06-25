@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Arcade Piano - V14.10 </title>
+    <title>Arcade Piano - V14.12 (Isolation Asynchrone & Accords Progressifs)</title>
     <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.2/build/cjs/vexflow.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -487,7 +487,6 @@
     <script>
         const VF = Vex.Flow;
         
-        // --- 1. DICTIONNAIRES DES MOTIFS D'ARPÈGES ---
         const ARPEGES_SIMPLES = [
             [0, 2, 4], [4, 2, 0], [0, 2, 4, 2], [0, 4, 2, 4]
         ];
@@ -499,134 +498,57 @@
             [0, 2, 1, 3, 2, 4], [4, 2, 3, 1, 2, 0]  
         ];
 
-// --- 2. PALMARÈS & PHRASES D'ENCOURAGEMENT ---
-const PHRASES_SCORE = {
-    RECORD: [
-        "Nouveau meilleur score, félicitations ! 🏆", "C'est l'histoire d'un record qui vient d'être pulvérisé. 🏆", "L'Olympe vous tend les bras. 🏆", 
-        "Vous êtes la définition même du mot 'victoire'. 🏆", "Même Mozart aurait transpiré. 🏆", "Le boss final, c'est vous. 🏆", 
-        "Un chef-d'œuvre absolu de dextérité. 🏆", "C'est un record. Un vrai. Qui inspire le respect. 🏆", "La légende raconte que votre clavier fume encore. 🏆",
-        "Vous venez de redéfinir la notion de virtuosité. 🏆", "Personne ne pensait cela possible. Et pourtant... 🏆", "C'est beau comme du Bach, mais en plus rapide. 🏆",
-        "On va devoir inventer de nouveaux niveaux pour vous. 🏆", "Les lois de la physique ne s'applissent visiblement plus à vos doigts. 🏆",
-        "C'est un triomphe. Modeste, mais mondial. 🏆", "L'histoire se souviendra de ce moment. Peut-être. 🏆", "Un score digne du conservatoire intergalactique. 🏆",
-        "Si la perfection existait, elle vous demanderait des autographes. 🏆", "Vous avez cassé le jeu. Dans le bon sens du terme. 🏆", "Magistral. Tout simplement. 🏆",
-        "Liszt vient d'annuler sa tournée après avoir vu ça. 🏆", "Même l'algorithme a applaudi. 🏆", "Vos doigts ont franchi le mur du son. 🏆",
-        "Un score tellement haut qu'il a le mal des montagnes. 🏆", "Le panthéon de la musique vient d'ouvrir une nouvelle aile. 🏆",
-        "On a dû vérifier si vous n'aviez pas branché une IA sur vos phalanges. 🏆", "C'est plus de la musique, c'est de la sorcellerie. 🏆",
-        "Les touches demandent l'asile politique après un tel traitement. 🏆", "Le compteur de score a eu un vertige. 🏆",
-        "Une masterclass gravée dans le silicium. 🏆", "Votre nom est désormais écrit en lettres d'or dans la mémoire vive. 🏆",
-        "Même avec de la latence, vous auriez explosé le record. 🏆", "Rachmaninov en aurait perdu ses grands accords. 🏆",
-        "Une pluie de notes parfaites. Pas une goutte à côté. 🏆", "On appelle ça l'état de grâce. Ou de la pure magie. 🏆",
-        "Vous jouez plus vite que votre ombre, et plus juste que la lumière. 🏆", "Le trône est à vous. Quelqu'un veut contester ? Non, personne. 🏆",
-        "Vos mains ont développé leur propre conscience héroïque. 🏆", "Un ouragan de justesse. Rien n'a résisté. 🏆",
-        "La légende est en marche, et elle a un sacré rythme. 🏆", "Le capteur MIDI n'en croit pas ses circuits. 🏆",
-        "Un sans-faute qui frise l'insolence. Chapeau bas ! 🏆", "À ce niveau-là, ce n'est plus du jeu, c'est de l'art sacré. 🏆",
-        "Votre score vient de s'envoler pour la stratosphère. 🏆", "Même en essayant de faire exprès, personne ne peut vous rattraper. 🏆",
-        "Vos doigts bougent à la vitesse d'un processeur overclocké. 🏆", "Le grand frisson de la note parfaite. Quelle claque ! 🏆",
-        "Vous avez dompté le clavier comme personne avant vous. 🏆", "Une performance historique, les historiens sont déjà prévenus. 🏆",
-        "Le sommet absolu. Le paysage est dégagé là-haut ? 🏆"
-    ],
-    TIER_90: [
-        "Bravo, un de vos meilleurs scores !", "On sent que le record n'est plus très loin.", "Presque ! C'est comme rater le bus de 2 secondes, mais avec panache.",
-        "La perfection est une chimère, mais vous étiez à deux doigts de l'attraper.", "Excellent travail, la prochaine c'est la bonne.",
-        "C'est ce qu'on appelle frôler le soleil.", "Une prestation de très haute volée.", "Le record vacille, il finira par tomber.",
-        "Il a manqué un rien. Un tout petit rien.", "Vous étiez dans la zone. On a tous vu la zone.", "Quelle intensité ! Le record a tremblé.",
-        "C'est un score magnifique. Et je dis ça en tant que code binaire.", "Presque légendaire.", "La prochaine partie sera la bonne, c'est une certitude statistique.",
-        "Vous avez du talent à revendre.", "Chopin aurait approuvé cette performance.", "C'était chaud, très chaud.", "Une maîtrise impressionnante du clavier.",
-        "Vous flirtez avec le sommet du classement.", "Ne vous arrêtez pas en si bon chemin !",
-        "Le sommet est juste là, vous pouvez le toucher du bout des doigts.", "Une fluidité digne des plus grandes scènes.",
-        "Encore une note et le record changeait définitivement de propriétaire.", "Beethoven n'entendait rien, mais il aurait vu le talent ici sans problème.",
-        "À un bémol près, c'était le sans-faute absolu.", "Vos phalanges sont officiellement des instruments de précision.",
-        "Une démo technique qui force l'admiration du processeur.", "Le public virtuel est debout, le rappel est imminent.",
-        "Vous avez frôlé le divin. Revenez-y dès la prochaine partie.", "C'est de la haute couture musicale, ajustée au millimètre.",
-        "La mécanique est parfaitement huilée, l'envolée est totale.", "On frise l'excellence à l'état brut.",
-        "Un score qui donne le tournis aux statistiques.", "Vous jouez dans la cour des très, très grands.",
-        "La dextérité est là, la concentration est maximale. Une merveille.", "Le record a eu chaud aux fesses, il s'en sort bien cette fois.",
-        "Une agilité qui laisse rêveur. Encore un effort !", "Vous avez transformé ce morceau en démonstration de force.",
-        "C'est une pluie fine de notes impeccables. Superbe !", "La frontière entre vous et le record est devenue microscopique.",
-        "Un rythme d'enfer tenu de bout en bout. Quelle endurance !", "On a frôlé le bug de surchauffe tellement c'était intense.",
-        "Les touches répondent au doigt et à l'œil. Littéralement.", "Une régularité impressionnante à cette vitesse-là.",
-        "Le trône a tremblé sur ses fondations. Ne relâchez pas la pression !", "La grande classe. Tout simplement.",
-        "Vous avez le morceau dans la peau et les notes au bout des doigts.", "Encore quelques pixels de plus et vous brisiez le plafond.",
-        "La zone d'excellence est votre résidence secondaire désormais.", "Une exécution remarquable. Le grand art est proche."
-    ],
-    TIER_70: [
-        "Bien, vous consolidez vos progrès !", "La régularité, c'est la clé du succès.", "C'est un score très honnête. Pas de quoi s'extasier, mais très honnête.",
-        "Comme disait Churchill: 'Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.'", "Vous avez les bases, reste à affiner la vitesse.",
-        "C'est du solide. Un bon travail d'artisan.", "Vous êtes sur la bonne voie.", "Encore un peu d'huile de coude et le top 90% est à vous.",
-        "C'est ce qu'on appelle une performance 'sympa'.", "Pas mal du tout ! L'échauffement est terminé ?", "On sent le potentiel.",
-        "La persévérance est la noblesse de l'effort.", "Un bon score de milieu de tableau, confortable et rassurant.", "Vous avez survécu plus longtemps que la moyenne.",
-        "La technique est là, il manque l'étincelle.", "C'est bien. C'est pas exceptionnel, mais c'est bien.", "On ne construit pas Rome en un jour.",
-        "Un effort tout à fait louable.", "C'est une étape nécessaire vers la grandeur.", "Vous pouvez être fier. Modérément, mais fier.",
-        "C'est propre, c'est carré, c'est du travail bien fait.", "La structure est solide, on attend maintenant l'envolée lyrique.",
-        "Un tempo bien tenu, sans fioritures inutiles.", "Pas d'extase mystique, mais un profond respect pour la régularité.",
-        "C'est le métier qui rentre, et il rentre par la grande porte.", "Une interprétation stable, les fondations sont posées.",
-        "Vous commencez à imposer votre rythme au jeu.", "Le clavier commence à vous obéir sans discuter.",
-        "Une performance rassurante, la marge de progression diminue.", "Les automatismes sont là, c'est une excellente nouvelle.",
-        "Vous esquivez la plupart des pièges avec élégance.", "C'est une base saine pour bâtir de futurs exploits.",
-        "Rien de dramatique, bien au contraire : c'est du travail sérieux.", "Le métronome intérieur fonctionne à merveille.",
-        "Vous ne vous laissez pas démonter par la vitesse, solide !", "Un rendu globalement harmonieux, l'oreille apprécie.",
-        "La partition commence à se dessiner d'elle-même sous vos doigts.", "Vous êtes confortablement installé dans le haut du panier.",
-        "Un bon coup de collier et vous basculez dans l'élite.", "La constance finit toujours par payer, continuez !",
-        "Ce n'est plus du hasard, c'est de la maîtrise en construction.", "Vos doigts se repèrent de mieux en mieux dans l'espace.",
-        "Une prestation honorable qui mérite de s'y attarder.", "Le cap des 70% montre que vous avez compris la logique du morceau.",
-        "On sent l'application derrière chaque appui. Bravo.", "Pas de fausse note majeure, le contrat est rempli.",
-        "Vous avancez pas à pas, mais le pas est ferme.", "Un score qui consolide votre réputation naissante.",
-        "La technique de base est validée, place à l'audace désormais.", "C'est du bon boulot, net et sans bavure."
-    ],
-    TIER_50: [
-        "La route est encore longue, mais le paysage est joli.", "C'est un début. Ou une fin précipitée, ça dépend de comment on voit les choses.",
-        "L'important c'est de participer. Enfin, c'est ce qu'on dit en général.", "Un score tiède. Ni bouillant, ni glacial. Tiède.",
-        "Ne baissez pas les bras, vos doigts peuvent mieux faire.", "Comme on dit: 'C'est en forgeant qu'on devient forgeron'.",
-        "Vous prenez vos marques, c'est tout à fait normal.", "Il faut bien que quelqu'un fasse des scores moyens pour mettre les autres en valeur.",
-        "Une petite pause café et on y retourne ?", "C'est un score qui existe. Voilà. Il existe.", "La marge de progression est... vaste.",
-        "Ne laissez pas ce score définir qui vous êtes.", "On a vu mieux. Mais on a aussi vu pire. Rarement, mais on a vu pire.",
-        "Un peu de concentration que diable !", "L'apprentissage est fait de hauts et de bas. Là, c'est un bas.", "Rome ne s'est pas faite en un jour, ni ce score.",
-        "Il y a de l'idée. Surtout de l'idée.", "Vous vous échauffiez les poignets, n'est-ce pas ?", "C'est audacieux de s'arrêter là.",
-        "La prochaine fois, essayez de taper sur les bonnes touches au bon moment.",
-        "C'est tiède, mais le tiède a son public.", "Une performance qui laisse perplexe mais étrangement optimiste.",
-        "Disons que le piano a survécu à l'exercice, c'est l'essentiel.", "Un léger malentendu entre vos yeux et l'action de vos mains.",
-        "C'est un bon début pour un exercice difficile, restons positifs.", "On sent que vous cherchez les touches... et parfois, vous les trouvez !",
-        "La moyenne est atteinte, mais la gloire attendra un peu.", "Une prestation qui manque un poil de relief, mais le fond est là.",
-        "Vos doigts ont hésité à plusieurs reprises. Manque de confiance ?", "Le rythme s'est perdu en chemin, mais il va revenir.",
-        "Ce score ne fera pas date dans l'histoire, mais il compte quand même.", "Un peu de flottement au milieu, ressaisissez-vous !",
-        "Ni une catastrophe, ni un miracle. Un jeudi après-midi classique.", "Le potentiel est caché quelque part sous ce score, cherchons-le.",
-        "Vous avez joué la carte de la prudence. Un peu trop, peut-être ?", "Les notes sont passées, mais elles ont couru un peu trop vite pour vous.",
-        "Un score de transition. On oublie et on passe à l'étape supérieure.", "La coordination demande encore un petit effort de synchronisation.",
-        "C'est une esquisse. Le tableau final sera bien meilleur.", "Vos mains manquent encore un peu de dialogue fraternel.",
-        "Ne jetez pas le clavier tout de suite, il y a de l'espoir.", "Le tempo a joué au yoyo, stabilisons tout ça.",
-        "Une lecture un peu laborieuse, mais le déchiffrage avance.", "On va dire que c'était une répétition générale en costume de nuit.",
-        "Vous avez les notes, il ne reste plus qu'à les mettre dans le bon ordre.", "L'intention était bonne, la réalisation... perfectible.",
-        "Un score qui a le mérite d'être honnête face à l'effort fourni.", "Encore un peu de travail et la moyenne sera un vieux souvenir.",
-        "Vos doigts ont confondu vitesse et précipitation sur la fin.", "Allez, on remet cent balles dans le bastringue et on s'applique !"
-    ],
-    TIER_LOW: [
-        "Il y a des jours avec, et des jours sans. Aujourd'hui, c'était très clairement sans.", "Avez-vous essayé d'appuyer sur les touches ?",
-        "Je ne suis pas en colère, je suis juste déçu.", "C'est audacieux d'appeler ça de la musique.", "Nelson Mandela a dit: 'Je ne perds jamais, soit je gagne, soit j'apprends'. Vous avez beaucoup appris.",
-        "Il faut bien commencer quelque part. Le sous-sol est un excellent point de départ.", "C'est très intéressant. Mais c'est faux.",
-        "Vos doigts sont-ils engourdis ?", "Pourquoi faire bien quand on peut faire ça ?", "Edison a fait 1000 essais avant l'ampoule. Vous en êtes au premier.",
-        "C'est une performance... conceptuelle.", "Même mon algorithme de hasard aurait fait mieux.", "Un faux pas magistral.",
-        "Oublions ça et recommençons incognito.", "Ce score restera entre nous. Promis.", "C'était fulgurant de brièveté.",
-        "Vous avez confondu le clavier avec une machine à écrire ?", "Il n'y a pas d'échec, que du feedback. Voici le mien: aïe.",
-        "Le silence est parfois le plus beau des accords.", "C'est un record à l'envers. Félicitations.",
-        "C'était une tentative d'art contemporain ? L'intention est abstraite.", "Même le métronome s'est arrêté pour pleurer.",
-        "Le silence qui a suivi cette partie était d'une beauté remarquable.", "Vous jouiez avec des moufles ou des gants de boxe ?",
-        "L'immense avantage de ce score, c'est qu'on ne peut absolument pas descendre plus bas.", "Une interprétation extrêmement... libre de la structure originale.",
-        "On aurait dit un chat qui marche sur un clavier après avoir bu du café.", "Les touches n'ont rien fait pour mériter un tel traitement.",
-        "Une performance disruptive. Le monde de la musique est sous le choc.", "C'était une répétition pour tester la résistance du plastique ?",
-        "Si l'objectif était de rater un maximum de notes, c'est un sans-faute absolu.", "Vos mains ont déclaré forfait dès la troisième seconde, non ?",
-        "Le rythme s'est enfui en courant en entendant la première note.", "Un grand moment de solitude interactive.",
-        "Même le processeur a essayé de fermer les yeux.", "C'est ce qu'on appelle un naufrage artistique de grande envergure.",
-        "Vous avez tenté une approche novatrice basée sur le chaos aléatoire.", "L'essentiel est de participer... mais là, vous avez surtout regardé passer les trains.",
-        "Une cascade de fausses notes du plus bel effet dramatique.", "Le jeu a cru que vous nettoyiez votre écran avec un chiffon.",
-        "On va mettre ça sur le compte d'une crampe soudaine et généralisée.", "Le dictionnaire cherche une nouvelle définition pour le mot 'raté'.",
-        "Vous avez confondu la touche 'Jouer' avec la touche 'Détruire'.", "Une prestation qui fera date dans les annales du contre-emploi.",
-        "Votre score vient de creuser un tunnel vers le centre de la Terre.", "Même les sourds auraient tiqué sur ce passage.",
-        "Un bel effort de déconstruction rythmique. Très punk dans l'esprit.", "On efface la mémoire tampon et on fait comme si rien ne s'était passé.",
-        "Aïe. Mon code source a eu mal aux lignes.", "Heureusement que le ridicule ne consomme pas d'octets."
-    ]
-};
+        const PHRASES_SCORE = {
+            RECORD: [
+                "Nouveau meilleur score, félicitations ! 🏆", "C'est l'histoire d'un record qui vient d'être pulvérisé. 🏆", "L'Olympe vous tend les bras. 🏆", 
+                "Vous êtes la définition même du mot 'victoire'. 🏆", "Même Mozart aurait transpiré. 🏆", "Le boss final, c'est vous. 🏆", 
+                "Un chef-d'œuvre absolu de dextérité. 🏆", "C'est un record. Un vrai. Qui inspire le respect. 🏆", "La légende raconte que votre clavier fume encore. 🏆",
+                "Vous venez de redéfinir la notion de virtuosité. 🏆", "Personne ne pensait cela possible. Et pourtant... 🏆", "C'est beau comme du Bach, mais en plus rapide. 🏆",
+                "On va devoir inventer de nouveaux niveaux pour vous. 🏆", "Les lois de la physique ne s'appliquent visiblement plus à vos doigts. 🏆",
+                "C'est un triomphe. Modeste, mais mondial. 🏆", "L'histoire se souviendra de ce moment. Peut-être. 🏆", "Un score digne du conservatoire intergalactique. 🏆",
+                "Si la perfection existait, elle vous demanderait des autographes. 🏆", "Vous avez cassé le jeu. Dans le bon sens du terme. 🏆", "Magistral. Tout simplement. 🏆"
+            ],
+            TIER_90: [
+                "Bravo, un de vos meilleurs scores !", "On sent que le record n'est plus très loin.", "Presque ! C'est comme rater le bus de 2 secondes, mais avec panache.",
+                "La perfection est une chimère, mais vous étiez à deux doigts de l'attraper.", "Excellent travail, la prochaine c'est la bonne.",
+                "C'est ce qu'on appelle frôler le soleil.", "Une prestation de très haute volée.", "Le record vacille, il finira par tomber.",
+                "Il a manqué un rien. Un tout petit rien.", "Vous étiez dans la zone. On a tous vu la zone.", "Quelle intensité ! Le record a tremblé.",
+                "C'est un score magnifique. Et je dis ça en tant que code binaire.", "Presque légendaire.", "La prochaine partie sera la bonne, c'est une certitude statistique.",
+                "Vous avez du talent à revendre.", "Chopin aurait approuvé cette performance.", "C'était chaud, très chaud.", "Une maîtrise impressionnante du clavier.",
+                "Vous flirtez avec le sommet du classement.", "Ne vous arrêtez pas en si bon chemin !"
+            ],
+            TIER_70: [
+                "Bien, vous consolidez vos progrès !", "La régularité, c'est la clé du succès.", "C'est un score très honnête. Pas de quoi s'extasier, mais très honnête.",
+                "Comme disait Churchill: 'Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.'", "Vous avez les bases, reste à affiner la vitesse.",
+                "C'est du solide. Un bon travail d'artisan.", "Vous êtes sur la bonne voie.", "Encore un peu d'huile de coude et le top 90% est à vous.",
+                "C'est ce qu'on appelle une performance 'sympa'.", "Pas mal du tout ! L'échauffement est terminé ?", "On sent le potentiel.",
+                "La persévérance est la noblesse de l'effort.", "Un bon score de milieu de tableau, confortable et rassurant.", "Vous avez survécu plus longtemps que la moyenne.",
+                "La technique est là, il manque l'étincelle.", "C'est bien. C'est pas exceptionnel, mais c'est bien.", "On ne construit pas Rome en un jour.",
+                "Un effort tout à fait louable.", "C'est une étape nécessaire vers la grandeur.", "Vous pouvez être fier. Modérément, mais fier."
+            ],
+            TIER_50: [
+                "La route est encore longue, mais le paysage est joli.", "C'est un début. Ou une fin précipitée, ça dépend de comment on voit les choses.",
+                "L'important c'est de participer. Enfin, c'est ce qu'on dit en général.", "Un score tiède. Ni bouillant, ni glacial. Tiède.",
+                "Ne baissez pas les bras, vos doigts peuvent mieux faire.", "Comme on dit: 'C'est en forgeant qu'on devient forgeron'.",
+                "Vous prenez vos marques, c'est tout à fait normal.", "Il faut bien que quelqu'un fasse des scores moyens pour mettre les autres en valeur.",
+                "Une petite pause café et on y retourne ?", "C'est un score qui existe. Voilà. Il existe.", "La marge de progression est... vaste.",
+                "Ne laissez pas ce score définir qui vous êtes.", "On a vu mieux. Mais on a aussi vu pire. Rarement, mais on a vu pire.",
+                "Un peu de concentration que diable !", "L'apprentissage est fait de hauts et de bas. Là, c'est un bas.", "Rome ne s'est pas faite en un jour, ni ce score.",
+                "Il y a de l'idée. Surtout de l'idée.", "Vous vous échauffiez les poignets, n'est-ce pas ?", "C'est audacieux de s'arrêter là.",
+                "La prochaine fois, essayez de taper sur les bonnes touches au bon moment."
+            ],
+            TIER_LOW: [
+                "Il y a des jours avec, et des jours sans. Aujourd'hui, c'était très clairement sans.", "Avez-vous essayé d'appuyer sur les touches ?",
+                "Je ne suis pas en colère, je suis juste déçu.", "C'est audacieux d'appeler ça de la musique.", "Nelson Mandela a dit: 'Je ne perds jamais, soit je gagne, soit j'apprends'. Vous avez beaucoup appris.",
+                "Il faut bien commencer quelque part. Le sous-sol est un excellent point de départ.", "C'est très intéressant. Mais c'est faux.",
+                "Vos doigts sont-ils engourdis ?", "Pourquoi faire bien quand on peut faire ça ?", "Edison a fait 1000 essais avant l'ampoule. Vous en êtes au premier.",
+                "C'est une performance... conceptuelle.", "Même mon algorithme de hasard aurait fait mieux.", "Un faux pas magistral.",
+                "Oublions ça et recommençons incognito.", "Ce score restera entre nous. Promis.", "C'était fulgurant de brièveté.",
+                "Vous avez confondu le clavier avec une machine à écrire ?", "Il n'y a pas d'échec, que du feedback. Voici le mien: aïe.",
+                "Le silence est parfois le plus beau des accords.", "C'est un record à l'envers. Félicitations."
+            ]
+        };
 
-        // --- 3. PRESETS ARCADE D'USINE ---
         const PRESETS_ARCADE_USINE = {
             "grand_debutant": { 
                 nom: "1. Grand Débutant", 
@@ -1148,18 +1070,17 @@ const PHRASES_SCORE = {
             return choisi;
         }
 
-        // --- POINT D : Variabilité pseudo-aléatoire par paliers de 5% ---
         function calculerProchainEspacementTreble(tracker) {
             if (config.inputSource === "mic") { let baseVal = parseInt(document.getElementById("cfg-debit-bass").value); return isNaN(baseVal) ? 180 : baseVal; }
             let mode = document.getElementById("cfg-debit-treble").value;
             if (mode.startsWith("var")) {
                 if (varCompteurTreble >= varTargetTreble) {
                     varCompteurTreble = 0; 
-                    varTargetTreble = Math.floor(Math.random() * 6) + 5; // Changement tous les 5 à 10 notes
+                    varTargetTreble = Math.floor(Math.random() * 6) + 5; 
                     let maxPct = parseInt(mode.replace("var", "")); 
-                    let steps = maxPct / 5; // Nombre de paliers
-                    let randomStep = Math.floor(Math.random() * (steps + 1)); // Entre 0 et max paliers
-                    varFacteurTreble = 1.0 + (randomStep * 0.05); // Variabilité entre +0% et +Max%
+                    let steps = maxPct / 5; 
+                    let randomStep = Math.floor(Math.random() * (steps + 1)); 
+                    varFacteurTreble = 1.0 + (randomStep * 0.05); 
                 }
                 varCompteurTreble++; return 180 * varFacteurTreble;
             }
@@ -1198,7 +1119,6 @@ const PHRASES_SCORE = {
             varCompteurBass = 0; varTargetBass = 5; varFacteurBass = 1.0;
             poolTreble = []; poolBass = [];
 
-            // POOL MAIN DROITE (TREBLE)
             let mdMelodie = document.getElementById("cfg-md-melodie").checked; let mdFond = document.getElementById("cfg-md-fondamental").checked; let mdRenv = document.getElementById("cfg-md-renversement").checked; let mdArpS = document.getElementById("cfg-md-arpege-simple").checked; let mdArpC = document.getElementById("cfg-md-arpege-complexe").checked;
             config.modeMD = (mdMelodie || mdFond || mdRenv || mdArpS || mdArpC) ? 'on' : 'off';
             if (config.modeMD === 'on') {
@@ -1215,7 +1135,6 @@ const PHRASES_SCORE = {
                 }
             }
 
-            // POOL MAIN GAUCHE (BASS)
             let mgMelodie = document.getElementById("cfg-mg-melodie").checked; let mgFond = document.getElementById("cfg-mg-fondamental").checked; let mgRenv = document.getElementById("cfg-mg-renversement").checked; let mgArpS = document.getElementById("cfg-mg-arpege-simple").checked; let mgArpC = document.getElementById("cfg-mg-arpege-complexe").checked;
             config.modeMG = (mgMelodie || mgFond || mgRenv || mgArpS || mgArpC) ? 'on' : 'off';
             if (config.modeMG === 'on') {
@@ -1301,7 +1220,23 @@ const PHRASES_SCORE = {
             col.subNotes.forEach(sub => {
                 let note = new VF.StaveNote({ clef: col.clef, keys: sub.keys, duration: isArp ? "8" : "q" });
                 sub.acc.forEach((a, i) => { if(a) note.addModifier(new VF.Accidental(a), i); });
-                appliquerCouleur(note, sub.status); staveNotes.push(note);
+                
+                // Coloration VexFlow dynamique pour chaque clé (Note On)
+                if (sub.status === 'hit') {
+                    note.setStyle({ fillStyle: "#2ecc71", strokeStyle: "#2ecc71" });
+                } else if (sub.status === 'missed') {
+                    note.setStyle({ fillStyle: "#e74c3c", strokeStyle: "#e74c3c" });
+                } else {
+                    note.setStyle({ fillStyle: "#2c3e50", strokeStyle: "#2c3e50" });
+                    // On colore les têtes de notes individuellement si elles sont pressées
+                    sub.pressed.forEach(midiNum => {
+                        let keyIndex = sub.midi.indexOf(midiNum);
+                        if (keyIndex !== -1) {
+                            note.setKeyStyle(keyIndex, { fillStyle: "#2ecc71", strokeStyle: "#2ecc71" });
+                        }
+                    });
+                }
+                staveNotes.push(note);
             });
 
             let voice = new VF.Voice({num_beats: staveNotes.length, beat_value: isArp ? 8 : 4}).addTickables(staveNotes);
@@ -1312,12 +1247,6 @@ const PHRASES_SCORE = {
 
             voice.draw(context, stave); if (beam) beam.setContext(context).draw();
             staveNotes.forEach((sn, idx) => { col.subNotes[idx].localX = sn.getAbsoluteX() * 1.4; });
-        }
-
-        function appliquerCouleur(staveNote, status) {
-            if (status === 'hit') staveNote.setStyle({ fillStyle: "#2ecc71", strokeStyle: "#2ecc71" });
-            else if (status === 'missed') staveNote.setStyle({ fillStyle: "#e74c3c", strokeStyle: "#e74c3c" });
-            else staveNote.setStyle({ fillStyle: "#2c3e50", strokeStyle: "#2c3e50" });
         }
 
         function boucleDeJeu(timestamp) {
@@ -1335,7 +1264,6 @@ const PHRASES_SCORE = {
                     let allProcessed = true; let reqRedraw = false;
                     col.subNotes.forEach(sub => {
                         let notePos = positionEcran + sub.localX;
-                        // POINT G : La note devient rouge STRICTEMENT à la sortie de la HitZone (180px)
                         if (sub.status === 'pending') { 
                             if (notePos < 180) { 
                                 sub.status = 'missed'; fautes++; reqRedraw = true; 
@@ -1351,12 +1279,12 @@ const PHRASES_SCORE = {
                         if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
                     }
                     
-                    // POINT G : Une fois toutes les notes traitées (soit Hit, soit Sorties et devenues Rouges),
-                    // la colonne entière subit un fade-out, répondant au besoin de "disparition après".
                     if (allProcessed) { 
                         col.processed = true; 
-                        col.element.style.transition = "opacity 0.6s ease-out";
-                        col.element.style.opacity = "0";
+                        if (col.subNotes.some(s => s.status === 'missed')) {
+                            col.element.style.transition = "opacity 0.6s ease-out";
+                            col.element.style.opacity = "0";
+                        }
                     }
                 }
             }
@@ -1383,28 +1311,27 @@ const PHRASES_SCORE = {
             document.getElementById("top-controls-bar").style.display = "flex"; updateBadgeVisual();
         }
 
-        // --- POINT A : Validation indépendante des flux et respect d'ordre chronologique strict ---
         function validerNote(col, sub, noteJouee) {
-            if (!sub.pressed.includes(noteJouee)) sub.pressed.push(noteJouee);
-            
-            if (sub.pressed.length === sub.midi.length) { 
-                sub.status = 'hit'; 
-                score += (10 * sub.midi.length); 
+            if (!sub.pressed.includes(noteJouee)) {
+                sub.pressed.push(noteJouee);
+                redessinerColonne(col); // On redessine immédiatement pour colorer la tête de note
             }
             
-            document.getElementById("lbl-score").innerText = score; 
-            redessinerColonne(col);
-            
-            let allProcessed = col.subNotes.every(s => s.status !== 'pending');
-            if (allProcessed && col.subNotes.every(s => s.status === 'hit')) {
-                col.processed = true; 
-                col.element.style.transition = "opacity 0.5s ease-out";
-                col.element.style.opacity = "0";
-                notesValideesCeNiveau++;
-                if (notesValideesCeNiveau >= 15) { 
-                    niveau++; notesValideesCeNiveau = 0; 
-                    config.vitesse *= (1 + (config.acceleration / 100)); 
-                    document.getElementById("lbl-level").innerText = niveau; 
+            if (sub.pressed.length === sub.midi.length && sub.status !== 'hit') { 
+                sub.status = 'hit'; 
+                score += (10 * sub.midi.length); 
+                document.getElementById("lbl-score").innerText = score; 
+                redessinerColonne(col);
+
+                let allProcessed = col.subNotes.every(s => s.status !== 'pending');
+                if (allProcessed && col.subNotes.every(s => s.status === 'hit')) {
+                    col.processed = true; 
+                    notesValideesCeNiveau++;
+                    if (notesValideesCeNiveau >= 15) { 
+                        niveau++; notesValideesCeNiveau = 0; 
+                        config.vitesse *= (1 + (config.acceleration / 100)); 
+                        document.getElementById("lbl-level").innerText = niveau; 
+                    }
                 }
             }
         }
@@ -1412,39 +1339,40 @@ const PHRASES_SCORE = {
         function traiterEntreeNote(noteJouee) {
             let noteAcceptee = false;
 
-            // 1. Chercher la TOUTE PREMIÈRE note éligible en Clé de Sol
+            // 1. RECHERCHE ASYNCHRONE CLÉ DE SOL
             let cibleTreble = null;
             for (let col of colonnesEnCours) {
                 if (col.processed || col.clef !== 'treble') continue;
-                let positionEcran = col.xBase - currentX;
-                for (let sub of col.subNotes) {
-                    if (sub.status === 'pending') {
-                        let notePos = positionEcran + sub.localX;
-                        // On vérifie qu'elle est bien physiquement dans la HitZone
-                        if (notePos <= 420 && notePos >= 180) { cibleTreble = { col, sub }; }
-                        break; // Bloque la file Treble sur la première pending
+                let pendingSub = col.subNotes.find(s => s.status === 'pending');
+                if (pendingSub) {
+                    let positionEcran = col.xBase - currentX;
+                    let firstNotePos = positionEcran + col.subNotes[0].localX;
+                    // L'entité devient éligible dès que sa première note passe les 420px
+                    if (firstNotePos <= 420) {
+                        let notePos = positionEcran + pendingSub.localX;
+                        if (notePos >= 130) { cibleTreble = { col, sub: pendingSub }; }
                     }
+                    break; 
                 }
-                if (cibleTreble) break;
             }
 
-            // 2. Chercher la TOUTE PREMIÈRE note éligible en Clé de Fa
+            // 2. RECHERCHE ASYNCHRONE CLÉ DE FA
             let cibleBass = null;
             for (let col of colonnesEnCours) {
                 if (col.processed || col.clef !== 'bass') continue;
-                let positionEcran = col.xBase - currentX;
-                for (let sub of col.subNotes) {
-                    if (sub.status === 'pending') {
-                        let notePos = positionEcran + sub.localX;
-                        // On vérifie qu'elle est bien physiquement dans la HitZone
-                        if (notePos <= 420 && notePos >= 180) { cibleBass = { col, sub }; }
-                        break; // Bloque la file Bass sur la première pending
+                let pendingSub = col.subNotes.find(s => s.status === 'pending');
+                if (pendingSub) {
+                    let positionEcran = col.xBase - currentX;
+                    let firstNotePos = positionEcran + col.subNotes[0].localX;
+                    if (firstNotePos <= 420) {
+                        let notePos = positionEcran + pendingSub.localX;
+                        if (notePos >= 130) { cibleBass = { col, sub: pendingSub }; }
                     }
+                    break; 
                 }
-                if (cibleBass) break;
             }
 
-            // 3. Valider indépendamment
+            // 3. VALIDATION INDÉPENDANTE (Résout le blocage des notes simultanées)
             if (cibleTreble && cibleTreble.sub.midi.includes(noteJouee)) {
                 validerNote(cibleTreble.col, cibleTreble.sub, noteJouee);
                 noteAcceptee = true;
@@ -1454,8 +1382,25 @@ const PHRASES_SCORE = {
                 noteAcceptee = true;
             }
 
-            // 4. Pénalité si la note ne correspondait à aucune des deux priorités
-            if (!noteAcceptee && config.modeSansErreur) {
+            // 4. ABSORPTION DYNAMIQUE DES NOTES EN ZONE (Tolérance / Anti-rebond)
+            let noteAbsorbee = false;
+            if (!noteAcceptee) {
+                for (let col of colonnesEnCours) {
+                    let positionEcran = col.xBase - currentX;
+                    let firstNotePos = positionEcran + col.subNotes[0].localX;
+                    if (firstNotePos <= 450 && firstNotePos >= 100) { 
+                        for (let sub of col.subNotes) {
+                            if (sub.midi.includes(noteJouee)) {
+                                noteAbsorbee = true; break;
+                            }
+                        }
+                    }
+                    if (noteAbsorbee) break;
+                }
+            }
+
+            // 5. SANCTION UNIQUEMENT SI NOTE TOTALEMENT HORS CONTEXTE
+            if (!noteAcceptee && !noteAbsorbee && config.modeSansErreur) {
                 fautes++; 
                 document.getElementById("lbl-fautes").innerText = config.modeInfini ? `${fautes} (${DICTIONNAIRE[langueActuelle].infiniteLabel})` : `${fautes} / ${config.maxFautes}`;
                 if (!config.modeInfini && fautes >= config.maxFautes) { terminerJeu(); return; }
